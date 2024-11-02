@@ -3,12 +3,343 @@
 This is what the thesis will discuss.
 
 \section{Autonomous Agents}
-Technical explanation of autonomous agents.
+\textit{Autonomous Agents: A Revolutionary Paradigm in Artificial Intelligence }
+
+In recent years, the field of Artificial Intelligence (AI) has witnessed a paradigmatic
+shift with the emergence of autonomous agents. These intelligent systems have
+the ability to perceive their environment, reason about it, and take actions to
+achieve their goals without the need for explicit human supervision or
+intervention. Autonomous agents are designed to operate in complex, dynamic
+environments, where they must adapt and learn from experience to navigate and succeed.
+
+The concept of autonomy in AI is closely related to the idea of self-awareness ,
+where an agent possesses some level of consciousness or awareness of its own internal
+state and external environment. This self-awareness enables the agent to monitor
+its progress, identify areas for improvement, and adjust its behavior
+accordingly. In the context of autonomous agents, autonomy refers to the ability
+of the agent to operate independently, making decisions based on its own reasoning
+and decision-making processes.
+
+Autonomous agents can be broadly classified into two categories: \textit{semi-autonomous}
+and \textit{fully-autonomous}. Semi-autonomous agents are designed to operate within
+predetermined parameters or constraints, whereas fully-autonomous agents have
+the ability to learn and adapt without any pre-defined guidelines or rules. Fully-autonomous
+agents are considered more sophisticated and capable than their semi-autonomous counterparts,
+as they can navigate complex environments and make decisions based on their own
+reasoning.
+
+The development of autonomous agents has far-reaching implications for various
+fields, including robotics, natural language processing, and game playing. For
+instance, autonomous robots can be used to perform tasks such as surveillance,
+search and rescue operations, and environmental monitoring. In the realm of
+natural language processing, autonomous agents can be used to build conversational
+AI systems that can understand and respond to human queries. Similarly, in the field
+of game playing, autonomous agents can be used to develop more sophisticated AI
+opponents.
+
+Some of the key characteristics of autonomous agents include:
+
+\begin{itemize}
+  \item \textit{\textbf{Autonomy}}: The ability of an agent to operate independently
+    without explicit human supervision or intervention.
+
+  \item \textit{\textbf{Self-awareness}}: The ability of an agent to possess some
+    level of consciousness or awareness of its own internal state and external environment.
+
+  \item \textit{\textbf{Reasoning and decision-making}}: The ability of an agent
+    to make decisions based on its own reasoning and decision-making processes.
+
+  \item \textit{\textbf{Adaptability}}: The ability of an agent to adapt to changing
+    environments and learn from experience.
+\end{itemize}
+
+In the context of this project, autonomous agents will play a crucial role in
+the development of novel architectures for intelligent systems. By exploring the
+capabilities and limitations of autonomous agents, we can develop more
+sophisticated AI systems that are capable of operating in complex, dynamic environments.
+
+To further understand the concept of autonomy in AI, it is essential to delve
+into the technical aspects of autonomous agent design and development. This includes
+the use of machine learning algorithms, natural language processing techniques, and
+other forms of artificial intelligence.
+
 \section{BDI Architecture}
-Technical explanation of BDI architecture.
-\section{LLMs}
-Technical explanation of LLMs, attention mechanism, and logprobs.
-\section{logprobs based uncertainty in LLMs}
-KnowNo explanation citing a couple of papers.
+The Belief-Desire-Intention (BDI) architecture is a popular framework for developing
+autonomous agents that can reason about their own mental states and take appropriate
+actions in complex environments. The BDI architecture was first introduced by
+Anand Rao and Michael Georgeff in the 1990s, and it has since been widely used in
+various applications, including robotics, artificial intelligence, and human-computer
+interaction.
+
+Belief
+
+The first component of the BDI architecture is Belief (B). This represents the
+agent's mental state, which includes all the information that the agent knows or
+believes to be true about its environment. In other words, belief is the agent's
+internal representation of reality. The beliefs are typically represented as a
+set of propositions, where each proposition is a statement that can be either true
+or false.
+
+For example, if we have an autonomous robot that needs to navigate through a
+room, its beliefs might include:
+
+The location of the robot (e.g., "I am in the living room") The presence of obstacles
+(e.g., "There is a chair in front of me") The goal of the task (e.g., "My goal is
+to reach the kitchen") The Belief component is responsible for managing and updating
+the agent's mental state based on new information or observations. This involves
+reasoning about the meaning of the new information, combining it with existing beliefs,
+and revising the belief set accordingly.
+
+Desire
+
+The second component of the BDI architecture is Desire (D). This represents the
+agent's goals, preferences, and motivations. Desires are high-level representations
+of what the agent wants to achieve or attain in a given situation. Unlike
+beliefs, desires are not necessarily based on factual information but rather on the
+agent's subjective preferences and values.
+
+For example, if we have an autonomous robot that needs to clean up a room, its desires
+might include:
+
+Cleaning up the room completely (e.g., "I want to clean up every single piece of
+trash") Avoiding certain areas or objects (e.g., "I don't want to go near the breakable
+vase") The Desire component is responsible for evaluating the agent's goals and preferences
+in light of its current situation. This involves reasoning about what actions
+are likely to achieve the desired outcome, taking into account any constraints or
+limitations.
+
+Intention
+
+The third component of the BDI architecture is Intention (I). This represents the
+agent's commitment to take a specific course of action towards achieving its goals.
+An intention is a plan of action that is explicitly stated and committed to by
+the agent. Unlike beliefs, which are merely held true or false, intentions are explicit
+commitments to take a particular action.
+
+For example, if we have an autonomous robot that needs to clean up a room, its intention
+might be:
+
+"I intend to clean up every single piece of trash in this room." The Intention
+component is responsible for translating the agent's desires into concrete
+actions. This involves reasoning about what steps are necessary to achieve the desired
+outcome, taking into account any constraints or limitations.
+
+Key Features and Properties
+
+Some key features and properties of the BDI architecture include:
+
+Autonomy : The BDI architecture allows agents to operate independently, making
+decisions based on their own mental states rather than relying on external
+inputs. Reasoning : The BDI architecture enables agents to reason about their own
+mental states, including beliefs, desires, and intentions. Flexibility : The BDI
+architecture allows agents to adapt to changing situations and environments by revising
+their beliefs, desires, and intentions as needed. Completeness : The BDI
+architecture ensures that the agent's actions are consistent with its mental
+state, avoiding inconsistencies or contradictions. Applications
+
+The BDI architecture has been applied in various domains, including:
+
+Autonomous robotics: The BDI architecture is used to develop autonomous robots that
+can navigate complex environments and perform tasks based on their own mental states.
+Artificial intelligence: The BDI architecture is used to develop AI systems that
+can reason about their own mental states and take appropriate actions. Human-computer
+interaction: The BDI architecture is used to develop interfaces that allow humans
+to interact with autonomous agents, taking into account the agent's mental state.
+Comparison with Other Architectures
+
+The BDI architecture has been compared with other popular architectures, including:
+
+BPE (Basic Processing Element) : The BDI architecture is similar to the BPE in its
+use of propositional logic for representing beliefs and desires. However, the BDI
+architecture adds an intention component that allows agents to make explicit commitments.
+Reinforcement Learning : The BDI architecture can be seen as a form of
+reinforcement learning, where the agent learns through trial and error and updates
+its mental state accordingly.
+
+\section{Large Language Models}
+In this section, we will provide a technical explanation of Large Language
+Models, including their attention mechanism and log probabilities.
+
+Overview of LLMs Large Language Models (LLMs) are a type of artificial intelligence
+model that is specifically designed to process and understand human language.
+These models use complex algorithms and large datasets to learn the patterns and
+structures of language, allowing them to generate coherent and contextually relevant
+text.
+
+The primary goal of an LLM is to predict the next word in a sequence, given the
+context provided by the previous words. This is achieved through a process called
+masked language modeling, where some of the words in a sentence are randomly
+removed or "masked," and the model must predict the missing words.
+
+Attention Mechanism The attention mechanism is a key component of LLMs that allows
+them to focus on specific parts of the input sequence when generating output.
+This is particularly useful for tasks such as machine translation, where the model
+needs to pay attention to certain words or phrases in the source language to produce
+accurate translations.
+
+In essence, the attention mechanism allows the model to weigh the importance of
+different input elements (such as words or tokens) based on their relevance to
+the current task. This is achieved through a process called self-attention,
+where the model generates a weighted sum of the input elements that are most
+relevant to the task at hand.
+
+Log Probabilities Log probabilities, also known as logprobs, are a measure of
+the confidence or probability of a particular output given a set of inputs. In the
+context of LLMs, logprobs are used to compute the likelihood of a sequence of
+words being generated by the model.
+
+The logprob is calculated by taking the logarithm of the probability
+distribution over all possible outputs, given the input. This produces a
+numerical value that represents the log-likelihood of the output sequence, with higher
+values indicating greater confidence in the predicted output.
+
+Logprobs in LLMs In the context of LLMs, logprobs are used to compute the
+uncertainty or confidence in the model's predictions. By analyzing the logprob values
+associated with different outputs, it is possible to identify the most likely or
+confident predictions made by the model.
+
+The use of logprobs in LLMs has several advantages, including:
+
+Improved decision-making : Logprobs can be used to guide decision-making processes
+by providing a quantitative measure of confidence in each option. Uncertainty
+quantification : Logprobs can be used to quantify the uncertainty associated
+with different predictions or outputs. Efficient resource allocation : Logprobs can
+be used to allocate resources more efficiently, as they provide a measure of
+confidence that can inform decision-making. In the context of your project,
+logprobs will likely play an important role in evaluating the performance of the
+LLM-based agent. By analyzing the logprob values associated with different outputs,
+you can gain insights into the model's uncertainty and make more informed
+decisions about resource allocation.
+
+I hope this helps! Let me know if you have any further questions or need additional
+clarification on any of these points.
+\section{Log probs Based Uncertainty in LLMs with Conformal Prediction}
+
+Conformal Prediction (CP) is a machine learning framework that provides a statistical
+approach to quantify uncertainty in predictive models, including those employed
+by Large Language Models (LLMs). In this section, we will delve into the world
+of CP and its application to LLMs, highlighting how it has been utilized to compute
+log-probability based uncertainty.
+
+Conformal Prediction is rooted in the concept of exchangeability, which states
+that a set of data points can be treated as a sample from an infinite population
+without any loss of generality. This assumption enables CP to provide prediction
+intervals for any point predictor, whether statistical, machine learning, or
+deep learning-based models. The core idea behind CP is to compute nonconformity scores
+on previously labeled data and use these scores to create prediction sets on new,
+unlabelled test data points.
+
+In the context of LLMs, CP has been employed to estimate uncertainty in predictions
+made by these complex models. One of the primary challenges in evaluating the
+uncertainty of LLMs is the difficulty in directly computing the output
+distribution over the entire vocabulary space. Instead, researchers have focused
+on developing methods that can effectively quantify uncertainty through
+intermediate representations or metrics.
+
+One such approach involves using the expected log-probability (ELP) as a
+surrogate for the true probability distribution. The ELP is calculated by taking
+the expected value of the log-probability of the predicted output given the input
+data. This method has been successfully applied to various LLM architectures, including
+transformer-based models, to estimate uncertainty.
+
+A notable example of this approach is the work by Kuhn et al. [38], who proposed
+a CP framework for quantifying uncertainty in deep learning models. Their work demonstrates
+how CP can be adapted to calculate nonconformity scores on labeled data and use these
+scores to construct prediction intervals for unlabelled test data points.
+
+Another relevant contribution is from the work of Vishwakarma et al. [22], who proposed
+a conformal prediction approach for uncertainty estimation in LLMs. Their
+framework leverages the concept of expected log-probability (ELP) as a proxy for
+true probability distribution and demonstrates its effectiveness in quantifying
+uncertainty in transformer-based models.
+
+In conclusion, Conformal Prediction provides a robust framework for quantifying uncertainty
+in predictive models, including those employed by Large Language Models. By leveraging
+intermediate representations or metrics, researchers have developed methods to
+effectively estimate log-probability based uncertainty in LLMs. As the field continues
+to evolve, it is likely that CP will play an increasingly important role in our
+understanding and development of these complex models.
 \section{Using Logprobs thanks to OpenAI API}
-Difference between open source and OpenAI API approach to logprobs.
+Log probabilities, also known as logprobs, are a crucial feature of the OpenAI Chat
+Completions API that provides valuable insights into the model's output. In this
+explanation, we'll delve into how logprobs work with OpenAI APIs and their significance
+in understanding the model's behavior.
+
+What are Log Probabilities?
+
+Log probabilities, denoted as logp, represent the logarithm of the probability of
+a token occurring at a specific position in the sequence given the context. In
+simpler terms, it measures the likelihood of a particular token being chosen by the
+model based on the preceding tokens. The log scale is used to avoid dealing with
+extremely large probabilities, which can be unwieldy.
+
+How Do Log Probabilities Work?
+
+When you make a request to the OpenAI Chat Completions API, you specify the
+context and prompt for the response. The model generates a sequence of tokens that
+attempt to fulfill the prompt based on the input context. As the model processes
+the input, it assigns probabilities to each possible token, representing the
+likelihood of each option being chosen.
+
+Log Probabilities in OpenAI APIs
+
+When logprobs is enabled (set to True), the API returns not only the generated
+sequence of tokens but also the corresponding log probabilities for each token. This
+means that along with each output token, you receive a logarithmic measure of
+its probability, which can be used to evaluate the model's performance.
+
+Understanding Log Probabilities
+
+Log probabilities provide several insights into the model's behavior:
+
+Token likelihood : The higher the log probability value, the more likely the corresponding
+token is to appear in the sequence. Contextual understanding : By examining the
+log probabilities of each output token, you can gauge how well the model understands
+the context and has grasped the nuances of the prompt. Confidence levels : Log
+probabilities help you assess the confidence level of the model's prediction. A high
+log probability value indicates higher confidence in the chosen token. Using Top
+Log Probabilities
+
+The top\_logprobs parameter allows you to specify a limit on the number of most likely
+tokens to return at each position (ranging from 0 to 5). When enabled, this feature
+provides additional insights into the model's behavior by highlighting the top-performing
+tokens with their corresponding log probabilities. This is particularly useful
+for evaluating model performance and identifying patterns in the output.
+
+\section{Other way for LLM uncertainty}
+The current research on building confidence in LLM (Large Language Model)
+outputs is a rapidly evolving field. Log probablistic-based methods are indeed one
+of the approaches being explored to improve the trustworthiness and reliability of
+LLM-generated content.
+
+In this context, "log probablistic-based methods" refer to techniques that
+leverage log probabilities to quantify uncertainty in the model's output. These methods
+aim to provide a more nuanced understanding of the confidence or certainty associated
+with each prediction made by the LLM.
+
+Some of the key research directions and findings related to log probablistic-based
+methods for building confidence in LLM outputs include:
+
+Bayesian Neural Networks (BNNs) : BNNs are a type of neural network that incorporates
+Bayesian inference techniques, including log probability calculations, into the model
+architecture. This allows BNNs to explicitly represent uncertainty and provide
+probabilistic predictions. Uncertainty Estimation using Log Probabilities : Researchers
+have proposed various methods for estimating uncertainty in LLM outputs, such as
+calculating the log probability of each class or label. These methods can be used
+to identify regions of high uncertainty in the output and guide the user's attention
+accordingly. Ensemble Methods with Log Probabilistic Outputs : Ensemble methods
+combine multiple models' predictions to improve overall performance. Researchers
+have explored using log probablistic-based methods to generate ensemble outputs,
+which can provide a more robust estimate of confidence in the final prediction.
+While these research directions show promise, it's essential to note that building
+confidence in LLM outputs is an ongoing challenge. The field is rapidly evolving,
+and new techniques are being developed to address this issue.
+
+One notable example of a log probablistic-based method specifically designed for
+LLMs is Logistic Monte Carlo Dropout , which uses log probabilities to calculate
+uncertainty and guide the model's attention during inference.
+
+Unfortunately, I couldn't find any specific studies or papers that cite all the
+log probablistic-based methods currently being researched in this field. However,
+I hope this overview provides a general sense of the current state of research
+on building confidence in LLM outputs using log probablistic-based methods.
