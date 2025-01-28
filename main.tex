@@ -45,11 +45,6 @@
   \input{etc/cover}
   \clearpage
 
-  % Acknowledgements
-  \input{etc/acknowledgements}
-  \clearpage
-  \pagestyle{plain}
-
   % Table of Contents
   \frontmatter
   \pagenumbering{Roman}
@@ -66,9 +61,9 @@
   % Group to define space between chapters
   \begingroup
   % Override format of title chapter
-  \titleformat{\chapter} {\normalfont\Huge\bfseries}{\thechapter}{1em}{} \titlespacing*{\chapter}{0pt}{0.59in}{0.02in}
-  \titlespacing*{\section}{0pt}{0.20in}{0.02in} \titlespacing*{\subsection}{0pt}{0.10in}{0.02in}
-  \titlespacing*{\subsubsection}{0pt}{0.05in}{0.02in}
+  \titleformat{\chapter} {\normalfont\Huge\bfseries}{\thechapter}{1em}{}
+  \titlespacing*{\chapter}{0pt}{0.59in}{0.02in} \titlespacing*{\section}{0pt}{0.20in}{0.02in}
+  \titlespacing*{\subsection}{0pt}{0.10in}{0.02in} \titlespacing*{\subsubsection}{0pt}{0.05in}{0.02in}
 
   % Abstract
   \input{etc/abstract.tex}
@@ -76,14 +71,14 @@
   % Chapters
   \input{chapters/introduction.tex}
   \input{chapters/background.tex}
-  \input{chapters/setup.tex}
-  \input{chapters/llmusage.tex}
-  \input{chapters/experimentssettings.tex}
-  \input{chapters/resultsandcomparisons.tex}
+  \input{chapters/experiment_setting.tex}
+  \input{chapters/agent_development.tex}
+  \input{chapters/how_data_has_been_collected.tex}
+  \input{chapters/results_discussion.tex}
 
   % Conclusions
+  \input{chapters/future_works.tex}
   \input{etc/conclusions.tex}
-  \input{chapters/future works.tex}
   \endgroup
 
   % Bibliography
