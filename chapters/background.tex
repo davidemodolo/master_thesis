@@ -1,13 +1,15 @@
 \chapter{Background}
 \label{cha:background}
 
-In this thesis, we will analyze in detail the behavior of an LLM within a controlled
-environment.
+In this thesis, we will analyze in detail the behavior of an LLM as an agent within
+a controlled environment.
 
 Before presenting all the work carried out in detail, this chapter aims to
 provide a comprehensive explanation of all the theoretical foundations necessary
-to understand the steps presented in the following chapters. In particular, we
-want to highlight what an LLM is and how it works, with a special focus on the Attention
+to understand the steps presented in the following chapters. Starting from a brief
+introduction of Artificial Intelligence just to define the boundaries in which we
+are working, we will move to the core concepts. In particular, we want to
+highlight what an LLM is and how it works, with a special focus on the Attention
 mechanism and how the uncertainty of an LLM can be calculated. This will serve
 as a basis for correctly interpreting the results analyzed in Section
 \ref{cha:results_discussion}.
@@ -19,11 +21,30 @@ being discussed over the media.
 To better define the context, we will examine the main alternative approaches to
 solving a logistical problem currently studied in the literature.
 
+\section{Artificial Intelligence}
+\label{sec:artificial_intelligence} Right now in the media, AI is being used as
+a synonym for Large Language Models. However, AI is a broader concept that
+includes all the techniques and methods used to make machines perform tasks that
+would require human intelligence. The debate of what is intelligence is still open,
+and we will not go inside this rabbit hole. In this thesis we will focus on Natural
+Language Processing tasks, and in particular on LLMs.
+
 \section{Large Language Models - LLMs}
 \label{sec:large_language_models_llms}
+
+We could summarize the concept of LLMs as a model that can generate text based on
+a given input.
+
 \subsection{LLMs' Uncertainty}
 \label{sub:llms_uncertainty}
 
+Understanding the uncertainty of an LLM is crucial to correctly interpret the
+text it generates. If we ask for a yes/no question, it would make a different
+impact on us reading "Yes" or "Yes - Uncertainty 49\%". Moreover, this would let
+us get some kind of explainability behind these complex and opaque systems.
+
+We can define two main different ways the literature tries to compute the uncertainty
+of an LLM:
 \section{Agents}
 \label{sec:agents}
 \subsection{BDI Architecture}
