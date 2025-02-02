@@ -47,6 +47,53 @@ some kind of explainability behind these complex and opaque systems.
 
 \section{Agents}
 \label{sec:agents}
+
+As widely explained in the book "An Introduction to Multiagent Systems" \cite{wooldridge2002multiagent},
+we can summarize the definition of an agent as an autonomous entity that
+perceives its environment through sensors and acts upon it through effectors, making
+decisions based on its perceptions and objectives in order to achieve specific goals.
+
+This definition highlights several key aspects of agents:
+\begin{itemize}
+  \item Autonomy: Agents operate without direct human intervention, controlling their
+    own actions.
+
+  \item Perception and Action: They interact with the environment via sensors (perception)
+    and effectors (action execution).
+
+  \item Decision-making: Agents select actions based on their internal model, goals,
+    and the state of the environment.
+
+  \item Non-determinism and Adaptability: Since environments are generally non-deterministic,
+    agents must be prepared for uncertainty and potential failures in action execution.
+
+  \item Preconditions and Constraints: Actions are subject to certain conditions
+    that must be met for successful execution.
+\end{itemize}
+
+Thus, an agent's fundamental challenge is deciding which actions to perform in
+order to best satisfy its objectives, given the constraints and uncertainties of
+its environment.
+
+We will analyze in detail the prompts and the choices in the Chapter X Section Y,
+but to give an some kind of help to align with the definition above, we can map some
+of its concept to what this thesis will analyze:
+\begin{itemize}
+  \item Perception and Action: what the server sends about the current state of
+    the environment can be seen as the perception of the agent, while the action
+    it can take will be given in the prompt in a specific way.
+
+  \item Decision-making: the decision-making process will be the generation of
+    the text by the LLM, weighted by the uncertainty.
+
+  \item Non-determinism and Adaptability: to emulate the non-determinism of the
+    environment, the state received by the server will be used "raw" in the prompt,
+    without any hard processing or parsing.
+
+  \item Preconditions and Constraints: living in a "limited" map with a fixed
+    number of cells, is itself a constraint the agent must consider.
+\end{itemize}
+
 \subsection{BDI Architecture}
 \label{sub:bdi_architecture}
 \section{State of the Art}
