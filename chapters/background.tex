@@ -49,13 +49,13 @@ some kind of explainability behind these complex and opaque systems.
 \section{Agents}
 \label{sec:agents}
 
-\begin{figure}[h!]
-  \label{fig:agent_scheme}
-  \centering
-  \includegraphics[width=.3333\textwidth]{images/Agent_Scheme.png}
-  \caption{Agent Scheme}
-  { Source: redesign of a scheme in \cite{wooldridge2002multiagent}}
-\end{figure}
+% \begin{figure}[h!]
+%   \label{fig:agent_scheme}
+%   \centering
+%   \includegraphics[width=.3333\textwidth]{images/Agent_Scheme.png}
+%   \caption{Agent Scheme}
+%   { Source: redesign of a scheme in \cite{wooldridge2002multiagent}}
+% \end{figure}
 
 As widely explained in the book "An Introduction to Multiagent Systems"
 \cite{wooldridge2002multiagent}, we can summarize the definition of an agent as an
@@ -85,14 +85,57 @@ Thus, an agent's fundamental challenge is deciding which actions to perform in o
 to best satisfy its objectives, given the constraints and uncertainties of its
 environment.
 
-As shown in Figure \ref{fig:agent_scheme}, an agent is some entity that perceives
-the environment and reacts to it. The environment can be anything from a simple
-thermostat to a complex system like a self-driving car. The idea is that the agent
-is able to react to a change in the environment and take actions to achieve its goals.
+\begin{figure}[h!]
+  \centering
+  \begin{tikzpicture}[
+    node distance=2cm, % Distance between nodes
+  ]
+    \node[
+      rectangle,
+      minimum width=3cm,
+      minimum height=1cm,
+      text centered,
+      draw=black,
+      fill={rgb,255:red,5; green,91; blue,0},
+      text=white
+    ] (agent) {Agent};
+    \node[
+      rectangle,
+      minimum width=3cm,
+      minimum height=1cm,
+      text centered,
+      draw=black,
+      below of=agent,
+      fill={rgb,255:red,171; green,171; blue,171},
+      text=white
+    ] (env) {Environment};
 
-We will analyze in detail the prompts and the choices in the Chapter X Section Y,
-but to give an some kind of help to align with the definition above, we can map some
-of its concept to what this thesis will analyze:
+    % First arrow (Action) slightly shifted right
+    \draw[thick, ->, >=stealth]
+      (agent.south)
+      ++(0.5,0) -- ++(0,-1)
+      node[midway, right] {Action};
+
+    % Second arrow (Observation) slightly shifted left
+    \draw[thick, ->, >=stealth]
+      (env.north)
+      ++(-0.5,0) -- ++(0,1)
+      node[midway, left] {Observation};
+  \end{tikzpicture}
+  \caption{Agent Scheme}
+  { Source: redesign of a scheme in \cite{wooldridge2002multiagent}} \label{fig:agent_scheme}
+\end{figure}
+
+As shown in Figure \ref{fig:agent_scheme}, an agent is some entity that
+perceives the environment and reacts to it. The environment can be anything from
+a simple thermostat to a complex system like a self-driving car. The idea is
+that the agent is able to react to a change in the environment and take actions
+to achieve its goals.
+
+We will analyze in detail the prompts and the choices in the Chapter
+\ref{cha:data_collection} Section \ref{sec:prompts}, but to give an some kind of
+help to align with the definition above, we can map some of its concept to what
+this thesis will analyze:
 \begin{itemize}
   \item Perception and Action: what the server sends about the current state of
     the environment can be seen as the perception of the agent, while the action
@@ -112,13 +155,12 @@ of its concept to what this thesis will analyze:
 \subsection{BDI Architecture}
 \label{sub:bdi_architecture}
 
-The Belief-Desire-Intention (BDI) architecture is a widely adopted framework in
-artificial intelligence (AI) for modeling rational agents. It was formally developed
-by Rao and Georgeff in 1995 \cite{bdi-icmas95} and has been implemented in several
-architectures, including PRS (1987), dMARS (1998), JAM (1999), Jack (2001), and
-JADEX (2005). BDI provides a structured approach to practical reasoning,
-allowing agents to function effectively in dynamic and unpredictable
-environments.
+The Belief-Desire-Intention (BDI) architecture is a widely adopted framework in artificial
+intelligence (AI) for modeling rational agents. It was formally developed by Rao
+and Georgeff in 1995 \cite{bdi-icmas95} and has been implemented in several
+architectures, including PRS (1987), dMARS (1998), JAM (1999), Jack (2001), and JADEX
+(2005). BDI provides a structured approach to practical reasoning, allowing agents
+to function effectively in dynamic and unpredictable environments.
 
 \subsubsection{Core Components of BDI}
 BDI agents operate based on three key components:
@@ -142,12 +184,30 @@ BDI agents operate based on three key components:
 
 \subsubsection{BDI in Practical AI Applications}
 
-BDI has been extensively used in fields like robotics, automated planning, and multi-agent
-systems. For instance, JADEX is a popular Java-based BDI framework used in simulations
-and decision-making applications.
+BDI has been extensively used in fields like robotics, automated planning, and
+multi-agent systems. For instance, JADEX is a popular Java-based BDI framework
+used in simulations and decision-making applications.
 
 \section{State of the Art}
 \label{sec:state_of_the_art}
+
+A logistic problem is a typical problem in the field of AI, and there are
+several approaches to solve it. In this section, we will analyze the main
+alternatives to LLMs in the literature and highlight the core differences
+between them and our approach.
+
+\begin{quotation}
+  This is a longer blockquote that may span multiple paragraphs. It is indented
+  on both sides.
+\end{quotation}
+
+\begin{blockquote}
+  This is another styled blockquote with a grey background.
+\end{blockquote}
+
+\subsection{PDDL Based Solution}
+
+\subsubsection{Planning Domain Definition Language}
 
 PDDL: pro (explainable, efficienza in ambienti limitati) e contro (time intensive,
 non c'è adattamento, in un problema di dimensioni moderate è quasi impossibile usarlo
