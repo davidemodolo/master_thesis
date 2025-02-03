@@ -27,7 +27,8 @@ approaches to solving a logistical problem currently studied in the literature.
 Right now in the media, AI is being used as a synonym for Large Language Models.
 However, AI is a broader concept that includes many techniques and methodologies.
 
-\#\# Summary of different kind of AI ending with Generative Models
+\#\# Summary of different kind of AI ending with Generative Models end with NLP
+history
 
 \section{Large Language Models - LLMs}
 \label{sec:large_language_models_llms}
@@ -48,10 +49,19 @@ some kind of explainability behind these complex and opaque systems.
 \section{Agents}
 \label{sec:agents}
 
-As widely explained in the book "An Introduction to Multiagent Systems" \cite{wooldridge2002multiagent},
-we can summarize the definition of an agent as an autonomous entity that
-perceives its environment through sensors and acts upon it through effectors, making
-decisions based on its perceptions and objectives in order to achieve specific goals.
+\begin{figure}[h!]
+  \label{fig:agent_scheme}
+  \centering
+  \includegraphics[width=.3333\textwidth]{images/Agent_Scheme.png}
+  \caption{Agent Scheme}
+  { Source: redesign of a scheme in \cite{wooldridge2002multiagent}}
+\end{figure}
+
+As widely explained in the book "An Introduction to Multiagent Systems"
+\cite{wooldridge2002multiagent}, we can summarize the definition of an agent as an
+autonomous entity that perceives its environment through sensors and acts upon it
+through effectors, making decisions based on its perceptions and objectives in
+order to achieve specific goals.
 
 This definition highlights several key aspects of agents:
 \begin{itemize}
@@ -71,9 +81,14 @@ This definition highlights several key aspects of agents:
     that must be met for successful execution.
 \end{itemize}
 
-Thus, an agent's fundamental challenge is deciding which actions to perform in
-order to best satisfy its objectives, given the constraints and uncertainties of
-its environment.
+Thus, an agent's fundamental challenge is deciding which actions to perform in order
+to best satisfy its objectives, given the constraints and uncertainties of its
+environment.
+
+As shown in Figure \ref{fig:agent_scheme}, an agent is some entity that perceives
+the environment and reacts to it. The environment can be anything from a simple
+thermostat to a complex system like a self-driving car. The idea is that the agent
+is able to react to a change in the environment and take actions to achieve its goals.
 
 We will analyze in detail the prompts and the choices in the Chapter X Section Y,
 but to give an some kind of help to align with the definition above, we can map some
@@ -96,5 +111,54 @@ of its concept to what this thesis will analyze:
 
 \subsection{BDI Architecture}
 \label{sub:bdi_architecture}
+
+The Belief-Desire-Intention (BDI) architecture is a widely adopted framework in
+artificial intelligence (AI) for modeling rational agents. It was formally developed
+by Rao and Georgeff in 1995 \cite{bdi-icmas95} and has been implemented in several
+architectures, including PRS (1987), dMARS (1998), JAM (1999), Jack (2001), and
+JADEX (2005). BDI provides a structured approach to practical reasoning,
+allowing agents to function effectively in dynamic and unpredictable
+environments.
+
+\subsubsection{Core Components of BDI}
+BDI agents operate based on three key components:
+\begin{itemize}
+  \item Belief: Represents the agent’s knowledge about the world, including past
+    events and observations. Given the agent's local perception and limited
+    computational resources, beliefs act as cached, imperfect information rather
+    than absolute knowledge
+
+  \item Desire (Goals): Defines the agent’s objectives or preferred end states, such
+    as "desiring to graduate." Desires help in justifying why an agent takes
+    specific actions and enable reasoning about goal interactions, particularly in
+    failure recovery scenarios
+
+  \item Intention: Represents the commitments of an agent toward achieving
+    specific goals through selected plans. Intentions provide structure by ensuring
+    persistence and internal consistency, allowing for incremental planning and
+    adaptation in real-time. They also serve as a means of coordinating multiple
+    agents in distributed systems.
+\end{itemize}
+
+\subsubsection{BDI in Practical AI Applications}
+
+BDI has been extensively used in fields like robotics, automated planning, and multi-agent
+systems. For instance, JADEX is a popular Java-based BDI framework used in simulations
+and decision-making applications.
+
 \section{State of the Art}
 \label{sec:state_of_the_art}
+
+PDDL: pro (explainable, efficienza in ambienti limitati) e contro (time intensive,
+non c'è adattamento, in un problema di dimensioni moderate è quasi impossibile usarlo
+in real time)
+
+Reinforcement Learning: pro (efficace, si può adattare all'ambiente che cambia) e
+contro (convergenza ad un local minima nella reward function, no explainability,
+costoso da allenare)
+
+Agenti LLM (es. o1 di OpenAI): introduzione a temi emergenti come il Chain of
+Thought, sottolineando come viene eseguito il reasoning e cosa differisce dal mio
+approccio
+
+Planning in LLM
