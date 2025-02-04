@@ -1,4 +1,4 @@
-# Thesis Template Test
+# Thesis Template
 
 [![ci](https://github.com/unitn-drive/thesis/actions/workflows/ci.yaml/badge.svg)](https://github.com/unitn-drive/thesis/actions/workflows/ci.yaml)
 
