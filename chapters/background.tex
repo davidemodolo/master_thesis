@@ -122,7 +122,7 @@ environment.
       ++(-0.5,0) -- ++(0,1)
       node[midway, left] {Observation};
   \end{tikzpicture}
-  \caption{Agent Scheme}
+  \caption{Agent Design Scheme}
   { Source: redesign of a scheme in \cite{wooldridge2002multiagent}} \label{fig:agent_scheme}
 \end{figure}
 
@@ -201,13 +201,207 @@ between them and our approach.
   on both sides.
 \end{quotation}
 
+\subsection{PDDL Based Solution}
 \begin{blockquote}
-  This is another styled blockquote with a grey background.
+  \textbf{Planning Domain Definition Language} (PDDL) is a human-readable format
+  for problems in automated planning that gives a description of the possible
+  states of the world, a description of the set of possible actions, a specific
+  initial state of the world, and a specific set of desired goals.
+
+  \emph{Source: Wikipedia \cite{wiki-pddl}}
 \end{blockquote}
 
-\subsection{PDDL Based Solution}
+The core difference between a PDDL-based solution and ours lays in the
+definition of PDDL. In a PDDL-based solution, the problem is defined in a formal
+language, and the planner is responsible for finding a sequence of actions that lead
+from the initial state to the goal state.
 
-\subsubsection{Planning Domain Definition Language}
+This approach is time-intensive and not suitable for real-time applications,
+since starting from the initial state, the planner has to travel the graph of all
+possible states until it finds a state contained in the possible goal states (with
+the use of some heuristics).
+
+\begin{lstlisting}[
+  caption={Domain file example for a bit toggle problem},
+  label={lst:domain_file_toggle_bits},
+  backgroundcolor=\color{code-bg},
+  numbers=left,
+  keywordstyle=\color{primary}\bfseries,
+  morekeywords={define, requirements, predicates, action}
+]
+(define (domain bit-toggle)
+  (:requirements :strips :negative-preconditions)
+  (:predicates
+    (bit ?b)                       ; predicate meaning
+                                   ; bit ?b is set (true)
+  )
+
+  (:action set-bit
+    :parameters (?b)
+    :precondition (not (bit ?b))   ; can only set a bit if
+                                   ; it is not already set
+    :effect (bit ?b)               ; setting the bit to true
+  )
+
+  (:action unset-bit
+    :parameters (?b)
+    :precondition (bit ?b)         ; can only unset a bit if
+                                   ; it is currently set
+    :effect (not (bit ?b))         ; setting the bit to false
+  )
+)
+\end{lstlisting}
+
+\begin{lstlisting}[
+  caption={Problem file example for a bit toggle problem},
+  label={lst:problem_file_toggle_bits},
+  backgroundcolor=\color{code-bg},
+  numbers=left,
+  keywordstyle=\color{primary}\bfseries,
+  morekeywords={define, init, goal}
+]
+(define (problem bit-toggle-full-problem)
+  (:domain bit-toggle-full)
+  (:objects
+     b1 b2 b3
+  )
+  (:init)                          ; Initially all bits are unset (false)
+
+  (:goal                           ; It can be any combination of T/F
+     (and (bit b1) (bit b2) (not(bit b3)))
+  )
+)
+\end{lstlisting}
+\noindent
+\begin{minipage}{0.33\textwidth}
+  \centering
+  \begin{tikzpicture}[nodes={draw, circle, minimum size=10mm, inner sep=0pt}]
+    % First plot
+    \node (00) at (0,0) [fill=primary, text=white] {00};
+    \node (01) at (2,1) [fill=code-bg] {01};
+    \node (10) at (2,-1) [fill=code-bg] {10};
+    \node (11)
+      at
+      (4,0)
+      [fill=code-bg, thick, draw=primary, line width=1mm]
+      {11};
+    \draw (00) -- (01);
+    \draw (00) -- (10);
+    \draw (01) -- (11);
+    \draw (10) -- (11);
+  \end{tikzpicture}
+
+  \vspace{1cm} % Space between first and second plot
+
+  \begin{tikzpicture}[nodes={draw, circle, minimum size=10mm, inner sep=0pt}]
+    % Second plot
+    \node (000) at (0,0) [fill=primary, text=white] {000};
+    \node (001) at (2,1) [fill=code-bg] {001};
+    \node (010) at (2,-1) [fill=code-bg] {010};
+    \node (011) at (4,0) [fill=code-bg] {011};
+    \node (100) at (2,3) [fill=code-bg] {100};
+    \node (101) at (4,2) [fill=code-bg] {101};
+    \node (110)
+      at
+      (4,4)
+      [fill=code-bg, thick, draw=primary, line width=1mm]
+      {110};
+    \node (111) at (6,3) [fill=code-bg] {111};
+    \draw (000) -- (001);
+    \draw (000) -- (010);
+    \draw (000) -- (100);
+    \draw (001) -- (011);
+    \draw (001) -- (101);
+    \draw (010) -- (011);
+    \draw (010) -- (110);
+    \draw (100) -- (101);
+    \draw (100) -- (110);
+    \draw (011) -- (111);
+    \draw (101) -- (111);
+    \draw (110) -- (111);
+  \end{tikzpicture}
+\end{minipage}
+\hfill
+\begin{minipage}{0.66\textwidth}
+  \centering
+  \begin{tikzpicture}[nodes={draw, circle, minimum size=10mm, inner sep=0pt}]
+    % Third plot
+    \node (0000) at (0,0) [fill=primary, text=white] {0000};
+    \node (0001) at (2,1) [fill=code-bg] {0001};
+    \node (0010) at (2,-1) [fill=code-bg] {0010};
+    \node (0011) at (4,0) [fill=code-bg] {0011};
+    \node (0100) at (2,3) [fill=code-bg] {0100};
+    \node (0101) at (4,2) [fill=code-bg] {0101};
+    \node (0110) at (4,-2) [fill=code-bg] {0110};
+    \node (0111) at (6,0) [fill=code-bg] {0111};
+    \node (1000) at (2,5) [fill=code-bg] {1000};
+    \node (1001) at (4,4) [fill=code-bg] {1001};
+    \node (1010) at (4,6) [fill=code-bg] {1010};
+    \node (1011) at (6,5) [fill=code-bg] {1011};
+    \node (1100) at (4,8) [fill=code-bg] {1100};
+    \node (1101) at (6,7) [fill=code-bg] {1101};
+    \node (1110)
+      at
+      (6,9)
+      [fill=code-bg, thick, draw=primary, line width=1mm]
+      {1110};
+    \node (1111) at (8,8) [fill=code-bg] {1111};
+    \draw (0000) -- (0001);
+    \draw (0000) -- (0010);
+    \draw (0000) -- (0100);
+    \draw (0000) -- (1000);
+    \draw (0001) -- (0011);
+    \draw (0001) -- (0101);
+    \draw (0001) -- (1001);
+    \draw (0010) -- (0011);
+    \draw (0010) -- (0110);
+    \draw (0010) -- (1010);
+    \draw (0011) -- (0111);
+    \draw (0011) -- (1011);
+    \draw (0100) -- (0101);
+    \draw (0100) -- (0110);
+    \draw (0100) -- (1100);
+    \draw (0101) -- (0111);
+    \draw (0101) -- (1101);
+    \draw (0110) -- (0111);
+    \draw (0110) -- (1110);
+    \draw (0111) -- (1111);
+    \draw (1000) -- (1001);
+    \draw (1000) -- (1010);
+    \draw (1000) -- (1100);
+    \draw (1001) -- (1011);
+    \draw (1001) -- (1101);
+    \draw (1010) -- (1011);
+    \draw (1010) -- (1110);
+    \draw (1011) -- (1111);
+    \draw (1100) -- (1101);
+    \draw (1100) -- (1110);
+    \draw (1101) -- (1111);
+    \draw (1110) -- (1111);
+  \end{tikzpicture}
+\end{minipage}
+
+\begin{figure}[h!]
+  \centering
+  \subfloat[
+  \centering
+  label 1]{{ \begin{tikzpicture}\begin{axis}[ title={Arcs over number of bits}, xlabel={Bits}, ylabel={Arcs}, width=7cm, height=7cm, xmin=2, xmax=16, ymin=4, ymax=550000, xtick={2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}, ytick={11264,53248,114688,245760, 524288}, legend pos=north west, ymajorgrids=true, grid style=dashed, ]\addplot[ color=primary, mark=square, ] coordinates { (2,4)(3,12)(4,32)(5,80)(6,192)(7,448)(8,1024)(9,2304)(10,5120)(11,11264)(12,24576)(13,53248)(14,114688)(15,245760)(16,524288) }; \legend{Number of arcs}\end{axis}\end{tikzpicture} }}
+  \qquad \subfloat[
+  \centering
+  label 1]{{ \begin{tikzpicture}\begin{semilogyaxis}[ title={Arcs over number of bits (Log Scale)}, xlabel={Bits}, ylabel={Arcs}, width=7cm, height=7cm, xmin=2, xmax=16, ymin=4, ymax=550000, xtick={2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}, ytick={4,10,100,1000,10000,100000}, legend pos=north west, ymajorgrids=true, grid style=dashed, ] \addplot[ color=primary, mark=square, ] coordinates { (2,4)(3,12)(4,32)(5,80)(6,192)(7,448)(8,1024)(9,2304)(10,5120)(11,11264)(12,24576)(13,53248)(14,114688)(15,245760)(16,524288) }; \legend{Number of arcs}\end{semilogyaxis}\end{tikzpicture} }}
+  \caption{Arcs per Bit}
+\end{figure}
+
+With the increasing number of variables (actions, objects), the number of
+possible states blows up. In fact, as we can see in Figure X, with just a pre-condition
+and a goal, the number of possible states grows exponentially.
+
+However, it is more explainable and efficient in limited environments, since all
+the information is explicitly defined by the user.
+
+An example of a similar problem solved using PDDL can be found in the paper ``An
+AI Planning Approach to Emergency Material Scheduling Using Numerical PDDL" by Yang
+et al. \cite{Yang2022}.
 
 PDDL: pro (explainable, efficienza in ambienti limitati) e contro (time intensive,
 non c'è adattamento, in un problema di dimensioni moderate è quasi impossibile usarlo
