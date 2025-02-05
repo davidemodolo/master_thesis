@@ -201,7 +201,7 @@ between them and our approach.
   on both sides.
 \end{quotation}
 
-\subsection{PDDL Based Solution}
+\subsection{PDDL Based Solutions}
 \begin{blockquote}
   \textbf{Planning Domain Definition Language} (PDDL) is a human-readable format
   for problems in automated planning that gives a description of the possible
@@ -236,14 +236,14 @@ the use of some heuristics).
                                    ; bit ?b is set (true)
   )
 
-  (:action set-bit
+  (:action setbit
     :parameters (?b)
     :precondition (not (bit ?b))   ; can only set a bit if
                                    ; it is not already set
     :effect (bit ?b)               ; setting the bit to true
   )
 
-  (:action unset-bit
+  (:action unsetbit
     :parameters (?b)
     :precondition (bit ?b)         ; can only unset a bit if
                                    ; it is currently set
@@ -272,114 +272,126 @@ the use of some heuristics).
   )
 )
 \end{lstlisting}
-\noindent
-\begin{minipage}{0.33\textwidth}
-  \centering
-  \begin{tikzpicture}[nodes={draw, circle, minimum size=10mm, inner sep=0pt}]
-    % First plot
-    \node (00) at (0,0) [fill=primary, text=white] {00};
-    \node (01) at (2,1) [fill=code-bg] {01};
-    \node (10) at (2,-1) [fill=code-bg] {10};
-    \node (11)
-      at
-      (4,0)
-      [fill=code-bg, thick, draw=primary, line width=1mm]
-      {11};
-    \draw (00) -- (01);
-    \draw (00) -- (10);
-    \draw (01) -- (11);
-    \draw (10) -- (11);
-  \end{tikzpicture}
 
-  \vspace{1cm} % Space between first and second plot
+With the increasing number of variables (actions or predicates), the number of
+arcs grows exponentially. A little example that makes this problem easy to visualize
+is the Domain where we can have N possible bits, that can be turned to \texttt{true}
+or \texttt{false} (Domain file in Listing \ref{lst:domain_file_toggle_bits}) and
+the Problem where everything start at \texttt{false} and we want a specific final
+combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
 
-  \begin{tikzpicture}[nodes={draw, circle, minimum size=10mm, inner sep=0pt}]
-    % Second plot
-    \node (000) at (0,0) [fill=primary, text=white] {000};
-    \node (001) at (2,1) [fill=code-bg] {001};
-    \node (010) at (2,-1) [fill=code-bg] {010};
-    \node (011) at (4,0) [fill=code-bg] {011};
-    \node (100) at (2,3) [fill=code-bg] {100};
-    \node (101) at (4,2) [fill=code-bg] {101};
-    \node (110)
-      at
-      (4,4)
-      [fill=code-bg, thick, draw=primary, line width=1mm]
-      {110};
-    \node (111) at (6,3) [fill=code-bg] {111};
-    \draw (000) -- (001);
-    \draw (000) -- (010);
-    \draw (000) -- (100);
-    \draw (001) -- (011);
-    \draw (001) -- (101);
-    \draw (010) -- (011);
-    \draw (010) -- (110);
-    \draw (100) -- (101);
-    \draw (100) -- (110);
-    \draw (011) -- (111);
-    \draw (101) -- (111);
-    \draw (110) -- (111);
-  \end{tikzpicture}
-\end{minipage}
-\hfill
-\begin{minipage}{0.66\textwidth}
-  \centering
-  \begin{tikzpicture}[nodes={draw, circle, minimum size=10mm, inner sep=0pt}]
-    % Third plot
-    \node (0000) at (0,0) [fill=primary, text=white] {0000};
-    \node (0001) at (2,1) [fill=code-bg] {0001};
-    \node (0010) at (2,-1) [fill=code-bg] {0010};
-    \node (0011) at (4,0) [fill=code-bg] {0011};
-    \node (0100) at (2,3) [fill=code-bg] {0100};
-    \node (0101) at (4,2) [fill=code-bg] {0101};
-    \node (0110) at (4,-2) [fill=code-bg] {0110};
-    \node (0111) at (6,0) [fill=code-bg] {0111};
-    \node (1000) at (2,5) [fill=code-bg] {1000};
-    \node (1001) at (4,4) [fill=code-bg] {1001};
-    \node (1010) at (4,6) [fill=code-bg] {1010};
-    \node (1011) at (6,5) [fill=code-bg] {1011};
-    \node (1100) at (4,8) [fill=code-bg] {1100};
-    \node (1101) at (6,7) [fill=code-bg] {1101};
-    \node (1110)
-      at
-      (6,9)
-      [fill=code-bg, thick, draw=primary, line width=1mm]
-      {1110};
-    \node (1111) at (8,8) [fill=code-bg] {1111};
-    \draw (0000) -- (0001);
-    \draw (0000) -- (0010);
-    \draw (0000) -- (0100);
-    \draw (0000) -- (1000);
-    \draw (0001) -- (0011);
-    \draw (0001) -- (0101);
-    \draw (0001) -- (1001);
-    \draw (0010) -- (0011);
-    \draw (0010) -- (0110);
-    \draw (0010) -- (1010);
-    \draw (0011) -- (0111);
-    \draw (0011) -- (1011);
-    \draw (0100) -- (0101);
-    \draw (0100) -- (0110);
-    \draw (0100) -- (1100);
-    \draw (0101) -- (0111);
-    \draw (0101) -- (1101);
-    \draw (0110) -- (0111);
-    \draw (0110) -- (1110);
-    \draw (0111) -- (1111);
-    \draw (1000) -- (1001);
-    \draw (1000) -- (1010);
-    \draw (1000) -- (1100);
-    \draw (1001) -- (1011);
-    \draw (1001) -- (1101);
-    \draw (1010) -- (1011);
-    \draw (1010) -- (1110);
-    \draw (1011) -- (1111);
-    \draw (1100) -- (1101);
-    \draw (1100) -- (1110);
-    \draw (1101) -- (1111);
-    \draw (1110) -- (1111);
-  \end{tikzpicture}
-\end{minipage}
+\begin{figure}[h!]
+  \noindent
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \begin{tikzpicture}[nodes={draw, circle, minimum size=10mm, inner sep=0pt}]
+      % First plot
+      \node (00) at (0,0) [fill=primary, text=white] {00};
+      \node (01) at (2,1) [fill=code-bg] {01};
+      \node (10) at (2,-1) [fill=code-bg] {10};
+      \node (11)
+        at
+        (4,0)
+        [fill=code-bg, thick, draw=primary, line width=1mm]
+        {11};
+      \draw (00) -- (01);
+      \draw (00) -- (10);
+      \draw (01) -- (11);
+      \draw (10) -- (11);
+    \end{tikzpicture}
+
+    \vspace{1cm} % Space between first and second plot
+
+    \begin{tikzpicture}[nodes={draw, circle, minimum size=10mm, inner sep=0pt}]
+      % Second plot
+      \node (000) at (0,0) [fill=primary, text=white] {000};
+      \node (001) at (2,1) [fill=code-bg] {001};
+      \node (010) at (2,-1) [fill=code-bg] {010};
+      \node (011) at (4,0) [fill=code-bg] {011};
+      \node (100) at (2,3) [fill=code-bg] {100};
+      \node (101) at (4,2) [fill=code-bg] {101};
+      \node (110)
+        at
+        (4,4)
+        [fill=code-bg, thick, draw=primary, line width=1mm]
+        {110};
+      \node (111) at (6,3) [fill=code-bg] {111};
+      \draw (000) -- (001);
+      \draw (000) -- (010);
+      \draw (000) -- (100);
+      \draw (001) -- (011);
+      \draw (001) -- (101);
+      \draw (010) -- (011);
+      \draw (010) -- (110);
+      \draw (100) -- (101);
+      \draw (100) -- (110);
+      \draw (011) -- (111);
+      \draw (101) -- (111);
+      \draw (110) -- (111);
+    \end{tikzpicture}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.66\textwidth}
+    \centering
+    \begin{tikzpicture}[nodes={draw, circle, minimum size=10mm, inner sep=0pt}]
+      % Third plot
+      \node (0000) at (0,0) [fill=primary, text=white] {0000};
+      \node (0001) at (2,1) [fill=code-bg] {0001};
+      \node (0010) at (2,-1) [fill=code-bg] {0010};
+      \node (0011) at (4,0) [fill=code-bg] {0011};
+      \node (0100) at (2,3) [fill=code-bg] {0100};
+      \node (0101) at (4,2) [fill=code-bg] {0101};
+      \node (0110) at (4,-2) [fill=code-bg] {0110};
+      \node (0111) at (6,0) [fill=code-bg] {0111};
+      \node (1000) at (2,5) [fill=code-bg] {1000};
+      \node (1001) at (4,4) [fill=code-bg] {1001};
+      \node (1010) at (4,6) [fill=code-bg] {1010};
+      \node (1011) at (6,5) [fill=code-bg] {1011};
+      \node (1100) at (4,8) [fill=code-bg] {1100};
+      \node (1101) at (6,7) [fill=code-bg] {1101};
+      \node (1110)
+        at
+        (6,9)
+        [fill=code-bg, thick, draw=primary, line width=1mm]
+        {1110};
+      \node (1111) at (8,8) [fill=code-bg] {1111};
+      \draw (0000) -- (0001);
+      \draw (0000) -- (0010);
+      \draw (0000) -- (0100);
+      \draw (0000) -- (1000);
+      \draw (0001) -- (0011);
+      \draw (0001) -- (0101);
+      \draw (0001) -- (1001);
+      \draw (0010) -- (0011);
+      \draw (0010) -- (0110);
+      \draw (0010) -- (1010);
+      \draw (0011) -- (0111);
+      \draw (0011) -- (1011);
+      \draw (0100) -- (0101);
+      \draw (0100) -- (0110);
+      \draw (0100) -- (1100);
+      \draw (0101) -- (0111);
+      \draw (0101) -- (1101);
+      \draw (0110) -- (0111);
+      \draw (0110) -- (1110);
+      \draw (0111) -- (1111);
+      \draw (1000) -- (1001);
+      \draw (1000) -- (1010);
+      \draw (1000) -- (1100);
+      \draw (1001) -- (1011);
+      \draw (1001) -- (1101);
+      \draw (1010) -- (1011);
+      \draw (1010) -- (1110);
+      \draw (1011) -- (1111);
+      \draw (1100) -- (1101);
+      \draw (1100) -- (1110);
+      \draw (1101) -- (1111);
+      \draw (1110) -- (1111);
+    \end{tikzpicture}
+  \end{minipage}
+  \caption{Graphs for bit-toggle problem with 2, 3, and 4 bits}
+  \label{fig:bit_toggle_graphs}
+\end{figure}
 
 \begin{figure}[h!]
   \centering
@@ -390,15 +402,35 @@ the use of some heuristics).
   \centering
   label 1]{{ \begin{tikzpicture}\begin{semilogyaxis}[ title={Arcs over number of bits (Log Scale)}, xlabel={Bits}, ylabel={Arcs}, width=7cm, height=7cm, xmin=2, xmax=16, ymin=4, ymax=550000, xtick={2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}, ytick={4,10,100,1000,10000,100000}, legend pos=north west, ymajorgrids=true, grid style=dashed, ] \addplot[ color=primary, mark=square, ] coordinates { (2,4)(3,12)(4,32)(5,80)(6,192)(7,448)(8,1024)(9,2304)(10,5120)(11,11264)(12,24576)(13,53248)(14,114688)(15,245760)(16,524288) }; \legend{Number of arcs}\end{semilogyaxis}\end{tikzpicture} }}
   \caption{Arcs per Bit}
+  \label{fig:arcs_per_bit}
 \end{figure}
 
-With the increasing number of variables (actions, objects), the number of
-possible states blows up. In fact, as we can see in Figure X, with just a pre-condition
-and a goal, the number of possible states grows exponentially.
+As we can see in the plot Figure \ref{fig:arcs_per_bit}, we can visualize the
+number of arcs (example of graphs for 2, 3 and 4 bits in Figure
+\ref{fig:bit_toggle_graphs}) grows exponentially with the number of bits. This
+makes the problem of finding a solution in real-time almost impossible for a
+moderate number of bits, and this is a basic problem.
 
-However, it is more explainable and efficient in limited environments, since all
-the information is explicitly defined by the user.
+\begin{lstlisting}[
+  caption={Plan for the bit toggle problem},
+  label={lst:plan_toggle_bits},
+  backgroundcolor=\color{code-bg},
+  numbers=left,
+  keywordstyle=\color{primary}\bfseries,
+  morekeywords={setbit}
+]
+          ; Found Plan (output)
+(setbit b3)
+(setbit b2)
+(setbit b1)
+\end{lstlisting}
 
+However, a PDDL approach is more explainable, since all the information is
+provided by the user and the output result is a sequence of actions (example at Listing
+\ref{lst:plan_toggle_bits}). Of course, there might be different paths to reach
+the goal.
+
+\subsubsection{Logistics Problem solved with PDDL in Literature}
 An example of a similar problem solved using PDDL can be found in the paper ``An
 AI Planning Approach to Emergency Material Scheduling Using Numerical PDDL" by Yang
 et al. \cite{Yang2022}.
@@ -407,12 +439,14 @@ PDDL: pro (explainable, efficienza in ambienti limitati) e contro (time intensiv
 non c'è adattamento, in un problema di dimensioni moderate è quasi impossibile usarlo
 in real time)
 
+\subsection{Reinforcement Learning}
 Reinforcement Learning: pro (efficace, si può adattare all'ambiente che cambia) e
 contro (convergenza ad un local minima nella reward function, no explainability,
 costoso da allenare)
 
+\subsection{LLM Agents}
 Agenti LLM (es. o1 di OpenAI): introduzione a temi emergenti come il Chain of
 Thought, sottolineando come viene eseguito il reasoning e cosa differisce dal mio
 approccio
 
-Planning in LLM
+\subsubsection{Planning in LLM}
