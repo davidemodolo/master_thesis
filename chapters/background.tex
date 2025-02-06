@@ -182,24 +182,36 @@ BDI agents operate based on three key components:
     agents in distributed systems.
 \end{itemize}
 
-\subsubsection{BDI in Practical AI Applications}
-
-BDI has been extensively used in fields like robotics, automated planning, and
-multi-agent systems. For instance, JADEX is a popular Java-based BDI framework
-used in simulations and decision-making applications.
+BDI has been extensively used in fields like robotics, automated planning, and multi-agent
+systems. For instance, JADEX is a popular Java-based BDI framework used in simulations
+and decision-making applications.
 
 \section{State of the Art}
 \label{sec:state_of_the_art}
 
-A logistic problem is a typical problem in the field of AI, and there are
-several approaches to solve it. In this section, we will analyze the main
-alternatives to LLMs in the literature and highlight the core differences
-between them and our approach.
+A logistic problem is a fundamental challenge in the field of Artificial
+Intelligence (AI), encompassing tasks such as route optimization, supply chain
+management, and delivery scheduling. These problems arise in various domains, including
+transportation, e-commerce, and manufacturing, where efficient resource
+allocation and decision-making are critical. Given the complexity of modern logistics,
+AI has emerged as a powerful tool for finding optimal or near-optimal solutions.
 
-\begin{quotation}
-  This is a longer blockquote that may span multiple paragraphs. It is indented
-  on both sides.
-\end{quotation}
+Several AI-based approaches can be used to address logistic problems. Traditional
+operations research techniques, such as linear programming and heuristics, have been
+widely employed. However, with the increasing availability of data and computational
+power, machine learning (ML) and deep learning methods have become more
+prevalent. These methods can predict demand, optimize routes dynamically, and enhance
+decision-making under uncertainty. Additionally, reinforcement learning (RL) has
+gained attention for its ability to learn optimal strategies through trial and error,
+particularly in dynamic and unpredictable environments.
+
+In the recent years with the explosion of Large Language Models (LLMs), many researchers
+started to apply them to different fields, including planning and logistics.
+
+% \begin{quotation}
+%   This is a longer blockquote that may span multiple paragraphs. It is indented
+%   on both sides.
+% \end{quotation}
 
 \subsection{PDDL Based Solutions}
 \begin{blockquote}
@@ -211,15 +223,20 @@ between them and our approach.
   \emph{Source: Wikipedia \cite{wiki-pddl}}
 \end{blockquote}
 
-The core difference between a PDDL-based solution and ours lays in the
-definition of PDDL. In a PDDL-based solution, the problem is defined in a formal
-language, and the planner is responsible for finding a sequence of actions that lead
-from the initial state to the goal state.
+The fundamental distinction between a PDDL-based solution and any Machine
+Learning/Deep Learning approach lies in the very nature of how problems are
+defined and solved. In a PDDL-based system, the problem must be explicitly
+encoded using a formal, structured language that describes the initial state,
+goal state, and available actions. The planner then takes on the computationally
+intensive task of exploring a vast search space, systematically generating and evaluating
+possible action sequences to determine an optimal path from the initial state to
+the goal state.
 
-This approach is time-intensive and not suitable for real-time applications,
-since starting from the initial state, the planner has to travel the graph of all
-possible states until it finds a state contained in the possible goal states (with
-the use of some heuristics).
+While effective in structured environments, this method is inherently time-consuming
+and computationally demanding. Since the planner must traverse a potentially enormous
+state space—guided by heuristics but still constrained by the rigid formalism of
+PDDL, it may struggle with real-time decision-making, making it unsuitable for dynamic,
+fast-paced applications.
 
 \begin{lstlisting}[
   caption={Domain file example for a bit toggle problem},
@@ -273,12 +290,12 @@ the use of some heuristics).
 )
 \end{lstlisting}
 
-With the increasing number of variables (actions or predicates), the number of
-arcs grows exponentially. A little example that makes this problem easy to visualize
+With the increasing number of variables (actions or predicates), the number of arcs
+grows exponentially. A little example that makes this problem easy to visualize
 is the Domain where we can have N possible bits, that can be turned to \texttt{true}
 or \texttt{false} (Domain file in Listing \ref{lst:domain_file_toggle_bits}) and
-the Problem where everything start at \texttt{false} and we want a specific final
-combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
+the Problem where everything start at \texttt{false} and we want a specific
+final combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
 
 \begin{figure}[h!]
   \noindent
@@ -405,14 +422,14 @@ combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
   \label{fig:arcs_per_bit}
 \end{figure}
 
-As we can see in the plot Figure \ref{fig:arcs_per_bit}, we can visualize the
-number of arcs (example of graphs for 2, 3 and 4 bits in Figure
-\ref{fig:bit_toggle_graphs}) grows exponentially with the number of bits. This
-makes the problem of finding a solution in real-time almost impossible for a
-moderate number of bits, and this is a basic problem.
+As we can see in the plot Figure \ref{fig:arcs_per_bit}, we can visualize the number
+of arcs (example of graphs for 2, 3 and 4 bits in Figure \ref{fig:bit_toggle_graphs})
+grows exponentially with the number of bits, as well as the number of states obviously.
+This shows how even a simple problem with a simple solution can become time-intensive
+and not suitable for real-time applications.
 
 \begin{lstlisting}[
-  caption={Plan for the bit toggle problem},
+  caption={Plan for the bit toggle problem, solved by LAMA-first planner},
   label={lst:plan_toggle_bits},
   backgroundcolor=\color{code-bg},
   numbers=left,
@@ -425,28 +442,35 @@ moderate number of bits, and this is a basic problem.
 (setbit b1)
 \end{lstlisting}
 
-However, a PDDL approach is more explainable, since all the information is
-provided by the user and the output result is a sequence of actions (example at Listing
-\ref{lst:plan_toggle_bits}). Of course, there might be different paths to reach
-the goal.
+However, a PDDL approach is more explainable, since all the information is provided
+by the user and the output result is a sequence of actions (example at Listing
+\ref{lst:plan_toggle_bits}). This makes it easier to understand and debug the
+solution, as each step is explicitly defined. Of course, there might be different
+paths to reach the goal, and the planner might choose one based on heuristics or
+optimization criteria. This transparency in the decision-making process is one of
+the key advantages of using PDDL for planning problems.
 
-\subsubsection{Logistics Problem solved with PDDL in Literature}
-An example of a similar problem solved using PDDL can be found in the paper ``An
+An example of a similar problem solved using PDDL can be found in the paper "An
 AI Planning Approach to Emergency Material Scheduling Using Numerical PDDL" by Yang
-et al. \cite{Yang2022}.
-
-PDDL: pro (explainable, efficienza in ambienti limitati) e contro (time intensive,
-non c'è adattamento, in un problema di dimensioni moderate è quasi impossibile usarlo
-in real time)
+et al. \cite{Yang2022}. In their work, they utilize PDDL 2.1 that allows to
+model the scheduling problem, incorporating factors such energy consumption constraints.
+Their approach employs the Metric-FF planner to generate optimized scheduling
+plans that minimize total scheduling time and transportation energy usage. However,
+while this demonstrates the applicability of AI planning to emergency logistics,
+their model simplifies the real-world scenario by assuming predefined transport routes,
+limited vehicle types, and abstract representations of congestion effects. This
+highlights a broader limitation of PDDL in capturing the full complexity of
+dynamic and uncertain environments often encountered in emergency response
+situations.
 
 \subsection{Reinforcement Learning}
-Reinforcement Learning: pro (efficace, si può adattare all'ambiente che cambia) e
-contro (convergenza ad un local minima nella reward function, no explainability,
-costoso da allenare)
+Reinforcement Learning: pro (efficace, si può adattare all'ambiente che cambia)
+e contro (convergenza ad un local minima nella reward function, no
+explainability, costoso da allenare)
 
 \subsection{LLM Agents}
-Agenti LLM (es. o1 di OpenAI): introduzione a temi emergenti come il Chain of
-Thought, sottolineando come viene eseguito il reasoning e cosa differisce dal mio
+Agenti LLM (es. o1 di OpenAI): introduzione a temi emergenti come il Chain of Thought,
+sottolineando come viene eseguito il reasoning e cosa differisce dal mio
 approccio
 
 \subsubsection{Planning in LLM}

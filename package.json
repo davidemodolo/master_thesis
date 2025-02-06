@@ -3,11 +3,11 @@
   "scripts": {
     "prebuild": "npm run clean",
     "build": "latexmk -interaction=nonstopmode -file-line-error -pdf -halt-on-error -outdir=build main",
-    "postbuild": "npx shx cp ./build/main.pdf ./surname_name_computer_science_2023_2024.pdf",
+    "postbuild": "npx shx cp ./build/main.pdf ./modolo_davide_ais_2023_2024.pdf",
     "check": "npx npm-run-all --npm-path npm check:*",
     "check:format": "npx prettier --check .",
     "check:spell": "npx cspell lint --config cspell.json --no-progress --show-context \"**\"",
-    "clean": "npx shx rm -rf ./build ./surname_name_computer_science_2023_2024.pdf",
+    "clean": "npx shx rm -rf ./build ./modolo_davide_ais_2023_2024.pdf",
     "fix": "npx npm-run-all --npm-path npm fix:*",
     "fix:format": "npx prettier --write ."
   },
