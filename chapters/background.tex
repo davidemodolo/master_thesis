@@ -450,27 +450,77 @@ paths to reach the goal, and the planner might choose one based on heuristics or
 optimization criteria. This transparency in the decision-making process is one of
 the key advantages of using PDDL for planning problems.
 
-An example of a similar problem solved using PDDL can be found in the paper "An
-AI Planning Approach to Emergency Material Scheduling Using Numerical PDDL" by Yang
-et al. \cite{Yang2022}. In their work, they utilize PDDL 2.1 that allows to
-model the scheduling problem, incorporating factors such energy consumption constraints.
-Their approach employs the Metric-FF planner to generate optimized scheduling
-plans that minimize total scheduling time and transportation energy usage. However,
-while this demonstrates the applicability of AI planning to emergency logistics,
-their model simplifies the real-world scenario by assuming predefined transport routes,
-limited vehicle types, and abstract representations of congestion effects. This
-highlights a broader limitation of PDDL in capturing the full complexity of
-dynamic and uncertain environments often encountered in emergency response
-situations.
+An example of a problem related to the one presented in this thesis, solved
+using PDDL, can be found in the paper "An AI Planning Approach to Emergency
+Material Scheduling Using Numerical PDDL" by Yang et al. \cite{Yang2022}. In their
+work, they utilize PDDL 2.1 that allows to model the scheduling problem, incorporating
+factors such energy consumption constraints. Their approach employs the Metric-FF
+planner to generate optimized scheduling plans that minimize total scheduling
+time and transportation energy usage. However, while this demonstrates the
+applicability of AI planning to emergency logistics, their model simplifies the real-world
+scenario by assuming predefined transport routes, limited vehicle types, and abstract
+representations of congestion effects. This highlights a broader limitation of
+PDDL in capturing the full complexity of dynamic and uncertain environments
+often encountered in emergency response situations.
 
-\subsection{Reinforcement Learning}
-Reinforcement Learning: pro (efficace, si può adattare all'ambiente che cambia)
-e contro (convergenza ad un local minima nella reward function, no
-explainability, costoso da allenare)
+\subsection{Reinforcement Learning Solutions}
+\begin{blockquote}
+  \textbf{Reinforcement Learning} (RL) is a branch of machine learning focused
+  on making decisions to maximize cumulative rewards in a given situation. Unlike
+  supervised learning, which relies on a training dataset with predefined
+  answers, RL involves learning through experience. In RL, an agent learns to achieve
+  a goal in an uncertain, potentially complex environment by performing actions
+  and receiving feedback through rewards or penalties.
 
-\subsection{LLM Agents}
+  \emph{Source: GeegksforGeeks \cite{g4g-rl}}
+\end{blockquote}
+
+When thinking about a logistic problem, it's easy to think about reinforcement
+learning. In fact there is an easy reward function easy to compute (packages/minute
+or step or something similar) and everything can be simulated in a virtual environment
+in parallel until the agent learns the best strategy.
+
+Reinforcement Learning works by defining:
+\begin{itemize}
+  \item An environment: the world in which the agent operates
+
+  \item An agent: the decision-maker that interacts with the environment
+
+  \item Actions: the possible moves the agent can make
+
+  \item Rewards: the feedback the agent receives for its actions
+
+  \item Policy: the strategy the agent uses to select Actions
+\end{itemize}
+
+However, RL has its own set of challenges. The most common one is the convergence
+to a local minimum in the reward function. This means that the agent might learn
+a suboptimal strategy that is not the best one. Moreover, RL is not explainable,
+meaning that we can't understand why the agent took a specific action in a specific
+situation. This is a big problem in real-world applications, where we need to understand
+the decision-making process to ensure safety and reliability.
+
+[PLOTS for RL] \label{fig:rl_local_minima}
+
+In the example provided in Figure \ref{fig:rl_local_minima}, we can see how the agent
+may converge to a local minimum in the reward function, leading to suboptimal
+performance.
+
+Another issue with RL is the cost of training. Since the agent learns through trial
+and error, it needs to perform a large number of actions to explore the
+environment and learn the best strategy. This can be computationally expensive and
+time-consuming, especially for complex problems with many variables and states. Moreover,
+once the agent is trained, its adaptability to new environments or situations is
+limited, as it is optimized for a specific reward function and environment
+configuration.
+
+An example of a problem similar to the one presented in this thesis, solved using
+Reinforcement Learning, can be found in the paper ``DeliverAI: a distributed path-sharing
+network based solution for the last mile food delivery problem" by Ashman et al.
+
+\subsection{Planning in LLM}
+
+\subsubsection{LLM Agents}
 Agenti LLM (es. o1 di OpenAI): introduzione a temi emergenti come il Chain of Thought,
 sottolineando come viene eseguito il reasoning e cosa differisce dal mio
 approccio
-
-\subsubsection{Planning in LLM}
