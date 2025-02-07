@@ -57,11 +57,10 @@ some kind of explainability behind these complex and opaque systems.
 %   { Source: redesign of a scheme in \cite{wooldridge2002multiagent}}
 % \end{figure}
 
-As widely explained in the book "An Introduction to Multiagent Systems"
-\cite{wooldridge2002multiagent}, we can summarize the definition of an agent as an
-autonomous entity that perceives its environment through sensors and acts upon it
-through effectors, making decisions based on its perceptions and objectives in
-order to achieve specific goals.
+As widely explained in the book ``An Introduction to Multiagent Systems" \cite{wooldridge2002multiagent},
+we can summarize the definition of an agent as an autonomous entity that
+perceives its environment through sensors and acts upon it through effectors, making
+decisions based on its perceptions and objectives in order to achieve specific goals.
 
 This definition highlights several key aspects of agents:
 \begin{itemize}
@@ -81,9 +80,9 @@ This definition highlights several key aspects of agents:
     that must be met for successful execution.
 \end{itemize}
 
-Thus, an agent's fundamental challenge is deciding which actions to perform in order
-to best satisfy its objectives, given the constraints and uncertainties of its
-environment.
+Thus, an agent's fundamental challenge is deciding which actions to perform in
+order to best satisfy its objectives, given the constraints and uncertainties of
+its environment.
 
 \begin{figure}[h!]
   \centering
@@ -126,16 +125,14 @@ environment.
   { Source: redesign of a scheme in \cite{wooldridge2002multiagent}} \label{fig:agent_scheme}
 \end{figure}
 
-As shown in Figure \ref{fig:agent_scheme}, an agent is some entity that
-perceives the environment and reacts to it. The environment can be anything from
-a simple thermostat to a complex system like a self-driving car. The idea is
-that the agent is able to react to a change in the environment and take actions
-to achieve its goals.
+As shown in Figure \ref{fig:agent_scheme}, an agent is some entity that perceives
+the environment and reacts to it. The environment can be anything from a simple
+thermostat to a complex system like a self-driving car. The idea is that the agent
+is able to react to a change in the environment and take actions to achieve its goals.
 
-We will analyze in detail the prompts and the choices in the Chapter
-\ref{cha:data_collection} Section \ref{sec:prompts}, but to give an some kind of
-help to align with the definition above, we can map some of its concept to what
-this thesis will analyze:
+We will analyze in detail the prompts and the choices in the Chapter \ref{cha:data_collection}
+Section \ref{sec:prompts}, but to give an some kind of help to align with the
+definition above, we can map some of its concept to what this thesis will analyze:
 \begin{itemize}
   \item Perception and Action: what the server sends about the current state of
     the environment can be seen as the perception of the agent, while the action
@@ -155,12 +152,13 @@ this thesis will analyze:
 \subsection{BDI Architecture}
 \label{sub:bdi_architecture}
 
-The Belief-Desire-Intention (BDI) architecture is a widely adopted framework in artificial
-intelligence (AI) for modeling rational agents. It was formally developed by Rao
-and Georgeff in 1995 \cite{bdi-icmas95} and has been implemented in several
-architectures, including PRS (1987), dMARS (1998), JAM (1999), Jack (2001), and JADEX
-(2005). BDI provides a structured approach to practical reasoning, allowing agents
-to function effectively in dynamic and unpredictable environments.
+The Belief-Desire-Intention (BDI) architecture is a widely adopted framework in
+artificial intelligence (AI) for modeling rational agents. It was formally developed
+by Rao and Georgeff in 1995 \cite{bdi-icmas95} and has been implemented in several
+architectures, including PRS (1987), dMARS (1998), JAM (1999), Jack (2001), and
+JADEX (2005). BDI provides a structured approach to practical reasoning,
+allowing agents to function effectively in dynamic and unpredictable
+environments.
 
 \subsubsection{Core Components of BDI}
 BDI agents operate based on three key components:
@@ -182,31 +180,31 @@ BDI agents operate based on three key components:
     agents in distributed systems.
 \end{itemize}
 
-BDI has been extensively used in fields like robotics, automated planning, and multi-agent
-systems. For instance, JADEX is a popular Java-based BDI framework used in simulations
-and decision-making applications.
+BDI has been extensively used in fields like robotics, automated planning, and
+multi-agent systems. For instance, JADEX is a popular Java-based BDI framework
+used in simulations and decision-making applications.
 
 \section{State of the Art}
 \label{sec:state_of_the_art}
 
-A logistic problem is a fundamental challenge in the field of Artificial
-Intelligence (AI), encompassing tasks such as route optimization, supply chain
-management, and delivery scheduling. These problems arise in various domains, including
-transportation, e-commerce, and manufacturing, where efficient resource
-allocation and decision-making are critical. Given the complexity of modern logistics,
-AI has emerged as a powerful tool for finding optimal or near-optimal solutions.
+A logistic problem is a fundamental challenge in the field of Artificial Intelligence
+(AI), encompassing tasks such as route optimization, supply chain management,
+and delivery scheduling. These problems arise in various domains, including
+transportation, e-commerce, and manufacturing, where efficient resource allocation
+and decision-making are critical. Given the complexity of modern logistics, AI has
+emerged as a powerful tool for finding optimal or near-optimal solutions.
 
-Several AI-based approaches can be used to address logistic problems. Traditional
-operations research techniques, such as linear programming and heuristics, have been
-widely employed. However, with the increasing availability of data and computational
-power, machine learning (ML) and deep learning methods have become more
-prevalent. These methods can predict demand, optimize routes dynamically, and enhance
-decision-making under uncertainty. Additionally, reinforcement learning (RL) has
-gained attention for its ability to learn optimal strategies through trial and error,
-particularly in dynamic and unpredictable environments.
+Several AI-based approaches can be used to address logistic problems.
+Traditional operations research techniques, such as linear programming and heuristics,
+have been widely employed. However, with the increasing availability of data and
+computational power, machine learning (ML) and deep learning methods have become
+more prevalent. These methods can predict demand, optimize routes dynamically,
+and enhance decision-making under uncertainty. Additionally, reinforcement
+learning (RL) has gained attention for its ability to learn optimal strategies
+through trial and error, particularly in dynamic and unpredictable environments.
 
-In the recent years with the explosion of Large Language Models (LLMs), many researchers
-started to apply them to different fields, including planning and logistics.
+In the recent years with the explosion of Large Language Models (LLMs), many
+researchers started to apply them to different fields, including planning and logistics.
 
 % \begin{quotation}
 %   This is a longer blockquote that may span multiple paragraphs. It is indented
@@ -220,23 +218,23 @@ started to apply them to different fields, including planning and logistics.
   states of the world, a description of the set of possible actions, a specific
   initial state of the world, and a specific set of desired goals.
 
-  \emph{Source: Wikipedia \cite{wiki-pddl}}
+  \emph{Source: Wikipedia\footnotemark}
 \end{blockquote}
+\footnotetext{\url{https://en.wikipedia.org/wiki/Planning_Domain_Definition_Language}}
 
-The fundamental distinction between a PDDL-based solution and any Machine
-Learning/Deep Learning approach lies in the very nature of how problems are
-defined and solved. In a PDDL-based system, the problem must be explicitly
-encoded using a formal, structured language that describes the initial state,
-goal state, and available actions. The planner then takes on the computationally
-intensive task of exploring a vast search space, systematically generating and evaluating
-possible action sequences to determine an optimal path from the initial state to
-the goal state.
+The fundamental distinction between a PDDL-based solution and any Machine Learning/Deep
+Learning approach lies in the very nature of how problems are defined and solved.
+In a PDDL-based system, the problem must be explicitly encoded using a formal,
+structured language that describes the initial state, goal state, and available
+actions. The planner then takes on the computationally intensive task of exploring
+a vast search space, systematically generating and evaluating possible action
+sequences to determine an optimal path from the initial state to the goal state.
 
 While effective in structured environments, this method is inherently time-consuming
-and computationally demanding. Since the planner must traverse a potentially enormous
-state space—guided by heuristics but still constrained by the rigid formalism of
-PDDL, it may struggle with real-time decision-making, making it unsuitable for dynamic,
-fast-paced applications.
+and computationally demanding. Since the planner must traverse a potentially
+enormous state space—guided by heuristics but still constrained by the rigid
+formalism of PDDL, it may struggle with real-time decision-making, making it
+unsuitable for dynamic, fast-paced applications.
 
 \begin{lstlisting}[
   caption={Domain file example for a bit toggle problem},
@@ -290,12 +288,12 @@ fast-paced applications.
 )
 \end{lstlisting}
 
-With the increasing number of variables (actions or predicates), the number of arcs
-grows exponentially. A little example that makes this problem easy to visualize
+With the increasing number of variables (actions or predicates), the number of
+arcs grows exponentially. A little example that makes this problem easy to visualize
 is the Domain where we can have N possible bits, that can be turned to \texttt{true}
 or \texttt{false} (Domain file in Listing \ref{lst:domain_file_toggle_bits}) and
-the Problem where everything start at \texttt{false} and we want a specific
-final combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
+the Problem where everything start at \texttt{false} and we want a specific final
+combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
 
 \begin{figure}[h!]
   \noindent
@@ -422,11 +420,11 @@ final combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
   \label{fig:arcs_per_bit}
 \end{figure}
 
-As we can see in the plot Figure \ref{fig:arcs_per_bit}, we can visualize the number
-of arcs (example of graphs for 2, 3 and 4 bits in Figure \ref{fig:bit_toggle_graphs})
-grows exponentially with the number of bits, as well as the number of states obviously.
-This shows how even a simple problem with a simple solution can become time-intensive
-and not suitable for real-time applications.
+As we can see in the plot Figure \ref{fig:arcs_per_bit}, we can visualize the
+number of arcs (example of graphs for 2, 3 and 4 bits in Figure
+\ref{fig:bit_toggle_graphs}) grows exponentially with the number of bits, as
+well as the number of states obviously. This shows how even a simple problem with
+a simple solution can become time-intensive and not suitable for real-time applications.
 
 \begin{lstlisting}[
   caption={Plan for the bit toggle problem, solved by LAMA-first planner},
@@ -442,26 +440,28 @@ and not suitable for real-time applications.
 (setbit b1)
 \end{lstlisting}
 
-However, a PDDL approach is more explainable, since all the information is provided
-by the user and the output result is a sequence of actions (example at Listing
-\ref{lst:plan_toggle_bits}). This makes it easier to understand and debug the
-solution, as each step is explicitly defined. Of course, there might be different
-paths to reach the goal, and the planner might choose one based on heuristics or
-optimization criteria. This transparency in the decision-making process is one of
-the key advantages of using PDDL for planning problems.
+However, a PDDL approach is more explainable, since all the information is
+provided by the user and the output result is a sequence of actions (example at Listing
+\ref{lst:plan_toggle_bits}). This makes it easier to understand and debug the solution,
+as each step is explicitly defined. Of course, there might be different paths to
+reach the goal, and the planner might choose one based on heuristics or optimization
+criteria. This transparency in the decision-making process is one of the key
+advantages of using PDDL for planning problems.
 
-An example of a problem related to the one presented in this thesis, solved
-using PDDL, can be found in the paper "An AI Planning Approach to Emergency
-Material Scheduling Using Numerical PDDL" by Yang et al. \cite{Yang2022}. In their
-work, they utilize PDDL 2.1 that allows to model the scheduling problem, incorporating
-factors such energy consumption constraints. Their approach employs the Metric-FF
-planner to generate optimized scheduling plans that minimize total scheduling
-time and transportation energy usage. However, while this demonstrates the
-applicability of AI planning to emergency logistics, their model simplifies the real-world
-scenario by assuming predefined transport routes, limited vehicle types, and abstract
-representations of congestion effects. This highlights a broader limitation of
-PDDL in capturing the full complexity of dynamic and uncertain environments
-often encountered in emergency response situations.
+\begin{quotation}
+  An example of a problem related to the one presented in this thesis, solved
+  using PDDL, can be found in the paper "An AI Planning Approach to Emergency
+  Material Scheduling Using Numerical PDDL" by Yang et al. \cite{Yang2022}. In their
+  work, they utilize PDDL 2.1 that allows to model the scheduling problem, incorporating
+  factors such energy consumption constraints. Their approach employs the Metric-FF
+  planner to generate optimized scheduling plans that minimize total scheduling
+  time and transportation energy usage. However, while this demonstrates the
+  applicability of AI planning to emergency logistics, their model simplifies the
+  real-world scenario by assuming predefined transport routes, limited vehicle
+  types, and abstract representations of congestion effects. This highlights a
+  broader limitation of PDDL in capturing the full complexity of dynamic and
+  uncertain environments often encountered in emergency response situations.
+\end{quotation}
 
 \subsection{Reinforcement Learning Solutions}
 \begin{blockquote}
@@ -472,39 +472,75 @@ often encountered in emergency response situations.
   a goal in an uncertain, potentially complex environment by performing actions
   and receiving feedback through rewards or penalties.
 
-  \emph{Source: GeegksforGeeks \cite{g4g-rl}}
+  \emph{Source: GeegksforGeeks \footnotemark}
 \end{blockquote}
+\footnotetext{\url{https://www.geeksforgeeks.org/what-is-reinforcement-learning/}}
 
+Reinforcement Learning is a learning setting, where the learner is an Agent that
+can perform a set of actions depending on its state in a set of states and the environment.
+In performing action \texttt{a} in state \texttt{s}, the learner receive an immediate
+reward \texttt{r(s,a)}. In some states, some actions could be not possible or
+valid.
+
+The task is to learn a policy (a full specification of what action to take at each
+state) allowing the agent to choose for each state the action maximizing the
+overall reward, including future moves.
+
+To deal with this delayed reward problem, the agent has to trade-off
+exploitation and exploration:
+\begin{itemize}
+  \item \textbf{Exploitation}: the agent chooses the action that it knows will give
+    some reward
+
+  \item \textbf{Exploration}: the agent tries alternative actions that could end
+    in bigger rewards
+\end{itemize}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.3333\textwidth]{images/rl_scheme.png}
+  \caption{RL Agent Scheme}
+  {Source: Mathworks\footnotemark} \label{fig:rl_scheme}
+\end{figure}
+\footnotetext{\url{https://it.mathworks.com/help/reinforcement-learning/ug/create-agents-for-reinforcement-learning.html}}
+
+% \begin{wrapfigure}
+%   [17]{l}{.25\textwidth}
+%   \centering
+%   \def\stackalignment{l}\stackunder{ \includegraphics[width=\linewidth]{images/rl_scheme.png} } %
+%   {\scriptsize \parbox[t]{\linewidth}{Source: \href{ https://it.mathworks.com/help/reinforcement-learning/ug/create-agents-for-reinforcement-learning.html}{Mathworks}}}
+%   \caption{RL Agent Scheme}
+%   \label{fig:rl_scheme}
+% \end{wrapfigure}
 When thinking about a logistic problem, it's easy to think about reinforcement
 learning. In fact there is an easy reward function easy to compute (packages/minute
 or step or something similar) and everything can be simulated in a virtual environment
-in parallel until the agent learns the best strategy.
+in parallel until the agent learns the best strategy. In fact, as we can see in the
+Figure \ref{fig:rl_scheme}, the diagram defining the Reinforcement Learning
+process remembers very closely the agent scheme presented in Figure
+\ref{fig:agent_scheme}, where the agent interacts with the environment,
+receiving feedback in the form of rewards and updating its policy to maximize
+future rewards.
 
 Reinforcement Learning works by defining:
 \begin{itemize}
-  \item An environment: the world in which the agent operates
+  \item \textbf{Environment}: the world in which the agent operates
 
-  \item An agent: the decision-maker that interacts with the environment
+  \item \textbf{Agent}: the decision-maker that interacts with the environment
 
-  \item Actions: the possible moves the agent can make
+  \item \textbf{Actions}: the possible moves the agent can make
 
-  \item Rewards: the feedback the agent receives for its actions
+  \item \textbf{Rewards}: the feedback the agent receives for its actions
 
-  \item Policy: the strategy the agent uses to select Actions
+  \item \textbf{Policy}: the strategy the agent uses to select Actions
 \end{itemize}
 
-However, RL has its own set of challenges. The most common one is the convergence
-to a local minimum in the reward function. This means that the agent might learn
-a suboptimal strategy that is not the best one. Moreover, RL is not explainable,
-meaning that we can't understand why the agent took a specific action in a specific
-situation. This is a big problem in real-world applications, where we need to understand
-the decision-making process to ensure safety and reliability.
-
-[PLOTS for RL] \label{fig:rl_local_minima}
-
-In the example provided in Figure \ref{fig:rl_local_minima}, we can see how the agent
-may converge to a local minimum in the reward function, leading to suboptimal
-performance.
+However, RL has its own set of challenges. The most common one is the
+convergence to a local minimum in the reward function. This means that the agent
+might learn a suboptimal strategy that is not the best one. Moreover, RL is not explainable,
+meaning that we can't understand why the agent took a specific action in a
+specific situation. This is a big problem in real-world applications, where we
+need to understand the decision-making process to ensure safety and reliability.
 
 Another issue with RL is the cost of training. Since the agent learns through trial
 and error, it needs to perform a large number of actions to explore the
@@ -514,10 +550,12 @@ once the agent is trained, its adaptability to new environments or situations is
 limited, as it is optimized for a specific reward function and environment
 configuration.
 
-An example of a problem similar to the one presented in this thesis, solved using
-Reinforcement Learning, can be found in the paper ``DeliverAI: a distributed path-sharing
-network based solution for the last mile food delivery problem" by Ashman et al.
-
+\begin{quotation}
+  An example of a problem similar to the one presented in this thesis, solved
+  using Reinforcement Learning, can be found in the paper ``DeliverAI: a
+  distributed path-sharing network based solution for the last mile food
+  delivery problem" by Ashman et al.
+\end{quotation}
 \subsection{Planning in LLM}
 
 \subsubsection{LLM Agents}
