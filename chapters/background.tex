@@ -463,16 +463,17 @@ advantages of using PDDL for planning problems.
 \begin{quotation}
   An example of a problem related to the one presented in this thesis, solved
   using PDDL, can be found in the paper "An AI Planning Approach to Emergency
-  Material Scheduling Using Numerical PDDL" by Yang et al. \cite{Yang2022}. In their
-  work, they utilize PDDL 2.1 that allows to model the scheduling problem, incorporating
-  factors such energy consumption constraints. Their approach employs the Metric-FF
-  planner to generate optimized scheduling plans that minimize total scheduling
-  time and transportation energy usage. However, while this demonstrates the
-  applicability of AI planning to emergency logistics, their model simplifies the
-  real-world scenario by assuming predefined transport routes, limited vehicle
-  types, and abstract representations of congestion effects. This highlights a
-  broader limitation of PDDL in capturing the full complexity of dynamic and
-  uncertain environments often encountered in emergency response situations.
+  Material Scheduling Using Numerical PDDL" by Yang et al. \cite{Yang2022}.
+
+  In their work, they utilize PDDL 2.1 that allows to model the scheduling problem,
+  incorporating factors such energy consumption constraints. Their approach employs
+  the Metric-FF planner to generate optimized scheduling plans that minimize total
+  scheduling time and transportation energy usage. However, while this demonstrates
+  the applicability of AI planning to emergency logistics, their model
+  simplifies the real-world scenario by assuming predefined transport routes, limited
+  vehicle types, and abstract representations of congestion effects. This highlights
+  a broader limitation of PDDL in capturing the full complexity of dynamic and uncertain
+  environments often encountered in emergency response situations.
 \end{quotation}
 
 \subsection{Reinforcement Learning Solutions}
@@ -609,10 +610,78 @@ configuration.
   using Reinforcement Learning, can be found in the paper ``DeliverAI: a
   distributed path-sharing network based solution for the last mile food
   delivery problem" by Ashman et al.
+  \cite{mehra2024deliveraireinforcementlearningbased}.
+
+  They aimed at solving the last-mile delivery problem by developing a
+  distributed path-sharing network based on Reinforcement Learning. Their approach
+  uses a multi-agent system to optimize delivery routes and schedules,
+  considering factors such as traffic congestion, delivery time windows, and
+  vehicle capacity. However, their model simplifies the real-world scenario by
+  assuming fixed delivery locations and known traffic patterns, which may not accurately
+  reflect the dynamic and uncertain nature of real-world logistics environments.
+  Moreover, their approach requires extensive training and tuning to achieve optimal
+  performance.
 \end{quotation}
+
 \subsection{Planning in LLM}
 
-\subsubsection{LLM Agents}
-Agenti LLM (es. o1 di OpenAI): introduzione a temi emergenti come il Chain of Thought,
-sottolineando come viene eseguito il reasoning e cosa differisce dal mio
-approccio
+LLMs are trained on vast amounts of textual data and have demonstrated
+remarkable performance across a wide range of language tasks, from translation and
+summarization to reasoning and problem-solving. This success has naturally led
+researchers to explore whether these models can be repurposed for more complex, multi-step
+decision-making problems that require planning.
+
+The key idea is that the same abilities that allow LLMs to understand and generate
+language can be harnessed to decompose a planning task into intermediate steps,
+reason about the consequences of actions, and even generate entire action sequences
+with minimal or no task-specific training.
+
+EXPLORING AND BENCHMARKING PLANNING CAPABILITIES OF LARGE LANGUAGE MODELS \cite{bohnet2024exploringbenchmarkingplanningcapabilities}
+Generalized Planning in PDDL Domains with Pretrained Large Language Models \cite{silver2023generalizedplanningpddldomains}
+
+\subsubsection{Chain-of-Thought Reasoning}
+
+One of the most influential ideas for using LLMs in planning is chain-of-thought
+(CoT) prompting. Instead of asking the model to jump directly from a problem
+statement to a final answer, CoT prompting encourages the model to ``think aloud"
+by generating intermediate reasoning steps. This decomposition can help in planning
+problems where the solution involves multiple, logically connected steps.
+
+This was first find by Wei et al. \cite{wei2023chainofthoughtpromptingelicitsreasoning},
+where they showed that asking the LLM to "answer step by step" the results on
+mathematical problems were better than asking the final result directly. They also
+showed that this step by step approach could be used in other fields, and this
+lead to the CoT reasoning.
+
+\paragraph{``Reasoning" Models}
+Reasoning-focused LLMs are trained to generate multiple Chain-of-Thought (CoT) steps,
+exploring different solution paths before selecting the most optimal one, often using
+Reinforcement Learning (RL) \cite{deepseekai2025deepseekr1incentivizingreasoningcapability}
+techniques such as RLHF (Reinforcement Learning from Human Feedback) or self-consistency
+methods. This approach enhances both accuracy and explainability, as the model articulates
+its reasoning process while still operating as a generative AI system. Expanding
+on this concept, reasoning models can integrate external tools, memory, and API calls,
+forming what is commonly referred to as an LLM Agent, capable of autonomous decision-making
+and real-world interaction. Last reasoning models are:
+\begin{itemize}
+  \item \textbf{OpenAI}: o1\footnote{\url{https://openai.com/o1/}}, o1-mini\footnote{\url{https://openai.com/index/openai-o1-mini-advancing-cost-efficient-reasoning/}}
+    and o3-mini\footnote{\url{https://openai.com/index/openai-o3-mini/}} are advanced
+    reasoning models designed to enhance logical problem-solving capabilities.
+    The o1 model is tailored to tackle complex problems across various domains, offering
+    robust reasoning skills. Building upon this foundation, o3-mini provides a more
+    cost-effective and faster alternative, optimized for tasks in science, technology,
+    engineering, mathematics (STEM), and coding.
+
+  \item \textbf{DeepSeek}: DeepSeek-R1\footnote{\url{https://github.com/deepseek-ai/DeepSeek-R1}},
+    is a notable AI development from a Chinese startup\footnote{\url{https://www.deepseek.com/}}.
+    Released in early 2025, DeepSeek-R1 is recognized for its powerful reasoning
+    and coding skills, achieved at a fraction of the development cost compared to
+    other leading models. Its open-source nature and efficiency have made it a
+    significant player in the AI landscape, offering an alternative approach to AI
+    development and deployment.
+\end{itemize}
+
+\subsubsection{Zero-Shot and Few-Shot Planning}
+\cite{huang2022languagemodelszeroshotplanners}
+
+PDDL PLANNING WITH PRE-TRAINED LARGE LANGUAGE MODELS\cite{silver2022pddl}
