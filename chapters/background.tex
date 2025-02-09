@@ -24,11 +24,54 @@ approaches to solving a logistical problem currently studied in the literature.
 \section{Artificial Intelligence}
 \label{sec:artificial_intelligence}
 
-Right now in the media, AI is being used as a synonym for Large Language Models.
-However, AI is a broader concept that includes many techniques and methodologies.
+Artificial Intelligence (AI) encompasses computational systems designed to
+perform tasks traditionally requiring human intelligence, such as reasoning,
+learning, perception, and \emph{natural language understanding}.
 
-\#\# Summary of different kind of AI ending with Generative Models end with NLP
-history
+In recent years, AI has rapidly evolved, driven by advances in deep learning\footnote{\url{https://en.wikipedia.org/wiki/Deep_learning}},
+increased computational power, and the easy availability of massive datasets (models
+may be even trained on the entirety of the internet). Early AI systems,
+including expert systems and early machine learning models, relied on manually crafted
+rules or statistical techniques. However, with the rise of neural networks,
+particularly deep learning models, AI has shifted toward self-learning systems capable
+of extracting complex patterns from raw data.
+
+One of the key breakthroughs in this evolution was the development of deep neural
+networks (DNNs), particularly Convolutional Neural Networks (CNNs) for image
+processing, introduced by Krizhevsky et al. \cite{articleCNN} and Recurrent
+Neural Networks (RNNs) for sequential data, including language modeling,
+introduced by Hochreiter et al. \cite{articleRNN}.
+
+Despite their success, RNNs struggled with long-term dependencies due to
+vanishing gradients, leading to the development of the \textbf{Transformer
+architecture} (from Vaswani et al., Attention Is All You Need \cite{vaswani2023attentionneed},
+a paper that we will analyze deeper later in this Chapter), which eliminated
+recurrence in favor of self-attention mechanisms, significantly improving efficiency
+and scalability in natural language processing. This shift enabled the emergence
+of large-scale AI models, particularly in NLP, where two main categories
+dominate: discriminative models and generative models.
+
+\paragraph{Discriminative models}
+[TODO]
+
+\paragraph{Generative models}
+learn the underlying data distribution to create new samples that resemble the
+original data. This category includes several architectures that have pushed the
+boundaries of AI-generated content. Variational Autoencoders (VAEs) (Kingma and Welling
+\cite{kingma2022autoencodingvariationalbayes}) introduced a probabilistic
+approach to generating structured data, while Generative Adversarial Networks (GANs)
+(Goodfellow et al. \cite{goodfellow2014generativeadversarialnetworks}) refined
+the concept by using two competing neural networks, a generator and a discriminator,
+to iteratively improve synthetic data generation. More recently, diffusion
+models (Ho et al. \cite{ho2020denoisingdiffusionprobabilisticmodels}) have surpassed
+GANs in generating high-quality images by modeling data transformations through iterative
+denoising processes. In the domain of text generation, autoregressive models like
+GPT (Radford et al., Improving Language Understanding by Generative Pre-Training
+\cite{radford2018improving}) demonstrated the power of large-scale, unsupervised
+pretraining. These Large Language Models (LLMs) predict the next token (that can
+be seen as a building block of a word, approximately a syllable) in a sequence
+based on vast amounts of textual data, learning contextual nuances and producing
+human-like responses.
 
 \section{Large Language Models - LLMs}
 \label{sec:large_language_models_llms} The rise of LLMs highlights a fundamental
