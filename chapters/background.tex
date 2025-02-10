@@ -14,25 +14,26 @@ mechanism and how the uncertainty of an LLM can be calculated. This will serve
 as a basis for correctly interpreting the results analyzed in Section
 \ref{cha:results_discussion}.
 
-There will also be a broader discussion on agents in a strict sense and "LLM agents"
-to better show the difference between our implementation and what is currently
-being discussed over the media.
+There will also be a broader discussion on agents in a strict sense and ``LLM
+agents" to better show the difference between our implementation and what is currently
+being discussed in the literature.
 
-To better define the context of this thesis, we will examine the main alternative
-approaches to solving a logistical problem currently studied in the literature.
+To better define the context of this thesis, we will also examine the main
+alternative approaches to solving a logistical problem currently studied in the
+literature.
 
 \section{Artificial Intelligence}
 \label{sec:artificial_intelligence}
 
-Artificial Intelligence (AI) encompasses computational systems designed to
-perform tasks traditionally requiring human intelligence, such as reasoning,
-learning, perception, and \emph{natural language understanding}.
+Artificial Intelligence (AI) is a very wide field, that can be resumes as
+systems designed to perform tasks traditionally intelligence, such as \emph{natural
+language understanding}, visual perception, decision-making, and problem-solving.
 
 In recent years, AI has rapidly evolved, driven by advances in deep learning\footnote{\url{https://en.wikipedia.org/wiki/Deep_learning}},
 increased computational power, and the easy availability of massive datasets (models
-may be even trained on the entirety of the internet). Early AI systems,
-including expert systems and early machine learning models, relied on manually crafted
-rules or statistical techniques. However, with the rise of neural networks,
+are even trained on the entirety of the internet). Early AI systems, including
+expert systems and early machine learning models, relied on manually crafted rules
+or statistical techniques. However, with the rise of neural networks,
 particularly deep learning models, AI has shifted toward self-learning systems capable
 of extracting complex patterns from raw data.
 
@@ -43,58 +44,274 @@ Neural Networks (RNNs) for sequential data, including language modeling,
 introduced by Hochreiter et al. \cite{articleRNN}.
 
 Despite their success, RNNs struggled with long-term dependencies due to
-vanishing gradients, leading to the development of the \textbf{Transformer
-architecture} (from Vaswani et al., Attention Is All You Need \cite{vaswani2023attentionneed},
-a paper that we will analyze deeper later in this Chapter), which eliminated
-recurrence in favor of self-attention mechanisms, significantly improving efficiency
-and scalability in natural language processing. This shift enabled the emergence
-of large-scale AI models, particularly in NLP, where two main categories
-dominate: discriminative models and generative models.
+vanishing gradients\footnote{\url{https://en.wikipedia.org/wiki/Vanishing_gradient_problem}},
+leading to the development of the \emph{Transformer architecture} (from Vaswani
+et al., Attention Is All You Need \cite{vaswani2023attentionneed}), which
+eliminated recurrence in favor of self-attention mechanisms, significantly improving
+efficiency and scalability in natural language processing. This shift enabled
+the emergence of large-scale AI models, particularly in NLP, where two main
+categories dominate: discriminative models and generative models.
 
 \paragraph{Discriminative models}
-[TODO]
+are a class of machine learning models that aim to directly model the decision
+boundary between different classes in a dataset. Unlike generative models, which
+learn the underlying distribution of the data, discriminative models focus on learning
+the conditional probability of a target class given the input features.
+Classical models like Support Vector Machines\footnote{\url{https://en.wikipedia.org/wiki/Support_vector_machine}}
+and Conditional Random Fields\footnote{\url{https://en.wikipedia.org/wiki/Conditional_random_field}}
+have been widely used for text classification and sequence labeling tasks such
+as Named Entity Recognition (Lafferty et al. \cite{crf}). More recently, deep learning-based
+models like BERT (Devlin et al. \cite{devlin2019bertpretrainingdeepbidirectional})
+have revolutionized NLU by leveraging contextualized word representations to
+improve performance on tasks like sentiment analysis, intent detection, and
+question answering. Unlike generative models, BERT and RoBERTa (Liu et al.
+\cite{liu2019robertarobustlyoptimizedbert}) fine-tune their representations for classification
+and inference tasks, making them highly effective discriminative models for NLU
+applications.
 
 \paragraph{Generative models}
-learn the underlying data distribution to create new samples that resemble the
-original data. This category includes several architectures that have pushed the
-boundaries of AI-generated content. Variational Autoencoders (VAEs) (Kingma and Welling
-\cite{kingma2022autoencodingvariationalbayes}) introduced a probabilistic
-approach to generating structured data, while Generative Adversarial Networks (GANs)
-(Goodfellow et al. \cite{goodfellow2014generativeadversarialnetworks}) refined
-the concept by using two competing neural networks, a generator and a discriminator,
-to iteratively improve synthetic data generation. More recently, diffusion
-models (Ho et al. \cite{ho2020denoisingdiffusionprobabilisticmodels}) have surpassed
-GANs in generating high-quality images by modeling data transformations through iterative
-denoising processes. In the domain of text generation, autoregressive models like
-GPT (Radford et al., Improving Language Understanding by Generative Pre-Training
-\cite{radford2018improving}) demonstrated the power of large-scale, unsupervised
-pretraining. These Large Language Models (LLMs) predict the next token (that can
-be seen as a building block of a word, approximately a syllable) in a sequence
-based on vast amounts of textual data, learning contextual nuances and producing
-human-like responses.
+learn the underlying data distribution to create new samples that resemble the original
+data. This category includes several architectures that have pushed the
+boundaries of AI-generated content. Variational Autoencoders (Kingma and Welling
+\cite{kingma2022autoencodingvariationalbayes}) introduced a probabilistic approach
+to generating structured data, while Generative Adversarial Networks (Goodfellow
+et al. \cite{goodfellow2014generativeadversarialnetworks}) refined the concept by
+using two competing neural networks, a generator and a discriminator, to iteratively
+improve synthetic data generation. More recently, diffusion models (Ho et al. \cite{ho2020denoisingdiffusionprobabilisticmodels})
+have surpassed GANs in generating high-quality images by modeling data
+transformations through iterative denoising processes. In the domain of text generation,
+autoregressive models like GPT (Radford et al. \cite{radford2018improving}) demonstrated
+the power of large-scale, unsupervised pretraining. These Large Language Models predict
+the next token (that can be seen as a building block of a word, approximately a syllable)
+in a sequence based on vast amounts of textual data, learning contextual nuances
+and producing human-like responses.
 
 \section{Large Language Models - LLMs}
-\label{sec:large_language_models_llms} The rise of LLMs highlights a fundamental
-shift in AI from models that primarily classify and label data to systems that can
-generate meaningful and context-aware content. With architectures like
-Transformers, self-supervised learning, and reinforcement learning from human
-feedback (RLHF), these models continue to improve in accuracy, adaptability, and
-generalization. As AI advances, the line between artificial and human-generated content
-is becoming increasingly blurred, making generative AI one of the most
-transformative areas in modern computing.
+\label{sec:large_language_models_llms}
 
-\#\# LLMs are generative models released with the paper "Attention is All You
-Need"
+Large Language Models (LLMs) are a class of deep learning models that leverage
+transformer architectures to generate coherent and contextually relevant text. These
+models have revolutionized natural language processing by achieving state-of-the-art
+performance on a wide range of tasks, including language modeling, translation,
+summarization, and question-answering.
+
+The transformer architecture, introduced by Vaswani et al. in the paper "Attention
+Is All You Need" \cite{vaswani2023attentionneed}, is the foundation of LLMs. It consists
+of an encoder-decoder structure, where the encoder processes the input sequence
+and generates a sequence of hidden states, while the decoder generates the output
+sequence based on the encoder's hidden states. The key innovation in
+transformers is the self-attention mechanism, which allows the model to weigh the
+importance of different input tokens when generating the output. This mechanism
+enables transformers to capture long-range dependencies and contextual
+information more effectively than RNNs.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.65\textwidth]{images/transformer_architecture.png}
+  \caption{Transformer Architecture}
+  { Source: Vaswani et al., Attention Is All You Need \cite{vaswani2023attentionneed}}
+  \label{fig:transformer_architecture}
+\end{figure}
+
+\subsection{Attention Mechanism}
+\label{sub:attention_mechanism}
+
+The attention mechanism is a fundamental component of the transformer
+architecture (Figure \ref{fig:transformer_architecture}), enabling the model to focus
+on specific parts of the input sequence when generating the output. The
+attention mechanism computes a weighted sum of the input tokens, where the weights
+are learned during training based on the relevance of each token to the current context.
+
+The self-attention mechanism works in this way:
+\begin{enumerate}
+  \item create 3 vectors from embeddings (query, key, value) multiplying by 3 matrices
+    learned during the training process;
+
+  \item calculate a score that determines how much focus goes to different parts
+    of the input sentence as it encodes a word;
+
+  \item divide the score for more stable gradients and apply softmax;
+
+  \item multiply each value vector by the softmax score to keep the value of the
+    word it focuses on, and sink other irrelevant words;
+
+  \item sum the weighted value vectors: this produces the output of the self-attention
+    layer at this position.
+\end{enumerate}
+
+The self-attention operation computes the relevance of each token in the input with
+respect to the query token using the scaled dot-product attention:
+
+\begin{displaymath}
+  \mbox{Attention}(Q, K, V) = \mbox{softmax}\left(\frac{QK^{T}}{\sqrt{d_{k}}}\right
+  ) V
+\end{displaymath}
+
+where $d_{k}$ is the dimensionality of the key vectors, ensuring that the dot products
+do not grow too large as input size increases. The softmax function normalizes
+the scores into attention weights, which determine how much influence each token
+should have on the final representation.
+
+Multi-head attention extends this mechanism by computing multiple sets of $Q,K,V$
+matrices in parallel, allowing the model to capture different aspects of
+contextual relationships:
+
+\begin{displaymath}
+  \mbox{MultiHead}(Q, K, V) = \mbox{Concat}(\mbox{head}_{1}, \dots, \mbox{head}_{h}
+  ) W^{O}
+\end{displaymath}
+
+where each attention head independently applies scaled dot-product attention,
+and the outputs are concatenated and linearly projected using $W^{O}$ . This
+improves the model's ability to encode complex dependencies and contextual
+meaning.
+
+The attention mechanism allows the model to focus on different parts of the
+input sequence based on the current context, enabling it to capture long-range dependencies
+and improve performance on tasks like text generation.
 
 \subsection{LLMs' Uncertainty}
 \label{sub:llms_uncertainty}
 
-Understanding the uncertainty of an LLM is crucial to correctly interpret the text
-it generates. If we ask for a yes/no question, it would make a different impact on
-us reading "Yes" or "Yes - Uncertainty 49\%". Moreover, this would let us get
-some kind of explainability behind these complex and opaque systems.
+Despite their impressive capabilities, LLMs are inherently probabilistic and can
+generate responses that are syntactically correct yet factually inaccurate.
+Understanding and quantifying this uncertainty is crucial for evaluating the
+reliability of generated text, especially in high-stakes applications such as medical
+diagnosis, legal advice, or automated decision-making.
 
-\#\# cite Hallucinations
+For example, if an LLM generates an answer to a yes/no question with
+probabilities:
+\begin{displaymath}
+  P(\mbox{Yes})=0.51,P(\mbox{No})=0.49
+\end{displaymath}
+
+then the model is nearly uncertain, and this information should be communicated rather
+than presenting "Yes" as a definitive response.
+
+A key consequence of uncertainty is the phenomenon of \emph{hallucination}, where
+the model generates confident but factually incorrect or fabricated information \cite{Ji_2023}.
+Hallucinations arise when:
+\begin{itemize}
+  \item the model lacks knowledge about a specific query but still generates an answer;
+
+  \item the training data contains conflicting or misleading patterns;
+
+  \item the model overgeneralizes from limited training examples.
+\end{itemize}
+
+Mitigating hallucinations involves uncertainty-aware generation techniques, the most
+common one is \emph{Retrieval-Augmented Generation} (RAG)
+\cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}, which enhance
+the prompt with additional context from a knowledge base to improve the model's factual
+accuracy.
+
+The literature studied different approaches to quantify uncertainty in LLMs, and
+this thesis will use one of the most common methods to quantify the probability
+of correctness in the generated choice by the agent.
+
+\subsubsection{Expressing Uncertainty}
+A study titled ``Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence
+Elicitation in LLMs" \cite{xiong2024llmsexpressuncertaintyempirical}
+investigates methods for eliciting confidence from LLMs without accessing their
+internal parameters or fine-tuning. The researchers propose a framework comprising
+three components:
+\begin{itemize}
+  \item Prompting Strategies: Techniques to elicit verbalized confidence from
+    the model;
+
+  \item Sampling Methods: Generating multiple responses to assess variability;
+
+  \item Aggregation Techniques: Computing consistency across responses to
+    determine confidence levels.
+\end{itemize}
+
+The study evaluates these methods on tasks such as confidence calibration and failure
+prediction across various datasets and LLMs, including GPT-4 and LLaMA 2 Chat.
+
+Key findings indicate that LLMs often exhibit overconfidence when verbalizing
+their certainty, possibly mirroring human confidence expression patterns.
+Additionally, as model capabilities increase, both calibration and failure
+prediction performance improve, though they remain suboptimal. They shown that
+implementing strategies like human-inspired prompts and assessing consistency
+among multiple responses can mitigate overconfidence. Notably, while methods
+requiring internal model access perform better, the performance gap is narrow.
+
+\subsubsection{Stable Explanations as Confidence Measures}
+In the pursuit of reliable uncertainty quantification in Large Language Models,
+the paper ``Cycles of Thought: Measuring LLM Confidence through Stable Explanations
+'' \cite{becker2024cyclesthoughtmeasuringllm} introduced a novel framework that
+assesses model confidence through the stability of generated explanations.
+
+Their approach posits that the consistency of explanations accompanying an
+answer can serve as a proxy for the model's certainty. Instead of assigning a single
+probability to an answer, the method generates multiple explanations for the
+same question and treats each explanation-answer pair as a distinct classifier. A
+posterior distribution is then computed over these classifiers, allowing for a
+principled estimation of confidence based on explanation stability. If the model's
+explanations remain stable across different reasoning paths, it suggests high
+confidence in the answer. Conversely, significant variation in explanations
+signals uncertainty. Empirical evaluations across multiple datasets demonstrated
+that this framework enhances confidence calibration and failure prediction,
+outperforming traditional baselines.
+
+However, there are some potential drawbacks. The method requires generating
+multiple explanations, which increases computational cost and latency.
+Additionally, it can be sensitive to prompt variations, and may misinterpret
+repetitive patterns as high confidence.
+
+\subsubsection{Tokens' log-probability}
+In the realm of robotic task planning, accurately assessing and managing uncertainty
+is essential to ensure that robots perform tasks reliably, especially when
+dealing with complex, multi-step processes. The paper ``Robots That Ask For Help:
+Uncertainty Alignment for Large Language Model Planners"
+\cite{ren2023robotsaskhelpuncertainty} introduces the KnowNo framework, which is
+the one we will use in this thesis to quantify the uncertainty of the agent.
+
+The KnowNo framework leverages Conformal Prediction (CP)\footnote{\url{https://en.wikipedia.org/wiki/Conformal_prediction}},
+a statistical method that provides formal guarantees on the reliability of predictions,
+to assess uncertainty.
+
+In the paper, they ask the LLM to generate a set of five action for a given prompt
+(since the \texttt{logit\_bias} parametere in the OpenAI API was limited to five
+tokens at that time), and then they ask again for the action to select. This
+will not be the case of this thesis, since the actions will always be the same,
+but we will use the same math behind the uncertainty calculation.
+
+KnowNo computes uncertainty evaluating the "validity" of each option. For each action,
+CP calculates a confidence interval based on previous data and task context, and
+from this, a set of valid actions is generated. This set can include one or more
+actions, and the size of this set is indicative of the level of uncertainty:
+\begin{itemize}
+  \item Singleton: If CP narrows down the options to just one action, this indicates
+    low uncertainty, and the robot can proceed confidently with the task. The model
+    is highly certain that this action is the most appropriate next step.
+
+  \item Multiple Options: When CP leaves multiple possible actions in the valid
+    set, this may indicate high uncertainty. In such cases, KnowNo triggers the robot
+    to request human assistance. This allows the robot to seek clarification
+    when it is unsure, thereby avoiding errors that might arise from acting on uncertain
+    predictions.
+\end{itemize}
+
+Technically speaking, the computation of the uncertainty can be summarize in 5 steps:
+\begin{enumerate}
+  \item give each action a single-token label (eg. \texttt{A)}, \texttt{B)}, \texttt{C)},
+    \texttt{D)}, \texttt{E)});
+
+  \item use the \texttt{logit\_bias} parameter in the API to force the model to
+    only answer using these labels;
+
+  \item get the log-probabilities of the tokens and scale them;
+
+  \item filter the resulting set of option with a threshold computed with CP;
+
+  \item either the result will be a singleton or a set of options.
+\end{enumerate}
+
+They also say that the framework has the advantage of being model-agnostic, as
+it can be applied to LLMs out-of-the-box without requiring any fine-tuning, thanks
+to the ``caution" that is given if the resulting filtered set of options is not
+a singleton.
 
 \section{Agents}
 \label{sec:agents}
@@ -134,6 +351,7 @@ Thus, an agent's fundamental challenge is deciding which actions to perform in
 order to best satisfy its objectives, given the constraints and uncertainties of
 its environment.
 
+\vspace{1cm} % Add margin on top
 \begin{figure}[h!]
   \centering
   \begin{tikzpicture}[
@@ -174,6 +392,7 @@ its environment.
   \caption{Agent Design Scheme}
   { Source: redesign of a scheme in \cite{wooldridge2002multiagent}} \label{fig:agent_scheme}
 \end{figure}
+\vspace{1cm} % Add margin on bottom
 
 As shown in Figure \ref{fig:agent_scheme}, an agent is some entity that perceives
 the environment and reacts to it. The environment can be anything from a simple
