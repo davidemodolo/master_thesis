@@ -1,11 +1,137 @@
 \chapter{Experiment Setting}
 \label{cha:experiment_setting}
 
+\textbf{ONGOING}
+
+In this chapter, we provide a comprehensive description of the experimental framework
+used to evaluate the performance of our agent. We begin by formally defining the
+problem, ensuring a clear understanding of the specific aspects of this field that
+our work aims to explore.
+
+Next, we offer a detailed explanation of the environment used to simulate the
+delivery platform. This section will cover the structure, features, and functionalities
+of the web-based platform.
+
+Finally, we discuss the selection of various large language models (LLMs) used
+in our experiments, including both tested and untested models. We will provide
+insights into the rationale behind our choices.
+
 \section{Problem Definition}
 \label{sec:problem_definition}
+
+As widely explained in Section \ref{sub:planning_in_llm}, the recent
+advancements and power of LLMs made us wanting to analyze further their ability
+to understand a planning/logistic problem and solve it on their own. In this work,
+we are interested in understanding strengths and weaknesses of ``raw'' LLMs, without
+any additional planning framework (nor path finding nor reasoning) on top of them.
+Moreover, we would like to emphasize again the fact that this is a generative approach,
+and we want to test the ability of the model on its own.
+
+Our question is: is an agent, that is using an LLM as ``backend'', able to solve
+a logistic problem in a unexpected environment? What are the limitations and the
+strengths of this approach?
+
+To simulate the unexpected environment, we decided to use a web-based platform that
+works with API calls. We decided to do not parse the JSON of the map received, so
+that the agent has to understand the map by itself. Moreover, if the API changes,
+the agent keeps working since it is not prepared to anything specific from the
+server.
+
+Our tests will be explained in detail later in Section X, but in general we want
+to test:
+\begin{itemize}
+  \item The ability of an agent to pickup a parcel in a specific tile;
+
+  \item The ability of an agent to deliver a parcel in a tile it has to derive from
+    the raw map.
+\end{itemize}
 
 \section{Environment - Deliveroo.js}
 \label{sec:environment_deliveroo_js}
 
-\section{GPT Models}
-\label{sec:gpt_models}
+Deliveroo.js it's an Educational Game, developed by Marco Robol for the course on
+Autonomous Software Agents (ASA) by Prof. Paolo Giorgini built using Treejs\footnote{\url{https://threejs.org/}}.
+The code for the server is open and che be accessed on GitHub \footnote{\url{https://github.com/unitn-ASA/Deliveroo.js}}
+as well as some example of agents (with different level of complexity)\footnote{\url{https://github.com/unitn-ASA/DeliverooAgent.js}}.
+
+The game can be played even by humans, but it is designed to serve as an
+environment for any kind of agent to interact with it using APIs (TODO ADD SOCKET
+EXPLANATION).
+
+Even if the game can be played without the graphical interface, it can be useful
+to visualize what the current state is at any given moment.
+
+[ADD FIGURE] \label{fig:deliveroo_js}
+
+As we can see from the Figure \ref{fig:deliveroo_js}, the game is a grid of $N \times
+M$ tiles where the agent can move. Right now, the $(0, 0)$ cell is in the bottom
+left corner.
+
+There are three possible types of cells:
+\begin{itemize}
+  \item \textcolor{primary}{\textbf{green}}: the agent can move on it. They can
+    contain multiple parcels but only one agent at a time;
+
+  \item \textcolor{red}{\textbf{red}}: the agent can move on it and deliver any number
+    of parcel it has;
+
+  \item \textcolor{black}{\textbf{black}}: the agent can't move on it and they can't
+    contain any parcel (we will not use them in our tests).
+\end{itemize}
+
+The functioning is very straight forward:
+
+\begin{itemize}
+  \item \textbf{Agents}: there can be any number of agents that can cooperate or
+    compete. Each agent has a score that is increased by delivering parcels. They
+    are represented as cones with their name on it on the map (`LLM Agent' in
+    Figure \ref{fig:deliveroo_js} is ours).
+
+  \item \textbf{Parcels}: they are represented as small squares with a number on
+    it. The number is the reward the agent will get by delivering it. They spawn
+    in random cells and they can be picked up by the agent. If they are not
+    delivered in a certain amount of time, they may disappear.
+\end{itemize}
+
+[ADD LISTING SERVER] \label{lst:deliveroo_server_config}
+
+The behavior of the parcels is specified in the server config file (example of
+one of ours in Listing \ref{lst:deliveroo_server_config}). Based on the server
+setting file, a maximum number of parcels can spawn at the same time (each one
+delayed from the previous one by a specific value) with a random reward value.
+Then, also based on the configuration file, its reward can decrease over time or
+remain constant.
+
+The agent can interact with the environment using the following actions:
+\begin{itemize}
+  \item \textbf{up}: move up;
+
+  \item \textbf{down}: move down;
+
+  \item \textbf{left}: move left;
+
+  \item \textbf{right}: move right;
+
+  \item \textbf{pickup}: the agent can pickup a parcel in the cell it is in;
+
+  \item \textbf{deliver}: the agent can deliver a parcel in the cell it is in:
+    if it is on a delivery zone the parcel will disappear and the reward will be
+    added to the player's score, otherwise it will just be dropped on the cell.
+\end{itemize}
+
+The server also sends each event to the agent, in specific these are the events we
+used in our tests:
+\begin{itemize}
+  \item \texttt{onMap} (width, height, tiles)
+
+  \item \texttt{onYou} (id, name, x, y, score )
+
+  \item \texttt{onParcelsSensing} async (perceived\_parcels)
+\end{itemize}
+
+\section{LLM Models}
+\label{sec:llm_models}
+
+\subsection{Open Source}
+
+\subsection{OpenAI}

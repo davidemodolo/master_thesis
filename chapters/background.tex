@@ -183,11 +183,11 @@ probabilities:
 \end{displaymath}
 
 then the model is nearly uncertain, and this information should be communicated rather
-than presenting "Yes" as a definitive response.
+than presenting ``Yes" as a definitive response.
 
-A key consequence of uncertainty is the phenomenon of \emph{hallucination}, where
-the model generates confident but factually incorrect or fabricated information \cite{Ji_2023}.
-Hallucinations arise when:
+A key consequence of uncertainty is the phenomenon of \emph{hallucination},
+where the model generates confident but factually incorrect or fabricated
+information \cite{Ji_2023}. Hallucinations arise when:
 \begin{itemize}
   \item the model lacks knowledge about a specific query but still generates an answer;
 
@@ -196,22 +196,20 @@ Hallucinations arise when:
   \item the model overgeneralizes from limited training examples.
 \end{itemize}
 
-Mitigating hallucinations involves uncertainty-aware generation techniques, the most
-common one is \emph{Retrieval-Augmented Generation} (RAG)
-\cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}, which enhance
-the prompt with additional context from a knowledge base to improve the model's factual
-accuracy.
+Mitigating hallucinations involves uncertainty-aware generation techniques, the
+most common one is \emph{Retrieval-Augmented Generation} (RAG) \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp},
+which enhance the prompt with additional context from a knowledge base to
+improve the model's factual accuracy.
 
 The literature studied different approaches to quantify uncertainty in LLMs, and
-this thesis will use one of the most common methods to quantify the probability
-of correctness in the generated choice by the agent.
+this thesis will use one of the most common methods to quantify the probability of
+correctness in the generated choice by the agent.
 
 \subsubsection{Expressing Uncertainty}
-A study titled ``Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence
-Elicitation in LLMs" \cite{xiong2024llmsexpressuncertaintyempirical}
-investigates methods for eliciting confidence from LLMs without accessing their
-internal parameters or fine-tuning. The researchers propose a framework comprising
-three components:
+A study titled ``Can LLMs Express Their Uncertainty? An Empirical Evaluation of
+Confidence Elicitation in LLMs" \cite{xiong2024llmsexpressuncertaintyempirical} investigates
+methods for eliciting confidence from LLMs without accessing their internal parameters
+or fine-tuning. The researchers propose a framework comprising three components:
 \begin{itemize}
   \item Prompting Strategies: Techniques to elicit verbalized confidence from
     the model;
@@ -222,57 +220,58 @@ three components:
     determine confidence levels.
 \end{itemize}
 
-The study evaluates these methods on tasks such as confidence calibration and failure
-prediction across various datasets and LLMs, including GPT-4 and LLaMA 2 Chat.
+The study evaluates these methods on tasks such as confidence calibration and
+failure prediction across various datasets and LLMs, including GPT-4 and LLaMA 2
+Chat.
 
-Key findings indicate that LLMs often exhibit overconfidence when verbalizing
-their certainty, possibly mirroring human confidence expression patterns.
-Additionally, as model capabilities increase, both calibration and failure
-prediction performance improve, though they remain suboptimal. They shown that
-implementing strategies like human-inspired prompts and assessing consistency
-among multiple responses can mitigate overconfidence. Notably, while methods
-requiring internal model access perform better, the performance gap is narrow.
+Key findings indicate that LLMs often exhibit overconfidence when verbalizing their
+certainty, possibly mirroring human confidence expression patterns. Additionally,
+as model capabilities increase, both calibration and failure prediction performance
+improve, though they remain suboptimal. They shown that implementing strategies like
+human-inspired prompts and assessing consistency among multiple responses can mitigate
+overconfidence. Notably, while methods requiring internal model access perform better,
+the performance gap is narrow.
 
 \subsubsection{Stable Explanations as Confidence Measures}
-In the pursuit of reliable uncertainty quantification in Large Language Models,
-the paper ``Cycles of Thought: Measuring LLM Confidence through Stable Explanations
-'' \cite{becker2024cyclesthoughtmeasuringllm} introduced a novel framework that
-assesses model confidence through the stability of generated explanations.
+In the pursuit of reliable uncertainty quantification in Large Language Models, the
+paper ``Cycles of Thought: Measuring LLM Confidence through Stable Explanations
+'' \cite{becker2024cyclesthoughtmeasuringllm} introduced a novel framework that assesses
+model confidence through the stability of generated explanations.
 
-Their approach posits that the consistency of explanations accompanying an
-answer can serve as a proxy for the model's certainty. Instead of assigning a single
-probability to an answer, the method generates multiple explanations for the
-same question and treats each explanation-answer pair as a distinct classifier. A
-posterior distribution is then computed over these classifiers, allowing for a
-principled estimation of confidence based on explanation stability. If the model's
-explanations remain stable across different reasoning paths, it suggests high
-confidence in the answer. Conversely, significant variation in explanations
-signals uncertainty. Empirical evaluations across multiple datasets demonstrated
-that this framework enhances confidence calibration and failure prediction,
-outperforming traditional baselines.
+Their approach posits that the consistency of explanations accompanying an answer
+can serve as a proxy for the model's certainty. Instead of assigning a single
+probability to an answer, the method generates multiple explanations for the same
+question and treats each explanation-answer pair as a distinct classifier. A
+posterior distribution is then computed over these classifiers, allowing for a principled
+estimation of confidence based on explanation stability. If the model's
+explanations remain stable across different reasoning paths, it suggests high confidence
+in the answer. Conversely, significant variation in explanations signals uncertainty.
+Empirical evaluations across multiple datasets demonstrated that this framework
+enhances confidence calibration and failure prediction, outperforming traditional
+baselines.
 
-However, there are some potential drawbacks. The method requires generating
-multiple explanations, which increases computational cost and latency.
-Additionally, it can be sensitive to prompt variations, and may misinterpret
-repetitive patterns as high confidence.
+However, there are some potential drawbacks. The method requires generating multiple
+explanations, which increases computational cost and latency. Additionally, it
+can be sensitive to prompt variations, and may misinterpret repetitive patterns as
+high confidence.
 
 \subsubsection{Tokens' log-probability}
-The paper ``Robots That Ask For Help: Uncertainty Alignment for Large Language Model
-Planners" \cite{ren2023robotsaskhelpuncertainty} introduces the KnowNo framework,
-which is the one we took inspiration from to quantify the uncertainty of the agent
-in this thesis.
+The paper ``Robots That Ask For Help: Uncertainty Alignment for Large Language
+Model Planners" \cite{ren2023robotsaskhelpuncertainty} introduces the KnowNo framework,
+which is the one we took inspiration from to quantify the uncertainty of the
+agent in this thesis.
 
 The KnowNo framework leverages Conformal Prediction (CP)\footnote{\url{https://en.wikipedia.org/wiki/Conformal_prediction}},
-a statistical method that provides formal guarantees on the reliability of predictions,
-to assess uncertainty.
+a statistical method that provides formal guarantees on the reliability of
+predictions, to assess uncertainty.
 
-In the paper, they ask the LLM to generate a set of five action for a given prompt
-(since the \texttt{logit\_bias} parametere in the OpenAI API was limited to five
-tokens at that time), and then they ask again for the action to select. This
-will not be the case of this thesis, since the actions will always be the same,
-but we will use the same math behind the uncertainty calculation.
+In the paper, they ask the LLM to generate a set of five action for a given
+prompt (since the \texttt{logit\_bias} parametere in the OpenAI API was limited
+to five tokens at that time), and then they ask again for the action to select. This
+will not be the case of this thesis, since the actions will always be the same, but
+we will use the same math behind the uncertainty calculation.
 
-KnowNo computes uncertainty evaluating the "validity" of each option. For each action,
+KnowNo computes uncertainty evaluating the ``validity" of each option. For each action,
 CP calculates a confidence interval based on previous data and task context, and
 from this, a set of valid actions is generated. This set can include one or more
 actions, and the size of this set is indicative of the level of uncertainty:
@@ -720,19 +719,18 @@ the key advantages of using PDDL for planning problems.
 
 \paragraph{Literature:}
 an example of a problem related to the one presented in this thesis, solved using
-PDDL, can be found in the paper "An AI Planning Approach to Emergency Material Scheduling
-Using Numerical PDDL" by Yang et al. \cite{Yang2022}.
+PDDL, can be found in the paper ``An AI Planning Approach to Emergency Material
+Scheduling Using Numerical PDDL" by Yang et al. \cite{Yang2022}.
 
 In their work, they utilize PDDL 2.1 that allows to model the scheduling problem,
-incorporating factors such energy consumption constraints. Their approach
-employs the Metric-FF planner to generate optimized scheduling plans that
-minimize total scheduling time and transportation energy usage. However, while
-this demonstrates the applicability of AI planning to emergency logistics, their
-model simplifies the real-world scenario by assuming predefined transport routes,
-limited vehicle types, and abstract representations of congestion effects. This
-highlights a broader limitation of PDDL in capturing the full complexity of
-dynamic and uncertain environments often encountered in emergency response
-situations.
+incorporating factors such energy consumption constraints. Their approach employs
+the Metric-FF planner to generate optimized scheduling plans that minimize total
+scheduling time and transportation energy usage. However, while this demonstrates
+the applicability of AI planning to emergency logistics, their model simplifies
+the real-world scenario by assuming predefined transport routes, limited vehicle
+types, and abstract representations of congestion effects. This highlights a broader
+limitation of PDDL in capturing the full complexity of dynamic and uncertain environments
+often encountered in emergency response situations.
 
 \subsection{Reinforcement Learning Solutions}
 \begin{blockquote}
@@ -748,8 +746,7 @@ situations.
 \footnotetext{\url{https://www.geeksforgeeks.org/what-is-reinforcement-learning/}}
 
 Reinforcement Learning is a learning setting, where the learner is an Agent that
-can perform a set of actions depending on its state in a set of states and the
-environment.
+can perform a set of actions depending on its state in a set of states and the environment.
 
 It works by defining:
 \begin{itemize}
@@ -764,16 +761,16 @@ It works by defining:
   \item \textbf{Policy}: the strategy the agent uses to select Actions
 \end{itemize}
 
-In performing action \texttt{a} in state \texttt{s}, the learner receive an immediate
-reward \texttt{r(s,a)}. In some states, some actions could be not possible or
-valid.
+In performing action \texttt{a} in state \texttt{s}, the learner receive an
+immediate reward \texttt{r(s,a)}. In some states, some actions could be not possible
+or valid.
 
-The task is to learn a policy (a full specification of what action to take at each
-state) allowing the agent to choose for each state the action maximizing the
+The task is to learn a policy (a full specification of what action to take at
+each state) allowing the agent to choose for each state the action maximizing the
 overall reward, including future moves.
 
-To deal with this delayed reward problem, the agent has to trade-off
-exploitation and exploration:
+To deal with this delayed reward problem, the agent has to trade-off exploitation
+and exploration:
 \begin{itemize}
   \item \textbf{Exploitation}: the agent chooses the action that it knows will give
     some reward
@@ -839,86 +836,88 @@ exploitation and exploration:
 %   \caption{RL Agent Scheme}
 %   \label{fig:rl_scheme}
 % \end{wrapfigure}
-When considering a logistics problem, reinforcement learning naturally comes to
-mind. This is because defining a reward function is relatively straightforward:
-it could be measured in terms of packages delivered per minute, per step, or a
-similar metric. Additionally, the entire process can be simulated in a virtual
-environment, allowing multiple parallel simulations to accelerate the agent's learning
-process. As illustrated in Figure \ref{fig:rl_scheme}, the structure of the Reinforcement
-Learning framework closely resembles the agent-based model depicted in Figure \ref{fig:agent_scheme}.
-In both cases, the agent interacts with its environment, receives feedback in
-the form of rewards, and continuously refines its policy to optimize future performance.
+When considering a logistics problem, reinforcement learning naturally comes to mind.
+This is because defining a reward function is relatively straightforward: it could
+be measured in terms of packages delivered per minute, per step, or a similar metric.
+Additionally, the entire process can be simulated in a virtual environment,
+allowing multiple parallel simulations to accelerate the agent's learning
+process. As illustrated in Figure \ref{fig:rl_scheme}, the structure of the
+Reinforcement Learning framework closely resembles the agent-based model
+depicted in Figure \ref{fig:agent_scheme}. In both cases, the agent interacts
+with its environment, receives feedback in the form of rewards, and continuously
+refines its policy to optimize future performance.
 
-However, RL has its own set of challenges. The most common one is the convergence
-to a local minimum in the reward function. This means that the agent might learn
-a suboptimal strategy that is not the best one. Moreover, RL is not explainable,
-meaning that we can't understand why the agent took a specific action in a specific
-situation.
+However, RL has its own set of challenges. The most common one is the
+convergence to a local minimum in the reward function. This means that the agent
+might learn a suboptimal strategy that is not the best one. Moreover, RL is not explainable,
+meaning that we can't understand why the agent took a specific action in a
+specific situation.
 
-Another issue with RL is the cost of training. Since the agent learns through
-trial and error, it needs to perform a large number of actions to explore the environment
-and learn the best strategy. This can be computationally expensive and time-consuming,
-especially for complex problems with many variables and states. Moreover, once the
-agent is trained, its adaptability to new environments or situations is limited,
-as it is optimized for a specific reward function and environment configuration.
+Another issue with RL is the cost of training. Since the agent learns through trial
+and error, it needs to perform a large number of actions to explore the
+environment and learn the best strategy. This can be computationally expensive and
+time-consuming, especially for complex problems with many variables and states. Moreover,
+once the agent is trained, its adaptability to new environments or situations is
+limited, as it is optimized for a specific reward function and environment
+configuration.
 
 \paragraph{Literature:}
-an example of a problem similar to the one presented in this thesis, solved using
-Reinforcement Learning, can be found in the paper ``DeliverAI: a distributed path-sharing
-network based solution for the last mile food delivery problem" by Ashman et al.
-\cite{mehra2024deliveraireinforcementlearningbased}.
+an example of a problem similar to the one presented in this thesis, solved
+using Reinforcement Learning, can be found in the paper ``DeliverAI: a
+distributed path-sharing network based solution for the last mile food delivery
+problem" by Ashman et al. \cite{mehra2024deliveraireinforcementlearningbased}.
 
 They aimed at solving the last-mile delivery problem by developing a distributed
-path-sharing network based on Reinforcement Learning. Their approach uses a
-multi-agent system to optimize delivery routes and schedules, considering factors
-such as traffic congestion, delivery time windows, and vehicle capacity.
+path-sharing network based on Reinforcement Learning. Their approach uses a multi-agent
+system to optimize delivery routes and schedules, considering factors such as
+traffic congestion, delivery time windows, and vehicle capacity.
 
-However, their model simplifies the real-world scenario by assuming fixed
-delivery locations and known traffic patterns, which may not accurately reflect the
-dynamic and uncertain nature of real-world logistics environments. Moreover, their
-approach requires extensive training and tuning to achieve optimal performance.
+However, their model simplifies the real-world scenario by assuming fixed delivery
+locations and known traffic patterns, which may not accurately reflect the
+dynamic and uncertain nature of real-world logistics environments. Moreover,
+their approach requires extensive training and tuning to achieve optimal
+performance.
 
 \subsection{Planning in LLM}
+\label{sub:planning_in_llm}
 
-LLMs are trained on vast amounts of textual data and have demonstrated
-remarkable performance across a wide range of language tasks, from translation and
-summarization to reasoning and problem-solving. This success has naturally led
-researchers to explore whether these models can be repurposed for more complex, multi-step
+LLMs are trained on vast amounts of textual data and have demonstrated remarkable
+performance across a wide range of language tasks, from translation and
+summarization to reasoning and problem-solving. This success has naturally led researchers
+to explore whether these models can be repurposed for more complex, multi-step
 decision-making problems that require planning.
 
-The key idea is that the same abilities that allow LLMs to understand and generate
-language can be harnessed to decompose a planning task into intermediate steps,
-reason about the consequences of actions, and even generate entire action sequences
-with minimal or no task-specific training.
+The key idea is that the same abilities that allow LLMs to understand and
+generate language can be harnessed to decompose a planning task into
+intermediate steps, reason about the consequences of actions, and even generate
+entire action sequences with minimal or no task-specific training.
 
 \subsubsection{Chain-of-Thought Reasoning}
 
 One of the most influential ideas for using LLMs in planning is chain-of-thought
-(CoT) prompting. Instead of asking the model to jump directly from a problem statement
-to a final answer, CoT prompting encourages the model to ``think aloud" by generating
-intermediate reasoning steps. This decomposition can help in planning problems
-where the solution involves multiple, logically connected steps.
+(CoT) prompting. Instead of asking the model to jump directly from a problem
+statement to a final answer, CoT prompting encourages the model to ``think aloud"
+by generating intermediate reasoning steps. This decomposition can help in planning
+problems where the solution involves multiple, logically connected steps.
 
-This was first discovered by Wei et al.
-\cite{wei2023chainofthoughtpromptingelicitsreasoning}, who demonstrated that prompting
-the LLM to 'answer step by step' led to improved performance on mathematical problems
-compared to requesting only the final answer. They also showed that this step-by-step
-approach could be applied to other fields, ultimately giving rise to Chain-of-Thought
-(CoT) reasoning.
+This was first discovered by Wei et al. \cite{wei2023chainofthoughtpromptingelicitsreasoning},
+who demonstrated that prompting the LLM to 'answer step by step' led to improved
+performance on mathematical problems compared to requesting only the final
+answer. They also showed that this step-by-step approach could be applied to other
+fields, ultimately giving rise to Chain-of-Thought (CoT) reasoning.
 
 \paragraph{``Reasoning" Models}
-Reasoning-focused LLMs are trained to generate multiple Chain-of-Thought (CoT)
-steps, exploring different solution paths before selecting the most optimal one,
-often using Reinforcement Learning (RL)
-\cite{deepseekai2025deepseekr1incentivizingreasoningcapability} techniques such
-as RLHF (Reinforcement Learning from Human Feedback) or self-consistency methods
-during the training.
+Reasoning-focused LLMs are trained to generate multiple Chain-of-Thought (CoT) steps,
+exploring different solution paths before selecting the most optimal one, often using
+Reinforcement Learning (RL) \cite{deepseekai2025deepseekr1incentivizingreasoningcapability}
+techniques such as RLHF (Reinforcement Learning from Human Feedback) or self-consistency
+methods during the training.
 
-This approach enhances both accuracy and explainability, as the model articulates
-its reasoning process while still operating as a generative AI system. Expanding
-on this concept, reasoning models can integrate external tools, memory, and API calls,
-forming what is commonly referred to as an LLM Agent, capable of autonomous decision-making
-and real-world interaction.
+This approach enhances both accuracy and explainability, as the model
+articulates its reasoning process while still operating as a generative AI
+system. Expanding on this concept, reasoning models can integrate external tools,
+memory, and API calls, forming what is commonly referred to as an LLM Agent,
+capable of autonomous decision-making and real-world interaction.
 
 Last and more famous reasoning models released to the public are by:
 \begin{itemize}
@@ -939,62 +938,64 @@ Last and more famous reasoning models released to the public are by:
 \end{itemize}
 
 \subsubsection{Zero-Shot and Few-Shot Planning}
-In zero-shot planning, LLMs generate action sequences by utilizing their
-extensive pretraining on text and code, effectively inferring plausible step-by-step
-solutions to given tasks. Few-shot planning further enhances this by providing
-LLMs with a small set of demonstrations, enabling them to generalize patterns and
+In zero-shot planning, LLMs generate action sequences by utilizing their extensive
+pretraining on text and code, effectively inferring plausible step-by-step
+solutions to given tasks. Few-shot planning further enhances this by providing LLMs
+with a small set of demonstrations, enabling them to generalize patterns and
 improve their action sequencing capabilities.
 
-However, while LLMs can produce reasonable plans, their direct applicability to embodied
-environments remains challenging. Huang et al. \cite{huang2022languagemodelszeroshotplanners}
-highlight the limitations of naive LLM planning, noting that LLMs struggle with
-real-world constraints, action feasibility, and long-horizon dependencies. Their
-work demonstrates that these shortcomings can be mitigated by leveraging the world
-knowledge embedded within LLMs and applying structured guidance, such as
-constraints on action generation and feedback-based refinements.
+However, while LLMs can produce reasonable plans, their direct applicability to
+embodied environments remains challenging. Huang et al.
+\cite{huang2022languagemodelszeroshotplanners} highlight the limitations of
+naive LLM planning, noting that LLMs struggle with real-world constraints,
+action feasibility, and long-horizon dependencies. Their work demonstrates that
+these shortcomings can be mitigated by leveraging the world knowledge embedded
+within LLMs and applying structured guidance, such as constraints on action generation
+and feedback-based refinements.
 
-Similarly, Silver et al. \cite{silver2022pddl} extend this inquiry to classical
-AI planning domains by evaluating few-shot prompting of LLMs on problems
-expressed in the Planning Domain Definition Language (PDDL). Their findings reveal
-mixed results: while LLMs can generate syntactically correct PDDL plans in
-certain domains, they often fail due to a lack of explicit access to transition models
-and logical constraints inherent to planning problems. Nonetheless, their study also
-introduces a hybrid approach where LLMs are used to initialize heuristic-based search
-planners, demonstrating that even imperfect LLM-generated plans can improve the
-efficiency of traditional AI planning methods.
+Similarly, Silver et al. \cite{silver2022pddl} extend this inquiry to classical AI
+planning domains by evaluating few-shot prompting of LLMs on problems expressed in
+the Planning Domain Definition Language (PDDL). Their findings reveal mixed
+results: while LLMs can generate syntactically correct PDDL plans in certain domains,
+they often fail due to a lack of explicit access to transition models and
+logical constraints inherent to planning problems. Nonetheless, their study also
+introduces a hybrid approach where LLMs are used to initialize heuristic-based
+search planners, demonstrating that even imperfect LLM-generated plans can improve
+the efficiency of traditional AI planning methods.
 
-These findings collectively suggest that while LLMs alone are not yet fully
-capable of robust autonomous planning, their ability to extract and apply commonsense
-knowledge makes them valuable tools for augmenting structured planning frameworks.
-By integrating LLM-generated outputs with classical search-based methods, researchers
-have shown improvements in planning efficiency and problem-solving robustness,
-highlighting a promising direction for future research at the intersection of
-language models and automated planning.
-
-\paragraph{Literature:}
-in the paper ``Exploring and Benchmarking Planning Capabilities of Large Language
-Models" by Bohnet et al. \cite{bohnet2024exploringbenchmarkingplanningcapabilities},
-the authors systematically analyze the planning capabilities of LLMs through a
-novel benchmarking suite that includes both classical planning tasks (expressed in
-PDDL) and natural language-based planning problems. Their work highlights the limitations
-of LLMs in planning, particularly their tendency to generate suboptimal or
-incorrect plans despite their strong language understanding capabilities. To address
-these shortcomings, they explore various methods to improve LLM-based planning (including
-many-shot in-context learning, fine-tuning with optimal plans, and the use of chain-of-thought
-reasoning techniques such as Monte Carlo Tree Search (MCTS) and Tree-of-Thought (ToT)).
-The results indicate that, while LLMs struggle with planning in zero-shot and
-few-shot settings, their performance significantly improves when provided with structured
-demonstrations and reasoning strategies. Moreover, fine-tuning on high-quality plan
-data leads to near-perfect accuracy in some cases, even with relatively small
-models. However, challenges remain in out-of-distribution generalization, where models
-fail to generalize effectively to novel scenarios without additional training.
-Their analysis also identifies key failure modes in LLM planning, such as constraint
-violations, failure to reach goal states, and incorrect action sequences,
-emphasizing the need for better training data curation and reasoning frameworks.
+These findings collectively suggest that while LLMs alone are not yet fully capable
+of robust autonomous planning, their ability to extract and apply commonsense
+knowledge makes them valuable tools for augmenting structured planning
+frameworks. By integrating LLM-generated outputs with classical search-based methods,
+researchers have shown improvements in planning efficiency and problem-solving
+robustness, highlighting a promising direction for future research at the intersection
+of language models and automated planning.
 
 \paragraph{Literature:}
-in "Generalized Planning in PDDL Domains with Pretrained Large Language Models" by
-Silver et al. \cite{silver2023generalizedplanningpddldomains}, the authors investigate
+in the paper ``Exploring and Benchmarking Planning Capabilities of Large
+Language Models" by Bohnet et al.
+\cite{bohnet2024exploringbenchmarkingplanningcapabilities}, the authors systematically
+analyze the planning capabilities of LLMs through a novel benchmarking suite that
+includes both classical planning tasks (expressed in PDDL) and natural language-based
+planning problems. Their work highlights the limitations of LLMs in planning, particularly
+their tendency to generate suboptimal or incorrect plans despite their strong language
+understanding capabilities. To address these shortcomings, they explore various methods
+to improve LLM-based planning (including many-shot in-context learning, fine-tuning
+with optimal plans, and the use of chain-of-thought reasoning techniques such as
+Monte Carlo Tree Search (MCTS) and Tree-of-Thought (ToT)). The results indicate
+that, while LLMs struggle with planning in zero-shot and few-shot settings,
+their performance significantly improves when provided with structured
+demonstrations and reasoning strategies. Moreover, fine-tuning on high-quality
+plan data leads to near-perfect accuracy in some cases, even with relatively small
+models. However, challenges remain in out-of-distribution generalization, where
+models fail to generalize effectively to novel scenarios without additional
+training. Their analysis also identifies key failure modes in LLM planning, such
+as constraint violations, failure to reach goal states, and incorrect action
+sequences, emphasizing the need for better training data curation and reasoning frameworks.
+
+\paragraph{Literature:}
+in ``Generalized Planning in PDDL Domains with Pretrained Large Language Models"
+by Silver et al. \cite{silver2023generalizedplanningpddldomains}, the authors investigate
 whether LLMs, specifically GPT-4, can serve as generalized planners, not just
 solving a single planning task, but synthesizing programs that generate plans for
 an entire domain. They introduce a pipeline where GPT-4 is prompted to summarize
