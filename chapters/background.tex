@@ -102,6 +102,10 @@ importance of different input tokens when generating the output. This mechanism
 enables transformers to capture long-range dependencies and contextual
 information more effectively than RNNs.
 
+In this thesis, we will focus on the models built by OpenAI, we will analyze
+them more in depth in the Chapter \ref{cha:experiment_setting} Section
+\ref{sec:llm_models}.
+
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.65\textwidth]{images/transformer_architecture.png}
@@ -256,10 +260,10 @@ can be sensitive to prompt variations, and may misinterpret repetitive patterns 
 high confidence.
 
 \subsubsection{Tokens' log-probability}
-The paper ``Robots That Ask For Help: Uncertainty Alignment for Large Language
-Model Planners" \cite{ren2023robotsaskhelpuncertainty} introduces the KnowNo framework,
-which is the one we took inspiration from to quantify the uncertainty of the
-agent in this thesis.
+\label{ssub:tokens_log_probability} The paper ``Robots That Ask For Help:
+Uncertainty Alignment for Large Language Model Planners" \cite{ren2023robotsaskhelpuncertainty}
+introduces the KnowNo framework, which is the one we took inspiration from to
+quantify the uncertainty of the agent in this thesis.
 
 The KnowNo framework leverages Conformal Prediction (CP)\footnote{\url{https://en.wikipedia.org/wiki/Conformal_prediction}},
 a statistical method that provides formal guarantees on the reliability of
@@ -923,11 +927,10 @@ Last and more famous reasoning models released to the public are by:
 \begin{itemize}
   \item \textbf{OpenAI}: o1\footnote{\url{https://openai.com/o1/}}, o1-mini\footnote{\url{https://openai.com/index/openai-o1-mini-advancing-cost-efficient-reasoning/}}
     and o3-mini\footnote{\url{https://openai.com/index/openai-o3-mini/}} are reasoning
-    models designed to enhance logical problem-solving capabilities. The o1
-    model is tailored to tackle complex problems across various domains, offering
-    robust reasoning skills. Building upon this foundation, o3-mini provides a more
-    cost-effective and faster alternative, optimized for tasks in science, technology,
-    engineering, mathematics (STEM), and coding;
+    models designed to enhance logical problem-solving capabilities. o1 is
+    tailored to tackle complex problems across various domains, offering robust reasoning
+    skills. Building upon this foundation, o3-mini provides a more cost-effective
+    and faster alternative;
 
   \item \textbf{DeepSeek}: DeepSeek-R1\footnote{\url{https://github.com/deepseek-ai/DeepSeek-R1}},
     is a notable AI development from a startup\footnote{\url{https://www.deepseek.com/}}.
