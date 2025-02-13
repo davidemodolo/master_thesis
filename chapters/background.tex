@@ -486,25 +486,25 @@ The fundamental distinction between a PDDL-based solution and any Machine Learni
 Learning approach lies in the very nature of how problems are defined and solved.
 
 In a PDDL-based system, the problem must be explicitly encoded using a formal, structured
-language that describes the initial state, goal state, and available actions.
-The planner then takes on the computationally intensive task of exploring a vast
-search space, systematically generating and evaluating possible action sequences
-to determine an optimal path from the initial state to the goal state.
+language that describes the initial state, the goal state, and the set of available
+actions. This formal encoding serves as a blueprint for the planner, which then performs
+the computationally intensive task of exploring a vast search space. The planner
+systematically generates and evaluates possible action sequences, using algorithms
+to determine an optimal path from the initial state to the goal state. This
+process is highly deterministic, with each action being considered in the context
+of its direct impact on reaching the goal.
 
-While effective in structured environments, this method is inherently time-consuming
-and computationally demanding. Since the planner must traverse a potentially enormous
-state space—guided by heuristics but still constrained by the rigid formalism of
-PDDL, it may struggle with real-time decision-making, making it unsuitable for dynamic,
-fast-paced applications.
+While effective in structured, static environments with well-defined parameters,
+this approach is inherently time-consuming and computationally demanding. The
+planner must traverse a potentially enormous state space, guided by heuristics to
+prune less relevant possibilities, but still constrained by the rigid formalism
+of PDDL. Because of this, it can struggle with real-time decision-making, particularly
+in situations where the environment is dynamic, uncertain, or rapidly changing.
 
-\begin{lstlisting}[
-  caption={Domain file example for a bit toggle problem},
-  label={lst:domain_file_toggle_bits},
-  backgroundcolor=\color{code-bg-new},
-  numbers=left,
-  keywordstyle=\color{primary}\bfseries,
-  morekeywords={define, requirements, predicates, action}
-]
+\vspace{10mm}
+\begin{codewindow}
+  [PDDL Code] \lstset{style=pddlstyle, language=PDDL, caption={Domain file example for a bit toggle problem},
+  label={lst:domain_file_toggle_bits}} \begin{lstlisting}
 (define (domain bit-toggle)
   (:requirements :strips :negative-preconditions)
   (:predicates
@@ -526,16 +526,15 @@ fast-paced applications.
     :effect (not (bit ?b))         ; setting the bit to false
   )
 )
-\end{lstlisting}
 
-\begin{lstlisting}[
-  caption={Problem file example for a bit toggle problem},
-  label={lst:problem_file_toggle_bits},
-  backgroundcolor=\color{code-bg-new},
-  numbers=left,
-  keywordstyle=\color{primary}\bfseries,
-  morekeywords={define, init, goal}
-]
+\end{lstlisting}
+\end{codewindow}
+\vspace{10mm}
+
+\vspace{10mm}
+\begin{codewindow}
+  [PDDL Code] \lstset{style=pddlstyle, language=PDDL, caption={Problem file example for a bit toggle problem},
+  label={lst:problem_file_toggle_bits}} \begin{lstlisting}
 (define (problem bit-toggle-full-problem)
   (:domain bit-toggle-full)
   (:objects
@@ -548,13 +547,15 @@ fast-paced applications.
   )
 )
 \end{lstlisting}
+\end{codewindow}
+\vspace{10mm}
 
-With the increasing number of variables (actions or predicates), the number of arcs
-and nodes grows exponentially. A little example that makes this problem easy to
-visualize is the Domain where we can have N possible bits, that can be turned to
-\texttt{true} or \texttt{false} (Domain file in Listing
-\ref{lst:domain_file_toggle_bits}) and the Problem where everything start at \texttt{false}
-and we want a specific final combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
+With the increasing number of variables (actions or predicates), the number of
+arcs and nodes grows exponentially. A little example that makes this problem easy
+to visualize is the Domain where we can have N possible bits, that can be turned
+to \texttt{true} or \texttt{false} (Domain file in Listing \ref{lst:domain_file_toggle_bits})
+and the Problem where everything start at \texttt{false} and we want a specific final
+combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
 
 \begin{figure}[h!]
   \noindent
@@ -693,48 +694,46 @@ and we want a specific final combination (Problem file in Listing \ref{lst:probl
   \label{fig:arcs_per_bit}
 \end{figure}
 
-As we can see in the plot Figure \ref{fig:arcs_per_bit}, we can visualize the number
-of arcs (example of graphs for 2, 3 and 4 bits in Figure \ref{fig:bit_toggle_graphs})
-that grows exponentially with the number of bits, as well as the number of states
-obviously. This shows how even a simple problem with a simple solution can
-become time-intensive and not suitable for real-time applications.
+As we can see in the plot Figure \ref{fig:arcs_per_bit}, we can visualize the
+number of arcs (example of graphs for 2, 3 and 4 bits in Figure
+\ref{fig:bit_toggle_graphs}) that grows exponentially with the number of bits,
+as well as the number of states obviously. This shows how even a simple problem with
+a simple solution can become time-intensive and not suitable for real-time applications.
 
-\begin{lstlisting}[
-  caption={Plan for the bit toggle problem, solved by LAMA-first planner},
-  label={lst:plan_toggle_bits},
-  backgroundcolor=\color{code-bg-new},
-  numbers=left,
-  keywordstyle=\color{primary}\bfseries,
-  morekeywords={setbit}
-]
+\vspace{10mm}
+\begin{codewindow}
+  [PDDL Code] \lstset{style=pddlstyle, language=PDDL, caption={Plan for the bit toggle problem (\texttt{110}), solved by LAMA-first planner},
+  label={lst:plan_toggle_bits}} \begin{lstlisting}
           ; Found Plan (output)
-(setbit b3)
 (setbit b2)
 (setbit b1)
 \end{lstlisting}
+\end{codewindow}
+\vspace{10mm}
 
-However, a PDDL approach is more explainable, since all the information is provided
-by the user and the output result is a sequence of actions (example at Listing
-\ref{lst:plan_toggle_bits}). This makes it easier to understand and debug the
-solution, as each step is explicitly defined. Of course, there might be different
-paths to reach the goal, and the planner might choose one based on heuristics or
-optimization criteria. This transparency in the decision-making process is one of
-the key advantages of using PDDL for planning problems.
+However, a PDDL approach is more explainable, since all the information is
+provided by the user and the output result is a sequence of actions (example at Listing
+\ref{lst:plan_toggle_bits}). This makes it easier to understand and debug the solution,
+as each step is explicitly defined. Of course, there might be different paths to
+reach the goal, and the planner might choose one based on heuristics or optimization
+criteria. This transparency in the decision-making process is one of the key
+advantages of using PDDL for planning problems.
 
 \paragraph{Literature:}
-an example of a problem related to the one presented in this thesis, solved using
-PDDL, can be found in the paper ``An AI Planning Approach to Emergency Material
+an example of a problem related to the one presented in this thesis, solved
+using PDDL, can be found in the paper ``An AI Planning Approach to Emergency Material
 Scheduling Using Numerical PDDL" by Yang et al. \cite{Yang2022}.
 
 In their work, they utilize PDDL 2.1 that allows to model the scheduling problem,
-incorporating factors such energy consumption constraints. Their approach employs
-the Metric-FF planner to generate optimized scheduling plans that minimize total
-scheduling time and transportation energy usage. However, while this demonstrates
-the applicability of AI planning to emergency logistics, their model simplifies
-the real-world scenario by assuming predefined transport routes, limited vehicle
-types, and abstract representations of congestion effects. This highlights a broader
-limitation of PDDL in capturing the full complexity of dynamic and uncertain environments
-often encountered in emergency response situations.
+incorporating factors such energy consumption constraints. Their approach
+employs the Metric-FF planner to generate optimized scheduling plans that
+minimize total scheduling time and transportation energy usage. However, while
+this demonstrates the applicability of AI planning to emergency logistics, their
+model simplifies the real-world scenario by assuming predefined transport routes,
+limited vehicle types, and abstract representations of congestion effects. This
+highlights a broader limitation of PDDL in capturing the full complexity of
+dynamic and uncertain environments often encountered in emergency response
+situations.
 
 \subsection{Reinforcement Learning Solutions}
 \begin{blockquote}
@@ -750,7 +749,8 @@ often encountered in emergency response situations.
 \footnotetext{\url{https://www.geeksforgeeks.org/what-is-reinforcement-learning/}}
 
 Reinforcement Learning is a learning setting, where the learner is an Agent that
-can perform a set of actions depending on its state in a set of states and the environment.
+can perform a set of actions depending on its state in a set of states and the
+environment.
 
 It works by defining:
 \begin{itemize}
@@ -765,16 +765,16 @@ It works by defining:
   \item \textbf{Policy}: the strategy the agent uses to select Actions
 \end{itemize}
 
-In performing action \texttt{a} in state \texttt{s}, the learner receive an
-immediate reward \texttt{r(s,a)}. In some states, some actions could be not possible
-or valid.
+In performing action \texttt{a} in state \texttt{s}, the learner receive an immediate
+reward \texttt{r(s,a)}. In some states, some actions could be not possible or
+valid.
 
-The task is to learn a policy (a full specification of what action to take at
-each state) allowing the agent to choose for each state the action maximizing the
+The task is to learn a policy (a full specification of what action to take at each
+state) allowing the agent to choose for each state the action maximizing the
 overall reward, including future moves.
 
-To deal with this delayed reward problem, the agent has to trade-off exploitation
-and exploration:
+To deal with this delayed reward problem, the agent has to trade-off
+exploitation and exploration:
 \begin{itemize}
   \item \textbf{Exploitation}: the agent chooses the action that it knows will give
     some reward
@@ -840,88 +840,87 @@ and exploration:
 %   \caption{RL Agent Scheme}
 %   \label{fig:rl_scheme}
 % \end{wrapfigure}
-When considering a logistics problem, reinforcement learning naturally comes to mind.
-This is because defining a reward function is relatively straightforward: it could
-be measured in terms of packages delivered per minute, per step, or a similar metric.
-Additionally, the entire process can be simulated in a virtual environment,
-allowing multiple parallel simulations to accelerate the agent's learning
-process. As illustrated in Figure \ref{fig:rl_scheme}, the structure of the
-Reinforcement Learning framework closely resembles the agent-based model
-depicted in Figure \ref{fig:agent_scheme}. In both cases, the agent interacts
-with its environment, receives feedback in the form of rewards, and continuously
-refines its policy to optimize future performance.
+When considering a logistics problem, reinforcement learning naturally comes to
+mind. This is because defining a reward function is relatively straightforward:
+it could be measured in terms of packages delivered per minute, per step, or a
+similar metric. Additionally, the entire process can be simulated in a virtual
+environment, allowing multiple parallel simulations to accelerate the agent's learning
+process. As illustrated in Figure \ref{fig:rl_scheme}, the structure of the Reinforcement
+Learning framework closely resembles the agent-based model depicted in Figure \ref{fig:agent_scheme}.
+In both cases, the agent interacts with its environment, receives feedback in
+the form of rewards, and continuously refines its policy to optimize future performance.
 
-However, RL has its own set of challenges. The most common one is the
-convergence to a local minimum in the reward function. This means that the agent
-might learn a suboptimal strategy that is not the best one. Moreover, RL is not explainable,
-meaning that we can't understand why the agent took a specific action in a
-specific situation.
+However, RL has its own set of challenges. The most common one is the convergence
+to a local minimum in the reward function. This means that the agent might learn
+a suboptimal strategy that is not the best one. Moreover, RL is not explainable,
+meaning that we can't understand why the agent took a specific action in a specific
+situation.
 
-Another issue with RL is the cost of training. Since the agent learns through trial
-and error, it needs to perform a large number of actions to explore the
-environment and learn the best strategy. This can be computationally expensive and
-time-consuming, especially for complex problems with many variables and states. Moreover,
-once the agent is trained, its adaptability to new environments or situations is
-limited, as it is optimized for a specific reward function and environment
-configuration.
+Another issue with RL is the cost of training. Since the agent learns through
+trial and error, it needs to perform a large number of actions to explore the environment
+and learn the best strategy. This can be computationally expensive and time-consuming,
+especially for complex problems with many variables and states. Moreover, once the
+agent is trained, its adaptability to new environments or situations is limited,
+as it is optimized for a specific reward function and environment configuration.
 
 \paragraph{Literature:}
-an example of a problem similar to the one presented in this thesis, solved
-using Reinforcement Learning, can be found in the paper ``DeliverAI: a
-distributed path-sharing network based solution for the last mile food delivery
-problem" by Ashman et al. \cite{mehra2024deliveraireinforcementlearningbased}.
+an example of a problem similar to the one presented in this thesis, solved using
+Reinforcement Learning, can be found in the paper ``DeliverAI: a distributed path-sharing
+network based solution for the last mile food delivery problem" by Ashman et al.
+\cite{mehra2024deliveraireinforcementlearningbased}.
 
 They aimed at solving the last-mile delivery problem by developing a distributed
-path-sharing network based on Reinforcement Learning. Their approach uses a multi-agent
-system to optimize delivery routes and schedules, considering factors such as
-traffic congestion, delivery time windows, and vehicle capacity.
+path-sharing network based on Reinforcement Learning. Their approach uses a
+multi-agent system to optimize delivery routes and schedules, considering factors
+such as traffic congestion, delivery time windows, and vehicle capacity.
 
-However, their model simplifies the real-world scenario by assuming fixed delivery
-locations and known traffic patterns, which may not accurately reflect the
-dynamic and uncertain nature of real-world logistics environments. Moreover,
-their approach requires extensive training and tuning to achieve optimal
-performance.
+However, their model simplifies the real-world scenario by assuming fixed
+delivery locations and known traffic patterns, which may not accurately reflect the
+dynamic and uncertain nature of real-world logistics environments. Moreover, their
+approach requires extensive training and tuning to achieve optimal performance.
 
 \subsection{Planning in LLM}
 \label{sub:planning_in_llm}
 
-LLMs are trained on vast amounts of textual data and have demonstrated remarkable
-performance across a wide range of language tasks, from translation and
-summarization to reasoning and problem-solving. This success has naturally led researchers
-to explore whether these models can be repurposed for more complex, multi-step
+LLMs are trained on vast amounts of textual data and have demonstrated
+remarkable performance across a wide range of language tasks, from translation and
+summarization to reasoning and problem-solving. This success has naturally led
+researchers to explore whether these models can be repurposed for more complex, multi-step
 decision-making problems that require planning.
 
-The key idea is that the same abilities that allow LLMs to understand and
-generate language can be harnessed to decompose a planning task into
-intermediate steps, reason about the consequences of actions, and even generate
-entire action sequences with minimal or no task-specific training.
+The key idea is that the same abilities that allow LLMs to understand and generate
+language can be harnessed to decompose a planning task into intermediate steps,
+reason about the consequences of actions, and even generate entire action sequences
+with minimal or no task-specific training.
 
 \subsubsection{Chain-of-Thought Reasoning}
 
 One of the most influential ideas for using LLMs in planning is chain-of-thought
-(CoT) prompting. Instead of asking the model to jump directly from a problem
-statement to a final answer, CoT prompting encourages the model to ``think aloud"
-by generating intermediate reasoning steps. This decomposition can help in planning
-problems where the solution involves multiple, logically connected steps.
+(CoT) prompting. Instead of asking the model to jump directly from a problem statement
+to a final answer, CoT prompting encourages the model to ``think aloud" by generating
+intermediate reasoning steps. This decomposition can help in planning problems
+where the solution involves multiple, logically connected steps.
 
-This was first discovered by Wei et al. \cite{wei2023chainofthoughtpromptingelicitsreasoning},
-who demonstrated that prompting the LLM to 'answer step by step' led to improved
-performance on mathematical problems compared to requesting only the final
-answer. They also showed that this step-by-step approach could be applied to other
-fields, ultimately giving rise to Chain-of-Thought (CoT) reasoning.
+This was first discovered by Wei et al.
+\cite{wei2023chainofthoughtpromptingelicitsreasoning}, who demonstrated that prompting
+the LLM to 'answer step by step' led to improved performance on mathematical problems
+compared to requesting only the final answer. They also showed that this step-by-step
+approach could be applied to other fields, ultimately giving rise to Chain-of-Thought
+(CoT) reasoning.
 
 \paragraph{``Reasoning" Models}
-Reasoning-focused LLMs are trained to generate multiple Chain-of-Thought (CoT) steps,
-exploring different solution paths before selecting the most optimal one, often using
-Reinforcement Learning (RL) \cite{deepseekai2025deepseekr1incentivizingreasoningcapability}
-techniques such as RLHF (Reinforcement Learning from Human Feedback) or self-consistency
-methods during the training.
+Reasoning-focused LLMs are trained to generate multiple Chain-of-Thought (CoT)
+steps, exploring different solution paths before selecting the most optimal one,
+often using Reinforcement Learning (RL)
+\cite{deepseekai2025deepseekr1incentivizingreasoningcapability} techniques such
+as RLHF (Reinforcement Learning from Human Feedback) or self-consistency methods
+during the training.
 
-This approach enhances both accuracy and explainability, as the model
-articulates its reasoning process while still operating as a generative AI
-system. Expanding on this concept, reasoning models can integrate external tools,
-memory, and API calls, forming what is commonly referred to as an LLM Agent,
-capable of autonomous decision-making and real-world interaction.
+This approach enhances both accuracy and explainability, as the model articulates
+its reasoning process while still operating as a generative AI system. Expanding
+on this concept, reasoning models can integrate external tools, memory, and API calls,
+forming what is commonly referred to as an LLM Agent, capable of autonomous decision-making
+and real-world interaction.
 
 Last and more famous reasoning models released to the public are by:
 \begin{itemize}
@@ -941,77 +940,75 @@ Last and more famous reasoning models released to the public are by:
 \end{itemize}
 
 \subsubsection{Zero-Shot and Few-Shot Planning}
-In zero-shot planning, LLMs generate action sequences by utilizing their extensive
-pretraining on text and code, effectively inferring plausible step-by-step
-solutions to given tasks. Few-shot planning further enhances this by providing LLMs
-with a small set of demonstrations, enabling them to generalize patterns and
+In zero-shot planning, LLMs generate action sequences by utilizing their
+extensive pretraining on text and code, effectively inferring plausible step-by-step
+solutions to given tasks. Few-shot planning further enhances this by providing
+LLMs with a small set of demonstrations, enabling them to generalize patterns and
 improve their action sequencing capabilities.
 
-However, while LLMs can produce reasonable plans, their direct applicability to
-embodied environments remains challenging. Huang et al.
-\cite{huang2022languagemodelszeroshotplanners} highlight the limitations of
-naive LLM planning, noting that LLMs struggle with real-world constraints,
-action feasibility, and long-horizon dependencies. Their work demonstrates that
-these shortcomings can be mitigated by leveraging the world knowledge embedded
-within LLMs and applying structured guidance, such as constraints on action generation
-and feedback-based refinements.
+However, while LLMs can produce reasonable plans, their direct applicability to embodied
+environments remains challenging. Huang et al. \cite{huang2022languagemodelszeroshotplanners}
+highlight the limitations of naive LLM planning, noting that LLMs struggle with
+real-world constraints, action feasibility, and long-horizon dependencies. Their
+work demonstrates that these shortcomings can be mitigated by leveraging the world
+knowledge embedded within LLMs and applying structured guidance, such as
+constraints on action generation and feedback-based refinements.
 
-Similarly, Silver et al. \cite{silver2022pddl} extend this inquiry to classical AI
-planning domains by evaluating few-shot prompting of LLMs on problems expressed in
-the Planning Domain Definition Language (PDDL). Their findings reveal mixed
-results: while LLMs can generate syntactically correct PDDL plans in certain domains,
-they often fail due to a lack of explicit access to transition models and
-logical constraints inherent to planning problems. Nonetheless, their study also
-introduces a hybrid approach where LLMs are used to initialize heuristic-based
-search planners, demonstrating that even imperfect LLM-generated plans can improve
-the efficiency of traditional AI planning methods.
+Similarly, Silver et al. \cite{silver2022pddl} extend this inquiry to classical
+AI planning domains by evaluating few-shot prompting of LLMs on problems
+expressed in the Planning Domain Definition Language (PDDL). Their findings reveal
+mixed results: while LLMs can generate syntactically correct PDDL plans in
+certain domains, they often fail due to a lack of explicit access to transition models
+and logical constraints inherent to planning problems. Nonetheless, their study also
+introduces a hybrid approach where LLMs are used to initialize heuristic-based search
+planners, demonstrating that even imperfect LLM-generated plans can improve the
+efficiency of traditional AI planning methods.
 
-These findings collectively suggest that while LLMs alone are not yet fully capable
-of robust autonomous planning, their ability to extract and apply commonsense
-knowledge makes them valuable tools for augmenting structured planning
-frameworks. By integrating LLM-generated outputs with classical search-based methods,
-researchers have shown improvements in planning efficiency and problem-solving
-robustness, highlighting a promising direction for future research at the intersection
-of language models and automated planning.
+These findings collectively suggest that while LLMs alone are not yet fully
+capable of robust autonomous planning, their ability to extract and apply commonsense
+knowledge makes them valuable tools for augmenting structured planning frameworks.
+By integrating LLM-generated outputs with classical search-based methods, researchers
+have shown improvements in planning efficiency and problem-solving robustness,
+highlighting a promising direction for future research at the intersection of
+language models and automated planning.
 
 \paragraph{Literature:}
-in the paper ``Exploring and Benchmarking Planning Capabilities of Large
-Language Models" by Bohnet et al.
-\cite{bohnet2024exploringbenchmarkingplanningcapabilities}, the authors systematically
-analyze the planning capabilities of LLMs through a novel benchmarking suite that
-includes both classical planning tasks (expressed in PDDL) and natural language-based
-planning problems. Their work highlights the limitations of LLMs in planning, particularly
-their tendency to generate suboptimal or incorrect plans despite their strong language
-understanding capabilities. To address these shortcomings, they explore various methods
-to improve LLM-based planning (including many-shot in-context learning, fine-tuning
-with optimal plans, and the use of chain-of-thought reasoning techniques such as
-Monte Carlo Tree Search (MCTS) and Tree-of-Thought (ToT)). The results indicate
-that, while LLMs struggle with planning in zero-shot and few-shot settings,
-their performance significantly improves when provided with structured
-demonstrations and reasoning strategies. Moreover, fine-tuning on high-quality
-plan data leads to near-perfect accuracy in some cases, even with relatively small
-models. However, challenges remain in out-of-distribution generalization, where
-models fail to generalize effectively to novel scenarios without additional
-training. Their analysis also identifies key failure modes in LLM planning, such
-as constraint violations, failure to reach goal states, and incorrect action
-sequences, emphasizing the need for better training data curation and reasoning frameworks.
+in the paper ``Exploring and Benchmarking Planning Capabilities of Large Language
+Models" by Bohnet et al. \cite{bohnet2024exploringbenchmarkingplanningcapabilities},
+the authors systematically analyze the planning capabilities of LLMs through a
+novel benchmarking suite that includes both classical planning tasks (expressed in
+PDDL) and natural language-based planning problems. Their work highlights the limitations
+of LLMs in planning, particularly their tendency to generate suboptimal or
+incorrect plans despite their strong language understanding capabilities. To address
+these shortcomings, they explore various methods to improve LLM-based planning (including
+many-shot in-context learning, fine-tuning with optimal plans, and the use of chain-of-thought
+reasoning techniques such as Monte Carlo Tree Search (MCTS) and Tree-of-Thought (ToT)).
+The results indicate that, while LLMs struggle with planning in zero-shot and
+few-shot settings, their performance significantly improves when provided with structured
+demonstrations and reasoning strategies. Moreover, fine-tuning on high-quality plan
+data leads to near-perfect accuracy in some cases, even with relatively small
+models. However, challenges remain in out-of-distribution generalization, where models
+fail to generalize effectively to novel scenarios without additional training.
+Their analysis also identifies key failure modes in LLM planning, such as constraint
+violations, failure to reach goal states, and incorrect action sequences,
+emphasizing the need for better training data curation and reasoning frameworks.
 
 \paragraph{Literature:}
 in ``Generalized Planning in PDDL Domains with Pretrained Large Language Models"
-by Silver et al. \cite{silver2023generalizedplanningpddldomains}, the authors investigate
-whether LLMs, specifically GPT-4, can serve as generalized planners, not just
-solving a single planning task, but synthesizing programs that generate plans for
-an entire domain. They introduce a pipeline where GPT-4 is prompted to summarize
-the domain, propose a general strategy, and then implement it in Python. Additionally,
-they incorporate automated debugging, where GPT-4 iteratively refines its generated
-programs based on validation feedback. Their evaluation on seven PDDL domains
-demonstrates that GPT-4 can often generate efficient, domain-specific planning programs
-that generalize well from only a few training examples. The study also finds
-that automated debugging significantly improves performance, while the effectiveness
-of Chain-of-Thought (CoT) summarization is domain-dependent. Notably, GPT-4 outperforms
-previous generalized planning approaches in some cases, particularly when
-leveraging semantic cues from domain descriptions. However, limitations remain, especially
-in handling domains requiring deeper structural reasoning or non-trivial search processes.
-Their results suggest that LLMs can be powerful tools for generalized planning
-when properly guided, but refinements in prompting strategies and failure correction
-mechanisms are needed.
+by Silver et al. \cite{silver2023generalizedplanningpddldomains}, the authors
+investigate whether LLMs, specifically GPT-4, can serve as generalized planners,
+not just solving a single planning task, but synthesizing programs that generate
+plans for an entire domain. They introduce a pipeline where GPT-4 is prompted to
+summarize the domain, propose a general strategy, and then implement it in Python.
+Additionally, they incorporate automated debugging, where GPT-4 iteratively
+refines its generated programs based on validation feedback. Their evaluation on
+seven PDDL domains demonstrates that GPT-4 can often generate efficient, domain-specific
+planning programs that generalize well from only a few training examples. The study
+also finds that automated debugging significantly improves performance, while
+the effectiveness of Chain-of-Thought (CoT) summarization is domain-dependent. Notably,
+GPT-4 outperforms previous generalized planning approaches in some cases, particularly
+when leveraging semantic cues from domain descriptions. However, limitations remain,
+especially in handling domains requiring deeper structural reasoning or non-trivial
+search processes. Their results suggest that LLMs can be powerful tools for generalized
+planning when properly guided, but refinements in prompting strategies and
+failure correction mechanisms are needed.

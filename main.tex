@@ -43,7 +43,9 @@ backgroundcolor=gray!20,
 linecolor=gray!50,
 roundcorner=5pt
 ]{blockquote}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MY PACKAGES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{tikz}
 \usetikzlibrary{shapes, arrows, positioning}
 \usepackage{listings}
@@ -53,6 +55,81 @@ roundcorner=5pt
 \definecolor{primary}{RGB}{5, 91, 0}
 \usepackage{pgfplots}
 \usepackage{subfig}
+\usepackage{tcolorbox} % For styled code boxes
+
+% Define colors
+\definecolor{bggray}{rgb}{0.95,0.95,0.95}
+\definecolor{keywordcolor}{rgb}{0,0,1}
+\definecolor{commentcolor}{rgb}{0,0.5,0}
+\definecolor{stringcolor}{rgb}{0.6,0.1,0.1}
+
+% Define JavaScript language (if not built-in)
+\lstdefinelanguage{JavaScript}{ keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, throw, try, typeof, var, void, while, with, let, const, await, async, class, extends, super, export, import},
+morekeywords={[2]true,false,null,undefined,NaN,Infinity}, morekeywords={[3]console,window,document,Array,Object,Number,String,Boolean,RegExp,Date,Math,JSON,Promise,setTimeout,setInterval,clearTimeout,clearInterval,require,module,exports},
+literate= *{0}{{{\color{orange}0}}}{1} {1}{{{\color{orange}1}}}{1} {2}{{{\color{orange}2}}}{1}
+{3}{{{\color{orange}3}}}{1} {4}{{{\color{orange}4}}}{1} {5}{{{\color{orange}5}}}{1}
+{6}{{{\color{orange}6}}}{1} {7}{{{\color{orange}7}}}{1} {8}{{{\color{orange}8}}}{1}
+{9}{{{\color{orange}9}}}{1}, sensitive=true, comment=[l]{//}, morecomment=[s]{/*}{*/},
+morestring=[b]', morestring=[b]" }
+
+% Custom JavaScript style
+\lstdefinestyle{jsstyle}{ backgroundcolor=
+\color{bggray}
+, commentstyle=
+\color{commentcolor}
+, keywordstyle=
+\color{keywordcolor}
+\bfseries, stringstyle=
+\color{stringcolor}
+, basicstyle=\ttfamily\small, breaklines=true, captionpos=b, keepspaces=true, numbers=left,
+numbersep=5pt, numberstyle=\tiny
+\color{gray}
+, showspaces=false, showstringspaces=false, tabsize=2, frame=none, literate= *{0}{{{\color{orange}0}}}{1}
+{1}{{{\color{orange}1}}}{1} {2}{{{\color{orange}2}}}{1} {3}{{{\color{orange}3}}}{1}
+{4}{{{\color{orange}4}}}{1} {5}{{{\color{orange}5}}}{1} {6}{{{\color{orange}6}}}{1}
+{7}{{{\color{orange}7}}}{1} {8}{{{\color{orange}8}}}{1} {9}{{{\color{orange}9}}}{1}
+}
+% Define PDDL language
+\lstdefinelanguage{PDDL}{ keywords={define, and, or, not, exists, forall},
+morekeywords={[2]and, requirements, predicates, functions, action, parameters, precondition, effect, domain, goal,}
+sensitive=true, comment=[l]{;}, morecomment=[s]{\#|}{|\#}, stringstyle=
+\color{stringcolor}
+, morestring=[b]', morestring=[b]", }
+% Custom PDDL style
+\lstdefinestyle{pddlstyle}{ backgroundcolor=
+\color{bggray}
+, commentstyle=
+\color{commentcolor}
+, keywordstyle=
+\color{keywordcolor}
+\bfseries, stringstyle=
+\color{stringcolor}
+, basicstyle=\ttfamily\small, breaklines=true, captionpos=b, keepspaces=true, numbers=left,
+numbersep=5pt, % Adjusted spacing between row numbers and code
+numberstyle=\tiny
+\color{gray}
+, showspaces=false, showstringspaces=false, tabsize=2, frame=none }
+
+% Custom Python style
+\lstdefinestyle{pythonstyle}{ backgroundcolor=
+\color{bggray}
+, commentstyle=
+\color{commentcolor}
+, keywordstyle=
+\color{keywordcolor}
+\bfseries, stringstyle=
+\color{stringcolor}
+, basicstyle=\ttfamily\small, breaklines=true, captionpos=b, keepspaces=true, numbers=left,
+numbersep=5pt, % Adjusted spacing between row numbers and code
+numberstyle=\tiny
+\color{gray}
+, showspaces=false, showstringspaces=false, tabsize=2, frame=none, literate= *{0}{{{\color{orange}0}}}{1}
+{1}{{{\color{orange}1}}}{1} {2}{{{\color{orange}2}}}{1} {3}{{{\color{orange}3}}}{1}
+{4}{{{\color{orange}4}}}{1} {5}{{{\color{orange}5}}}{1} {6}{{{\color{orange}6}}}{1}
+{7}{{{\color{orange}7}}}{1} {8}{{{\color{orange}8}}}{1} {9}{{{\color{orange}9}}}{1}
+}
+% Define a custom tcolorbox for a "code window" effect
+\newtcolorbox{codewindow}[1][]{ colback=bggray, colframe=black, arc=5mm, boxrule=0.5mm, width=\linewidth, left=5mm, top=2mm, bottom=0mm, right=3mm, title=#1 }
 % Document
 \begin{document}
   % Cover

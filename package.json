@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "prebuild": "npm run clean",
-    "build": "latexmk -interaction=nonstopmode -file-line-error -pdf -halt-on-error -outdir=build main",
+    "build": "latexmk -shell-escape -interaction=nonstopmode -file-line-error -pdf -halt-on-error -outdir=build main",
     "postbuild": "npx shx cp ./build/main.pdf ./modolo_davide_ais_2023_2024.pdf",
     "check": "npx npm-run-all --npm-path npm check:*",
     "check:format": "npx prettier --check .",

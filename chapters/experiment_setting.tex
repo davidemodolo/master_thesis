@@ -44,13 +44,16 @@ One of the key aspects we wish to emphasize is that our approach remains purely
 generative. In other words, rather than embedding domain-specific logic or fine-tuned
 strategies within the model, we allow the LLM to operate autonomously,
 generating its own understanding of the environment and devising its own
-strategies for completing the given tasks. Specifically, our problem formulation
-is centered around asking the LLM to provide only the \emph{next step} that moves
-the agent closer to the goal, rather than generating an entire solution at once.
-This step-by-step approach enables the model to iteratively refine its path based
-on new observations and dynamically adapt to changing conditions. Furthermore, we
-assess the reliability of each generated step by computing the uncertainty of the
-model's response using the methodology detailed in Section \ref{ssub:tokens_log_probability}.
+strategies for completing the given tasks.
+
+\subsection{Our Task}
+Specifically, our problem formulation is centered around asking the LLM to provide
+only the \emph{next step} that moves the agent closer to the goal, rather than generating
+an entire solution at once. This step-by-step approach enables the model to
+iteratively refine its path based on new observations using the conversation
+history as a action-result feedback. Furthermore, we assess the reliability of
+each generated step by computing the uncertainty of the model's response using
+the methodology detailed in Section \ref{ssub:tokens_log_probability}.
 
 By taking this approach, we aim to answer these questions about the problem-solving
 skills of LLMs in logistics problems:
@@ -62,26 +65,26 @@ skills of LLMs in logistics problems:
     to traditional rule-based or algorithmic solutions?
 \end{itemize}
 
-To simulate an unexpected and dynamic environment, we designed our experiments around
-a web-based platform that interacts with the agent through API calls. The
+To simulate an unexpected and dynamic environment, we designed our experiments
+around a web-based platform that interacts with the agent through API calls. The
 platform provides a structured yet unpredictable setting in which the agent must
-operate. A critical design choice we made in our methodology was to avoid parsing
-the JSON response containing the map structure. Instead, the agent receives the raw
-map data (that is added to the prompt) and is expected to interpret it entirely on
-its own. This decision was made to ensure that the LLM must independently derive
-the necessary spatial and logistical information without relying on pre-processed
-or structured inputs.
+operate. A critical design choice we made in our methodology was to avoid
+parsing the JSON response containing the map structure. Instead, the agent
+receives the raw map data (that is added to the prompt) and is expected to
+interpret it entirely on its own. This decision was made to ensure that the LLM must
+independently derive the necessary spatial and logistical information without relying
+on pre-processed or structured inputs.
 
-Additionally, this design choice introduces a layer of robustness: if the API
-undergoes modifications, such as changes in the response format, the addition of
-new parameters, or variations in data structure, the agent should still be
-capable of functioning. This property aligns with our objective of evaluating the
-adaptability of LLM-driven agents in dynamically changing environments, where
-real-world conditions may not always remain constant.
+Additionally, this design choice introduces a layer of robustness: if the API undergoes
+modifications, such as changes in the response format, the addition of new parameters,
+or variations in data structure, the agent should still be capable of functioning.
+This property aligns with our objective of evaluating the adaptability of LLM-driven
+agents in dynamically changing environments, where real-world conditions may not
+always remain constant.
 
-Our experimental setup and results will be presented in detail in Chapter
-\ref{cha:results_discussion}. However, to summarize our primary evaluation
-criteria, we focus on testing the following goals of the LLM-based agent:
+Our experimental setup and results will be presented in detail in Chapter \ref{cha:results_discussion}.
+However, to summarize our primary evaluation criteria, we focus on testing the
+following goals of the LLM-based agent:
 
 \begin{itemize}
   \item \textbf{Parcel Pickup:} We evaluate whether the agent is capable of
@@ -103,12 +106,19 @@ limitations, and potential advantages in real-world scenarios.
 \section{Environment - Deliveroo.js}
 \label{sec:environment_deliveroo_js}
 
-Deliveroo.js it's an Educational Game, developed by Marco Robol for the course
-on Autonomous Software Agents (ASA) by Prof. Paolo Giorgini, using the Treejs\footnote{\url{https://threejs.org/}}
+Deliveroo.js it's an Educational Game, developed by Marco Robol for the course on
+Autonomous Software Agents (ASA) by Prof. Paolo Giorgini, using the Treejs\footnote{\url{https://threejs.org/}}
 framework.
 
 The code for the server is open and che be accessed on GitHub \footnote{\url{https://github.com/unitn-ASA/Deliveroo.js}}
 as well as some example of agents (with different level of complexity)\footnote{\url{https://github.com/unitn-ASA/DeliverooAgent.js}}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.65\textwidth]{images/deliveroo_js.png}
+  \caption{7x7 Map in Deliveroo.js with a single central delivery zone.}
+  { Source: } \label{fig:deliveroo_js}
+\end{figure}
 
 The game can be played even by humans, by interacting in the browser;
 technically speaking, it is a web-based platform consisting on three main components
@@ -129,21 +139,17 @@ connected to each other via sockets (implemented with Socket.io\footnote{\url{ht
     but it is useful to understand what is happening in the game.
 \end{itemize}
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.65\textwidth]{images/deliveroo_js.png}
-  \caption{7x7 Map in Deliveroo.js with a single central delivery zone.}
-  { Source: } \label{fig:deliveroo_js}
-\end{figure}
+As we can see from the Figure \ref{fig:deliveroo_js}, the game is a grid of $N \times
+M$ tiles where the agent can move. Right now, the $(0, 0)$ cell is in the bottom
+left corner. The map is defined in a JS file (example in Listing \ref{lst:deliveroo_map_config})
+where the number inside a cell represent the type of the cell.
 
-As we can see from the Figure \ref{fig:deliveroo_js}, the game is a grid of
-$N \times M$ tiles where the agent can move. Right now, the $(0, 0)$ cell is in
-the bottom left corner. The map is defined in a JS file (example in Listing
-\ref{lst:deliveroo_map_config}) where the number inside a cell represent the type
-of the cell.
-
-\begin{lstlisting}[language=Python, caption={Example of a configuration for a 7x7 map with a single central delivery zone}, label={lst:deliveroo_map_config}]
-  // 7x7 goal center deliver
+% \begin{lstlisting}[language=Python, caption={Example of a configuration for a 7x7 map with a single central delivery zone}, label={lst:deliveroo_map_config}]
+\vspace{10mm}
+\begin{codewindow}
+  [JavaScript Code] \lstset{style=jsstyle, language=JavaScript, caption={Example of a 7x7 map with a single central delivery zone},
+  label={lst:deliveroo_map_config}} \begin{lstlisting}
+// 7x7 goal center deliver
 module.exports = [
   [1, 1, 1, 1, 1, 1, 1],
   [1, 1, 1, 1, 1, 1, 1],
@@ -154,6 +160,8 @@ module.exports = [
   [1, 1, 1, 1, 1, 1, 1],
 ];
 \end{lstlisting}
+\end{codewindow}
+\vspace{10mm}
 
 There are three possible types of cells:
 \begin{itemize}
@@ -181,8 +189,14 @@ The functioning is very straight forward:
     delivered in a certain amount of time, they may disappear.
 \end{itemize}
 
-\begin{lstlisting} [language=Python, caption={Example of a configuration for the server}, label={lst:deliveroo_server_config}]
-  module.exports = {
+% \begin{lstlisting} [language=Python, caption={Example of a configuration for the server}, label={lst:deliveroo_server_config}]
+
+\subsection{Server Configuration and Event Handling}
+\vspace{10mm}
+\begin{codewindow}
+  [JavaScript Code] \lstset{style=jsstyle, language=JavaScript, caption={Example of a configuration file for the server},
+  label={lst:deliveroo_server_config}} \begin{lstlisting}
+module.exports = {
   MAP_FILE: "map_file",
 
   PARCELS_GENERATION_INTERVAL: "5s",
@@ -196,31 +210,31 @@ The functioning is very straight forward:
 
   PARCEL_REWARD_AVG: 10,
   PARCEL_REWARD_VARIANCE: "0",
-  PARCEL_DECADING_INTERVAL: "infinite",
+  PARCEL_DECAYING_INTERVAL: "infinite",
 
   RANDOMLY_MOVING_AGENTS: 0,
   RANDOM_AGENT_SPEED: "2s",
 
   CLOCK: 50,
 };
-
 \end{lstlisting}
+\end{codewindow}
+\vspace{10mm}
+The behavior of parcels in the system is defined through the server configuration
+file. This file specifies key parameters that control parcel generation, reward values,
+and decay over time. One such configuration is shown in the example in Listing \ref{lst:deliveroo_server_config}.
 
-The behavior of parcels in the system is defined through the server
-configuration file. This file specifies key parameters that control parcel generation,
-reward values, and decay over time. One such configuration is shown in the
-example in Listing \ref{lst:deliveroo_server_config}.
-
-Based on the server settings, a maximum number of parcels can be active simultaneously.
-Each parcel is spawned at a fixed interval, with a random reward value determined
-by a specified average and variance. Additionally, the configuration dictates whether
-the reward remains constant or decreases over time.
+Based on the server settings, a maximum number of parcels can be active
+simultaneously. Each parcel is spawned at a fixed interval, with a random reward
+value determined by a specified average and variance. Additionally, the
+configuration dictates whether the reward remains constant or decreases over
+time.
 
 In the example, parcels are generated every 5 seconds, but only one can exist at
 a time. Each parcel starts with a reward value of exactly 10. Furthermore, since
-\texttt{PARCEL\_DECADING\_INTERVAL} is set to \texttt{"infinite"}, the reward
-does not decrease over time and the parcel will not disappear (until delivered).
-This setup ensures a stable environment for testing the agent's performance.
+\texttt{PARCEL\_DECADING\_INTERVAL} is set to \texttt{"infinite"}, the reward does
+not decrease over time and the parcel will not disappear (until delivered). This
+setup ensures a stable environment for testing the agent's performance.
 
 The agent can interact with the environment using the following actions:
 \begin{itemize}
@@ -235,8 +249,8 @@ The agent can interact with the environment using the following actions:
 \end{itemize}
 
 The server is responsible for transmitting events to the agent, ensuring that it
-receives all relevant updates in real-time. Specifically, the following events
-were utilized in our tests:
+receives all relevant updates in real-time. Specifically, the following events were
+utilized in our tests:
 
 \begin{itemize}
   \item \texttt{onMap} (width, height, tiles): it sends the width and the height
@@ -256,9 +270,251 @@ were utilized in our tests:
     reward the agent will get by delivering it.
 \end{itemize}
 
-\section{LLM Models}
+\section{Large Language Models Selection}
 \label{sec:llm_models}
 
-\subsection{Open Source}
+As mentioned in Section \ref{sec:large_language_models_llms}, Large Language
+Models are powerful tools that have revolutionized the field of natural language
+processing. The way they generate text based on input prompts has opened up new possibilities
+for research and applications in various domains.
 
-\subsection{OpenAI}
+One of the core aspects of LLMs is their autoregressive nature, meaning they
+generate text one token at a time (given the current implementation, but
+alternative solution are being studied, for example by Meta\footnote{\url{https://ai.meta.com/}}
+in the paper ``Better \& Faster Large Language Models via Multi-token Prediction"
+by Gloeckle et al.\cite{gloeckle2024betterfasterlarge}), predicting the next most
+likely token based on the context provided. This capability is what allows LLMs
+to generate coherent and contextually relevant responses. The way these systems operate
+can be broken down into a (simplified) step-by-step process:
+
+\begin{itemize}
+  \item The prompt (the request) is tokenized, which means it is divided into
+    smaller units called tokens. These tokens are predefined character combinations
+    that serve as the building blocks for processing text. An example of this
+    tokenization process is illustrated in Figure \ref{fig:tokenization_example}.
+    Once tokenized, the prompt is passed to the model for processing;
+
+  \item The model then generates the ``next token" based on a probability
+    distribution computed using attention mechanisms, to determine the most contextually
+    appropriate next token;
+
+  \item The newly generated token is appended to the existing sequence, and the
+    process is repeated iteratively. This continues until a predefined stopping criterion
+    is met, either reaching a maximum token limit or encountering a special
+    termination token.
+\end{itemize}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.65\textwidth]{images/tokenization_example.png}
+  \caption{Example of tokenization of a sentence using the GPT-4o tokenizer.}
+  { Source: OpenAI Platform\footnote{\url{https://platform.openai.com/tokenizer}}}
+  \label{fig:tokenization_example}
+\end{figure}
+
+One key element of this process is how the next token is selected. The winning
+token is picked from a probability distribution obtained through the softmax
+function. However, if selection were purely deterministic, the model would always
+generate the same output given the same prompt, making it rigid and predictable.
+To introduce variability and prevent repetitive patterns, a controlled amount of
+randomness is introduced using the temperature parameter.
+
+The temperature parameter plays a crucial role in regulating randomness in text
+generation:
+
+This mechanism explains why the same prompt can yield different outputs when
+used multiple times: because the token selection is influenced by this controlled
+randomness.
+
+Beyond temperature, another factor that influences token selection is the logit
+bias\footnote{\url{https://www.vellum.ai/llm-parameters/logit-bias}}. Logit bias
+allows direct intervention in the probability of specific tokens being chosen
+during text generation. Instead of relying solely on the model's learned probabilities,
+users can manually adjust the likelihood of certain tokens appearing by
+modifying the logits (the unnormalized probabilities) before applying the
+softmax function.
+
+The logit bias mechanism operates as follows:
+
+\begin{itemize}
+  \item Positive bias values increase the probability of a specific token being selected,
+    making it more likely to appear in the generated text.
+
+  \item Negative bias values decrease the probability of a token, potentially
+    eliminating it from consideration altogether.
+\end{itemize}
+
+This approach gives users more control over text generation, allowing them to
+guide the model toward preferred outputs while avoiding undesired words or
+phrases. A simplified implementation of how logit bias works can be seen in the Python
+code snippet in Listing \ref{lst:logit_bias}, where we want to increase the
+likelihood of the word ``fox'' and decrease the likelihood of the word ``quick''.
+
+\vspace{10mm}
+\begin{codewindow}
+  [Python Code] \lstset{style=pythonstyle, language=Python, caption={Example of what a basic implementation of logit bias could look like},
+  label={lst:logit_bias}} \begin{lstlisting}
+[...]
+
+# Get the logits (raw predictions)
+outputs = model(**inputs)
+logits = outputs.logits
+
+logit_bias = {
+  # Decrease likelihood for the word "quick"
+  tokenizer.encode("quick")[0]: -2.0,
+  # Increase likelihood for the word "fox"
+  tokenizer.encode("fox")[0]: 2.0,
+  # Almost never generate the word "slow"
+  tokenizer.encode("slow")[0]: -100.0,
+  # Almost always generate the word "brown"
+  tokenizer.encode("brown")[0]: 100.0,
+}
+
+# Apply logit bias: modify logits of specific tokens
+for token_id, bias in logit_bias.items():
+  logits[token_id] += bias
+
+# Convert logits by applying softmax
+probs = torch.nn.functional.softmax(logits, dim=-1)
+
+[...]
+\end{lstlisting}
+\end{codewindow}
+\vspace{10mm}
+
+This technique is particularly useful in scenarios where the generated text must
+adhere to specific constraints. For example, logit bias can be used for content moderation,
+ensuring that the model avoids generating harmful, offensive, or inappropriate
+content. By assigning a strong negative bias to certain tokens used to build specific
+words or sentences, users can effectively steer the model away from producing
+undesirable responses.
+
+Not only, there are some cases where an LLM has been expanded with custom and private
+information, via fine-tuning or Retrieval Augmented Generation (as we cited in Section
+\ref{sub:llms_uncertainty}). In this context, we may want to force the model to
+not generate some specific content that may be useful for the overall response
+but should not be shared.
+
+On the other hand, logit bias can be leveraged to override built-in model safeguards.
+In some cases, AI models have safety mechanisms that prevent them from answering
+certain types of questions, responding with phrases like ``I'm sorry, but I can't
+provide that information." By applying a negative logit bias to the tokens that generate
+the words that build this response, users can force the model to produce an
+alternative reply, whether it be a reworded refusal or even an answer to the original
+question.
+
+Overall, logit bias is a powerful tool for modelling model behavior, allowing developers
+to enforce preferred linguistic patterns, avoid specific terminology, and customize
+AI responses according to their needs. When combined with temperature
+adjustments and other generation techniques, it provides a robust framework for controlling
+LLM output and ensuring its alignment with desired objectives.
+
+\subsection{Open Source Models}
+
+The term "Large" in Large Language Models (LLMs) refers to their extensive
+number of parameters and the vast datasets used during training. Training these models
+is a resource-intensive process, both in terms of computational power and time. However,
+some organizations choose to release their models as open source, allowing the community
+to access and utilize them freely.
+
+In the context of LLMs, the term "open source" differs from its traditional
+usage in software development\footnote{\url{https://promptengineering.org/llm-open-source-vs-open-weights-vs-restricted-weights/}}.
+Specifically, there is a nuanced distinction that categorizes publicly available
+models into two primary types:
+
+\begin{itemize}
+  \item \textbf{Open Source}: The creators provide full access to the model's source
+    code, architecture, training data, and pre-trained weights. This level of transparency
+    allows users to understand, modify, and enhance the model comprehensively.
+
+  \item \textbf{Open Weights}: The creators make the model's pre-trained weights
+    publicly available but may withhold other critical components, such as the
+    training data or detailed methodologies used during training. This approach enables
+    users to employ the model for specific tasks but limits their ability to fully
+    comprehend or modify its underlying structure.
+\end{itemize}
+
+In the following subsections, we will present some open models we tested in the early
+stages of our research. The results analyzed in Chapter
+\ref{cha:results_discussion} do not consider these models due to certain
+limitations, which we will discuss shortly. Nonetheless, they are worth mentioning
+as they provided a valuable starting point during the initial phases of our project.
+
+\subsubsection{Challenges with Open Source Models}
+
+One significant challenge we encountered with open source models was the
+implementation of the logit bias mechanism. While the example in Listing \ref{lst:logit_bias}
+may suggest simplicity, the reality is more complex. Implementing this mechanism
+requires:
+
+\begin{itemize}
+  \item Reconstructing the model's architecture accurately.
+
+  \item Loading the pre-trained weights appropriately.
+
+  \item Modifying the model's intricate structure to extract the raw values and change
+    them to incorporate the logit bias.
+\end{itemize}
+
+These steps demand substantial time and running them locally requires large
+computational resources, for something not essential to the core objectives of our
+project.
+
+Moreover, during initial tests, we observed difficulties in constraining the model
+to produce specific tokens without altering the logit bias, a necessary step for
+computing uncertainty, as explained in Section \ref{ssub:tokens_log_probability}.
+For instance, when prompted to ``Answer with just a single letter between U, D, L,
+R." (the explanation for this prompt will be given in Section \ref{sec:prompt_creation_choices})
+the model often responded with full sentences like "Sure, the answer is U!"
+Truncating such responses to a single token would result in outputs like ``Sure"
+which is not the desired outcome. This is a problem that we didn't have with the
+closed source models, that we will discuss in the next sub-section \ref{sub:closed_source_models_openai}.
+
+\subsubsection{LLaMa 3.2 and Gemma 2}
+\paragraph{LLaMa 3.2}
+developed by Meta AI\footnote{\url{https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/}},
+is a multimodal large language model designed to process both textual and visual
+data, marking Meta's first open-source AI model with such capabilities. The
+model is available in two configurations: an 11-billion-parameter version and a more
+robust 90-billion-parameter variant. There are also a 1-billion-parameter and 3-billion-parameter
+text-only versions of the models. These models are optimized for deployment on mobile
+(yet powerful) hardware platforms.
+
+The model tested in our experiments was the text-only 3-billion-parameter version.
+\paragraph{Gemma 2}
+introduced by Google\footnote{\url{https://developers.googleblog.com/en/gemma-explained-new-in-gemma-2/}},
+is an open suite of language models available in parameter sizes of 2 billion, 9
+billion, and 27 billion. The 27-billion-parameter model has demonstrated
+exceptional performance, surpassing larger models in real-world conversational benchmarks.
+This suite is built upon the same research and technology that underpins Google's
+Gemini models, emphasizing both performance and accessibility.
+
+The model tested in our experiments was the 9-billion-parameter version.
+\subsubsection{DeepSeek-V3}
+DeepSeek-V3, developed by DeepSeek \footnote{\url{https://github.com/deepseek-ai/DeepSeek-V3}},
+is a Mixture-of-Experts (MoE) language model comprising a total of 671 billion
+parameters, with 37 billion activated per token during inference. It employs
+Multi-head Latent Attention (MLA) and the DeepSeekMoE architecture to achieve
+efficient inference and cost-effective training. The model was pre-trained on 14.8
+trillion diverse and high-quality tokens, followed by supervised fine-tuning and
+reinforcement learning stages to fully harness its capabilities. Despite its extensive
+scale, DeepSeek-V3's training process is notably efficient, requiring only 2.788
+million H800 GPU hours, and it has demonstrated remarkable stability throughout
+training. Comprehensive evaluations reveal that DeepSeek-V3 outperforms other open-source
+models and achieves performance comparable to leading closed-source models.
+
+Unfortunately, we didn't get to test it because it released after the end of the
+project.
+
+\subsection{Closed Source Models - OpenAI}
+\label{sub:closed_source_models_openai}
+
+Describe Company. Explain the models we tried and to what extent. API instructions.
+API problems.
+
+\subsubsection{GPT-4o-mini}
+very cheap, also thanks to uncertainty just 1 token for each answer.
+\subsubsection{GPT-4o}
+\paragraph{AzureAPI}
+\subsubsection{GPT-3.5-turbo}
