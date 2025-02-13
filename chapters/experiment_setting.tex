@@ -1,8 +1,6 @@
 \chapter{Experiment Setting}
 \label{cha:experiment_setting}
 
-\textbf{ONGOING}
-
 In this chapter, we provide a comprehensive and in-depth description of the experimental
 framework designed to evaluate the performance of our LLM-driven agent.
 
@@ -115,9 +113,10 @@ as well as some example of agents (with different level of complexity)\footnote{
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.65\textwidth]{images/deliveroo_js.png}
-  \caption{7x7 Map in Deliveroo.js with a single central delivery zone.}
-  { Source: } \label{fig:deliveroo_js}
+  \includegraphics[width=0.90\textwidth]{images/deliveroo_js.png}
+  \caption{Two views of the same 7x7 Map in Deliveroo.js with a single central
+  delivery zone.}
+  \label{fig:deliveroo_js}
 \end{figure}
 
 The game can be played even by humans, by interacting in the browser;
@@ -306,7 +305,7 @@ can be broken down into a (simplified) step-by-step process:
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.65\textwidth]{images/tokenization_example.png}
+  \includegraphics[width=0.88\textwidth]{images/tokenization_example.png}
   \caption{Example of tokenization of a sentence using the GPT-4o tokenizer.}
   { Source: OpenAI Platform\footnote{\url{https://platform.openai.com/tokenizer}}}
   \label{fig:tokenization_example}
@@ -459,7 +458,7 @@ requires:
 
 These steps demand substantial time and running them locally requires large
 computational resources, for something not essential to the core objectives of our
-project.
+project (since closed models provide this feature out of the box).
 
 Moreover, during initial tests, we observed difficulties in constraining the model
 to produce specific tokens without altering the logit bias, a necessary step for
@@ -471,27 +470,55 @@ Truncating such responses to a single token would result in outputs like ``Sure"
 which is not the desired outcome. This is a problem that we didn't have with the
 closed source models, that we will discuss in the next sub-section \ref{sub:closed_source_models_openai}.
 
-\subsubsection{LLaMa 3.2 and Gemma 2}
-\paragraph{LLaMa 3.2}
-developed by Meta AI\footnote{\url{https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/}},
-is a multimodal large language model designed to process both textual and visual
-data, marking Meta's first open-source AI model with such capabilities. The
-model is available in two configurations: an 11-billion-parameter version and a more
-robust 90-billion-parameter variant. There are also a 1-billion-parameter and 3-billion-parameter
-text-only versions of the models. These models are optimized for deployment on mobile
-(yet powerful) hardware platforms.
+So, open source models have been tested only in the first instance of the
+project, to test the logic of the agent without wasting credit with OpenAI API.
+They have been run through Ollama\footnote{\url{https://ollama.com/}}, a tool
+for running and managing large language models locally. It simplifies downloading,
+running, and interacting with models without relying on cloud services.
 
-The model tested in our experiments was the text-only 3-billion-parameter version.
-\paragraph{Gemma 2}
-introduced by Google\footnote{\url{https://developers.googleblog.com/en/gemma-explained-new-in-gemma-2/}},
+\subsubsection{LLaMa 3.2}
+\begin{wrapfigure}
+  [9]{l}{.25\textwidth}
+  \centering
+  \def\stackalignment{l}\stackunder{ \includegraphics[width=\linewidth]{images/meta.png} }
+  {\scriptsize \parbox[t]{\linewidth}{Source: \href{https://www.flaticon.com/free-icon/meta_6033716}{Meta icons created by Freepik - Flaticon}}}
+\end{wrapfigure}
+
+LLaMa 3.2, developed by Meta AI\footnote{\url{https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/}},
+is a multimodal large language model designed to process both textual and visual
+data, marking Meta's first open-source AI model with such capabilities. The model
+is available in two configurations: an 11-billion-parameter version and a more
+robust 90-billion-parameter variant. There are also a 1-billion-parameter and 3-billion-parameter
+text-only versions of the models. These models are optimized for deployment on
+mobile (yet powerful) hardware platforms.
+
+The model tested in our experiments was the text-only 3-billion-parameter
+version.
+\vspace{8mm}
+\subsubsection{Gemma 2}
+\begin{wrapfigure}
+  [8]{l}{.25\textwidth}
+  \centering
+  \def\stackalignment{l}\stackunder{ \includegraphics[width=\linewidth]{images/gemma.png} }
+  {\scriptsize \parbox[t]{\linewidth}{Source: \href{https://logowik.com/google-gemma-ai-logo-vector-71178.html}{logowik}}}
+\end{wrapfigure}
+Gemma 2, introduced by Google\footnote{\url{https://developers.googleblog.com/en/gemma-explained-new-in-gemma-2/}},
 is an open suite of language models available in parameter sizes of 2 billion, 9
-billion, and 27 billion. The 27-billion-parameter model has demonstrated
-exceptional performance, surpassing larger models in real-world conversational benchmarks.
-This suite is built upon the same research and technology that underpins Google's
-Gemini models, emphasizing both performance and accessibility.
+billion, and 27 billion. The 27-billion-parameter model has demonstrated exceptional
+performance, surpassing larger models in real-world conversational benchmarks. This
+suite is built upon the same research and technology that underpins Google's Gemini
+models, emphasizing both performance and accessibility.
 
 The model tested in our experiments was the 9-billion-parameter version.
+
+\vspace{9mm}
 \subsubsection{DeepSeek-V3}
+\begin{wrapfigure}
+  [14]{l}{.25\textwidth}
+  \centering
+  \def\stackalignment{l}\stackunder{ \includegraphics[width=\linewidth]{images/ds.png} }
+  {\scriptsize \parbox[t]{\linewidth}{Source: \href{https://github.com/deepseek-ai}{DeepSeek GitHub}}}
+\end{wrapfigure}
 DeepSeek-V3, developed by DeepSeek \footnote{\url{https://github.com/deepseek-ai/DeepSeek-V3}},
 is a Mixture-of-Experts (MoE) language model comprising a total of 671 billion
 parameters, with 37 billion activated per token during inference. It employs
@@ -499,22 +526,163 @@ Multi-head Latent Attention (MLA) and the DeepSeekMoE architecture to achieve
 efficient inference and cost-effective training. The model was pre-trained on 14.8
 trillion diverse and high-quality tokens, followed by supervised fine-tuning and
 reinforcement learning stages to fully harness its capabilities. Despite its extensive
-scale, DeepSeek-V3's training process is notably efficient, requiring only 2.788
-million H800 GPU hours, and it has demonstrated remarkable stability throughout
-training. Comprehensive evaluations reveal that DeepSeek-V3 outperforms other open-source
-models and achieves performance comparable to leading closed-source models.
+scale, DeepSeek-V3's training process is notably efficient and it has
+demonstrated remarkable stability throughout training. Comprehensive evaluations
+reveal that DeepSeek-V3 outperforms other open-source models and achieves performance
+comparable to leading closed-source models.
 
 Unfortunately, we didn't get to test it because it released after the end of the
-project.
+project, but it is worth mentioning for future research thanks to its impressive
+performance.
 
 \subsection{Closed Source Models - OpenAI}
 \label{sub:closed_source_models_openai}
 
-Describe Company. Explain the models we tried and to what extent. API instructions.
-API problems.
+Before delving into the specifics of this section, we want to emphasize that OpenAI
+is not the only company offering closed-source AI models. Several other
+providers exist, such as Anthropic\footnote{\url{https://www.anthropic.com/}}, which
+develops the Claude family of models, and DeepSeek\footnote{\url{https://api-docs.deepseek.com/}},
+which provides API access to its models as well. While OpenAI remains the most widely
+recognized and utilized provider, particularly in research and industry
+applications, it is important to acknowledge that many of the benefits and drawbacks
+of closed-source models apply broadly across all such services. Nevertheless, since
+our work specifically relies on OpenAI's models, our discussion will primarily
+focus on them while keeping in mind that similar considerations extend to other
+closed-source alternatives.
+
+\vspace{2mm}
+
+A key distinction between open-source and closed-source models is the transparency
+regarding their architecture. In many closed-source models, details such as the exact
+number of parameters are not publicly disclosed. For instance, while OpenAI's GPT-3\cite{brown2020languagemodelsfewshotlearners}
+is known to have a maximum of 175 billion parameters\footnote{\url{https://en.wikipedia.org/wiki/GPT-3}},
+the parameter counts for subsequent models like GPT-4\cite{openai2024gpt4technicalreport}
+have not been officially confirmed. Estimates suggest that GPT-4 may have around
+1.76 trillion parameters, but this remains speculative\footnote{\url{https://en.wikipedia.org/wiki/GPT-4}}.
+
+\begin{wrapfigure}
+  [11]{r}{.25\textwidth}
+  \centering
+  \def\stackalignment{r}\stackunder{ \includegraphics[width=\linewidth]{images/openai.png} }
+  {\scriptsize \parbox[t]{\linewidth}{Source: \href{https://www.vecteezy.com/png/22227364-openai-chatgpt-logo-icon}{Vecteezy}}}
+\end{wrapfigure}
+
+OpenAI was established as a research organization dedicated to advancing artificial
+intelligence. They initially released models such as GPT-2\cite{Radford2019LanguageMA}
+and Whisper\cite{radford2022robustspeechrecognitionlargescale} (a speech recognition
+model) to the public at no cost. GPT-2, for example, was made available with various
+model sizes, the largest containing 1.5 billion parameters\footnote{\url{https://en.wikipedia.org/wiki/GPT-2}}.
+
+Subsequently, OpenAI developed GPT-3 and DALL·E\cite{ramesh2021zeroshottexttoimagegeneration},
+introducing them through a commercial platform and API services. The landscape of
+AI applications shifted significantly with the release of ChatGPT, a
+conversational AI model that garnered widespread attention for its advanced
+language understanding and generation capabilities.
+
+OpenAI offers access to their models via subscription plans and a pay-as-you-go
+API, with pricing varying based on the specific model utilized. The API provides
+granular control over model behavior through parameters such as \texttt{logit\_bias},
+that, as the name suggests, allows users to adjust the likelihood of specific
+tokens appearing in the generated output by assigning bias values ranging from -100
+to 100.
+
+However, a limitation of closed-source models is the lack of transparency regarding
+updates or changes. Users may be unaware of modifications that could affect
+model behavior. For instance, there have been instances where the behavior of
+the logit\_bias parameter changed without prior (or `at run-time') notice. We have
+identified three primary behaviors of the logit\_bias parameter, which appear to
+be dependent on API updates rather than the models themselves:
+\begin{enumerate}
+  \item \textbf{No change}: The API does not apply the logit\_bias at all,
+    resulting in outputs identical to those generated without using the
+    parameter;
+
+  \item \textbf{Exclusive}: The logit\_bias is applied strictly. Setting a token's
+    bias to 100 forces the model to produce that token; if multiple tokens are set
+    to 100, the model will choose among them. Conversely, setting a token's bias
+    to -100 prevents that token from appearing in the output;
+
+  \item \textbf{Soft}: The logit\_bias is applied moderately. Assigning a token
+    a bias of 100 significantly increases its likelihood of being produced, but other
+    tokens may still be selected. Similarly, setting a token's bias to -100
+    greatly decreases its likelihood, but it may still appear.
+\end{enumerate}
+
+Our tests were conducted during a period when the API exhibited the third
+behavior (Soft). However, due to potential API updates, we cannot guarantee the reproducibility
+of these results. To mitigate variability, we set the temperature parameter to zero
+during our tests, aiming for deterministic outputs.
+
+Another crucial feature offered by OpenAI is the \texttt{logprobs} parameter.
+When specified, this parameter returns the log probabilities of the top tokens that
+the model may generate as the `next token'. This information is essential for
+computing the uncertainty of the model's predictions, as detailed in Section \ref{ssub:tokens_log_probability}.
+It's important to note that the behavior of the \texttt{logprobs} parameter can change
+over time. For instance, when the paper "Robots That Ask For Help: Uncertainty Alignment
+for Large Language Model Planners" was written, the \texttt{logprobs} parameter
+returned a maximum of 5 tokens. Since then, this limit has been increased to a
+maximum of 20 tokens. In the future, it may be adjusted again, so it's important
+to keep this in mind when working with the API.
+
+Pricing per 1 million tokens for all the OpenAI models used can be seen in Table
+\ref{tab:pricing}; the functioning of caching is explained in Section
+\ref{sec:prompt_creation_choices}.
+
+\vspace{3mm}
+\begin{table}[h]
+  \centering
+  \renewcommand{\arraystretch}{1.5}
+  \setlength{\tabcolsep}{8pt}
+  \begin{tabular}{ c c c c }
+    \textbf{Model} & \textbf{Input} & \textbf{Cached Input} & \textbf{Output} \\
+    \hline
+    gpt-4o-mini    & \$0.15         & \$0.075               & \$0.60          \\
+    gpt-4o         & \$2.50         & \$1.25                & \$10.00         \\
+    gpt-3.5-turbo  & \$0.50         & /                     & \$1.50          \\
+  \end{tabular}
+  \caption{Pricing Table for the tested models.}
+  {\emph{Source: OpenAI \footnotemark}} \label{tab:pricing}
+\end{table}
+\footnotetext{\url{https://platform.openai.com/pricing}}
+\vspace{3mm}
 
 \subsubsection{GPT-4o-mini}
-very cheap, also thanks to uncertainty just 1 token for each answer.
+GPT-4o-mini, developed by OpenAI\footnote{\url{https://openai.com/research/gpt-4o}},
+is a lightweight variant of the GPT-4o architecture, optimized for efficiency while
+maintaining strong performance across a range of tasks. It is designed to
+deliver fast inference and lower computational costs, making it suitable for deployment
+in real-time applications and on-device AI systems. While OpenAI has not
+publicly disclosed the parameter count, it is positioned as a more efficient alternative
+to larger models in the GPT-4 family.
+
+The main model used for the tests in our experiments was GPT-4o-mini, selected
+for its balance of performance and efficiency and pricing.
+
 \subsubsection{GPT-4o}
+GPT-4o is OpenAI's flagship multimodal model, capable of processing and generating
+text, images, and audio in real time. It represents a significant leap in
+efficiency and latency, outperforming previous iterations such as GPT-4-turbo while
+operating at a lower computational cost. Unlike its predecessors, GPT-4o is natively
+trained across multiple modalities rather than combining separate models for different
+inputs. Though OpenAI has not released detailed architectural specifications, benchmark
+results indicate substantial improvements in reasoning, multilingual proficiency,
+and response speed.
+
+It has been used less than GPT-4o-mini because of the higher cost and the fact that,
+since from the first tests, the results were almost identical to the mini version.
+
 \paragraph{AzureAPI}
+GPT-4o was accessed via the Azure OpenAI API, provided by the University of Trento,
+offering a secure and private interface for interacting with the model. To facilitate
+communication between the agent's JavaScript code and the API, a lightweight
+Python server was developed. The server's code is available on GitHub\footnote{\url{https://github.com/davidemodolo/master_thesis_project/blob/main/azureAPI/server.py}}.
+
 \subsubsection{GPT-3.5-turbo}
+GPT-3.5-turbo is a high-performance variant of OpenAI's GPT-3.5 model. It provides
+strong general-purpose capabilities while being more accessible for applications
+requiring large-scale deployment. Though it does not match GPT-4-level reasoning
+abilities, it remains competitive in many NLP benchmarks and is widely used for production
+AI services.
+
+Unfortunately, this model has been the weakest in our tests; we will discuss this
+in depth in the Section \ref{sec:models_comparison}.
