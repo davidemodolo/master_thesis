@@ -103,14 +103,13 @@ enables transformers to capture long-range dependencies and contextual
 information more effectively than RNNs.
 
 In this thesis, we will focus on the models built by OpenAI, we will analyze
-them more in depth in the Chapter \ref{cha:experiment_setting} Section
-\ref{sec:llm_models}.
+them more in depth in Section \ref{sec:llm_models}.
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.65\textwidth]{images/transformer_architecture.png}
   \caption{Transformer Architecture}
-  { Source: Vaswani et al., Attention Is All You Need \cite{vaswani2023attentionneed}}
+  {\emph{Source: Vaswani et al., Attention Is All You Need \cite{vaswani2023attentionneed}}}
   \label{fig:transformer_architecture}
 \end{figure}
 
@@ -391,7 +390,7 @@ environment.
       node[midway, left] {Observation};
   \end{tikzpicture}
   \caption{Agent Design Scheme}
-  { Source: redesign of a scheme in \cite{wooldridge2002multiagent}} \label{fig:agent_scheme}
+  {\emph{Source: redesign of a scheme in \cite{wooldridge2002multiagent}}} \label{fig:agent_scheme}
 \end{figure}
 \vspace{1cm} % Add margin on bottom
 
@@ -784,6 +783,16 @@ and exploration:
     in bigger rewards
 \end{itemize}
 
+When considering a logistics problem, reinforcement learning naturally comes to
+mind. This is because defining a reward function is relatively straightforward:
+it could be measured in terms of packages delivered per minute, per step, or a
+similar metric. Additionally, the entire process can be simulated in a virtual
+environment, allowing multiple parallel simulations to accelerate the agent's learning
+process. As illustrated in Figure \ref{fig:rl_scheme}, the structure of the Reinforcement
+Learning framework closely resembles the agent-based model depicted in Figure \ref{fig:agent_scheme}.
+In both cases, the agent interacts with its environment, receives feedback in
+the form of rewards, and continuously refines its policy to optimize future performance.
+
 \begin{figure}[h!]
   \centering
   \includegraphics[width=.42\textwidth]{images/rl_scheme.png}
@@ -791,66 +800,6 @@ and exploration:
   {Source: Mathworks\footnotemark} \label{fig:rl_scheme}
 \end{figure}
 \footnotetext{\url{https://it.mathworks.com/help/reinforcement-learning/ug/create-agents-for-reinforcement-learning.html}}
-
-% \begin{tikzpicture}
-%   % Styles
-%   \tikzstyle{block}
-%   = [rectangle, draw, fill=blue!10, text width=9em, text centered, rounded corners,
-%   minimum height=2.5em]
-%   \tikzstyle{policy}
-%   = [rectangle, draw, fill=yellow!30, text width=9em, text centered, rounded
-%   corners, minimum height=2.5em]
-%   \tikzstyle{arrow}
-%   = [thick, ->, >=stealth]
-
-%   % Agent boundary
-%   \draw[thick, rounded corners, fill=blue!5] (-3.5, 2.8) rectangle (3.5, -1.2);
-%   \node at (0, 3.1) {\textbf{AGENT}};
-
-%   % Inside the agent: Policy and RL Algorithm
-%   \node (policy) [policy] at (0,2) {POLICY};
-%   \node (rl)
-%     [policy, below=2em of policy]
-%     {REINFORCEMENT \\ LEARNING \\ ALGORITHM};
-
-%   % Environment block (positioned below the agent)
-%   \node (env) [block, below=6em of rl] {ENVIRONMENT};
-
-%   % Labels for data flow
-%   \node[left=4em of policy] (obs) {OBSERVATION };
-%   \node[right=4em of policy] (act) {ACTION};
-%   \node[below=4em of obs] (next_obs) {NEXT OBSERVATION};
-%   \node[above=2em of env] (reward) {REWARD};
-
-%   % Arrows between elements
-%   \draw[arrow] (env) -- (reward);
-%   \draw[arrow] (env) -| (obs);
-%   \draw[arrow] (policy) -- (act);
-%   \draw[arrow] (act) |- (env);
-%   \draw[arrow] (obs) -- (policy);
-%   \draw[arrow] (next_obs) |- (rl);
-%   \draw[arrow] (reward) -- (rl);
-%   \draw[arrow] (rl) -- (policy) node[midway, right] {POLICY UPDATE};
-% \end{tikzpicture}
-
-% \begin{wrapfigure}
-%   [17]{l}{.25\textwidth}
-%   \centering
-%   \def\stackalignment{l}\stackunder{ \includegraphics[width=\linewidth]{images/rl_scheme.png} } %
-%   {\scriptsize \parbox[t]{\linewidth}{Source: \href{ https://it.mathworks.com/help/reinforcement-learning/ug/create-agents-for-reinforcement-learning.html}{Mathworks}}}
-%   \caption{RL Agent Scheme}
-%   \label{fig:rl_scheme}
-% \end{wrapfigure}
-When considering a logistics problem, reinforcement learning naturally comes to mind.
-This is because defining a reward function is relatively straightforward: it could
-be measured in terms of packages delivered per minute, per step, or a similar metric.
-Additionally, the entire process can be simulated in a virtual environment,
-allowing multiple parallel simulations to accelerate the agent's learning
-process. As illustrated in Figure \ref{fig:rl_scheme}, the structure of the
-Reinforcement Learning framework closely resembles the agent-based model
-depicted in Figure \ref{fig:agent_scheme}. In both cases, the agent interacts
-with its environment, receives feedback in the form of rewards, and continuously
-refines its policy to optimize future performance.
 
 However, RL has its own set of challenges. The most common one is the
 convergence to a local minimum in the reward function. This means that the agent
