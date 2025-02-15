@@ -1,8 +1,203 @@
 \chapter{Agent Development}
 \label{cha:agent_development}
 
+In this chapter we present the iterative development process of the agent. We describe
+the successive phases of its evolution, from the initial prototype to the final
+implementation. During this journey, several challenges and unexpected issues
+emerged. For each phase, we detail the encountered problems and the approaches
+adopted to overcome them, explaining the reasoning behind the design choices.
+The majority of the choices taken in the crafting of the various prompt will be
+discussed in Chapter \ref{cha:data_collection}, while reporting here all the discarded
+ones.
+
 \section{First Approach}
 \label{sec:first_approach}
+
+In this initial phase of the development and testing process, a trial-and-error methodology
+was adopted to iteratively refine the system's behavior and try to optimize performance.
+Unfortunately, this led to moving away from the definition of the problem and,
+in combination with the poor performance of the agent, it was decided to start over
+with a new approach. Nonetheless, this first attempt was crucial in understanding
+the challenges and limitations of the problem, so it is important to describe it.
+
+\vspace{1mm}
+\begin{codewindow}
+  [Prompt] \lstset{style=pythonstyle, caption={Summary of a prompt used in the first approach, more in Appendix},
+  label={lst:first_agent_prompt}} \begin{lstlisting}
+[ROLE DESCRIPTION]
+
+MAP:
+1 1 1 1 1
+1 1 P 1 1
+1 1 1 1 1
+2 A 1 1 1
+1 1 1 1 1
+
+LEGEND:
+- A: you (the Agent) are in this position;
+- 1: you can move in this position;
+- 2: you can deliver a parcel in this position (and also move there);
+- P: a parcel is in this position;
+- X: you are in the same position of a parcel;
+- Q: you are in the delivery/shipping point;
+
+ACTIONS you can do:
+- U: move up
+- D: move down
+- L: move left
+- R: move right
+- T: take a parcel
+- S: ship a parcel
+
+You have 1 parcels to deliver.
+
+[RULES]
+
+[QUESTION DESCRIPTION]
+What is your next action?
+\end{lstlisting}
+\end{codewindow}
+\vspace{1mm}
+
+The approach began by parsing crucial information from the server, which served
+as the foundation for understanding how the LLM would interact with it. The main
+point of discuss in the parsing topic was the map, that was represented as a
+multi-line string like the one in Listing \ref{lst:parced_map}. The first prompt
+sent to the LLM was crafted by concatenating the map with all the other information
+needed to describe the state of the environment, as shown in Listing
+\ref{lst:first_agent_prompt}.
+
+\vspace{1mm}
+\begin{codewindow}
+  [Text] \lstset{style=pythonstyle, caption={Parsed Map Result with legend},
+  label={lst:parced_map}} \begin{lstlisting}
+    1 1 1 1 1
+    1 1 P 1 1
+    1 1 1 1 1
+    2 A 1 1 1
+    1 1 1 1 1
+
+    LEGEND:
+    1: Walkable cell
+    2: Delivery point
+    A: Agent
+    P: Parcel
+\end{lstlisting}
+\end{codewindow}
+\vspace{1mm}
+
+This implementation started as a full raw approach, letting the LLM also decide
+the goal to pursue. As various challenges and inefficiencies were identified during
+extensive testing, we progressively implemented a total of seven ``helping" parameters.
+These parameters were introduced with the objective of addressing specific
+issues observed during experimentation, and each of them played a significant role
+in shaping the overall functionality of the agent:
+\begin{itemize}
+  \item \texttt{ANTI\_LOOP}: This parameter was introduced to eliminate a common
+    inefficiency in agent movement, wherein the agent would repeatedly traverse
+    the same path in a circular loop, failing to make meaningful progress toward
+    its goal. By setting this parameter to \texttt{true}, if the last four
+    action were \texttt{["U", "R", "D", "L"]} (either clockwise or
+    counterclockwise) the agent was forced to take an action that prevented the loop
+    for happening. This optimization helped the agent make more intelligent
+    movement decisions, thereby removing the possibility of being stuck in repetitive
+    cycles;
+
+  \item \texttt{HELP\_THE\_BOT}: The primary purpose of this parameter was to assist
+    the agent in handling parcels more effectively. When activated by setting it
+    to \texttt{true}, the agent was programmed to automatically take a parcel if
+    the parcel was located directly below its current position. Additionally, if
+    the agent was positioned at a delivery point, this parameter ensured that the
+    agent would immediately proceed with shipping the parcel without requiring additional
+    decision-making steps. This was implemented to reduce the number of calls to
+    the LLM, since, even in this version of the agent, it was able to always pick
+    up a parcel and deliver it (if in the correct tile);
+
+  \item \texttt{SELECT\_ONLY\_ACTION}: This parameter was designed to simplify the
+    agent's decision-making process in cases where the list of available actions
+    contained only a single option. When set to \texttt{true}, the agent would
+    automatically select and execute the sole available action without
+    hesitation or delay. This was made by a big filtering phase that returned the
+    legal actions:
+    \begin{itemize}
+      \item remove the opposite of the last action;
+
+      \item remove all the action that was not possible (like going left while
+        in the first column or going up while in the first row);
+
+      \item remove the delivery action if the agent wasn't carrying a parcel and
+        in a delivery point;
+
+      \item remove the pick action if the agent was in a cell with no parcel.
+    \end{itemize}
+    This, in combination with the \texttt{HELP\_THE\_BOT} parameter, reduced the
+    number of unnecessary calls to the LLM, thereby enhancing the agent's
+    efficiency, but also giving the agent too little decision power;
+
+  \item \texttt{USE\_HISTORY}: This parameter is the only one that was kept for all
+    the future iterations (more on this in Section \ref{sec:stateful}). The role
+    of this parameter was to decide whether each call to the LLM should contain
+    only the current state of the environment of the entire message history. If set
+    to \texttt{true}, the LLM would have access to the full conversation history,
+    allowing it to make more informed decisions based on past interactions and
+    events. This feature was particularly useful and powerful, but also with a
+    big downside related to the LLM context length, that will be discussed in Chapter
+    \ref{cha:conclusions};
+
+  \item \texttt{REDUCED\_MAP}: This parameter was introduced to optimize the space
+    the map occupied in the prompt by limiting the environment described as a slice
+    of the full map and then scaling all the coordinates (of the agent and the
+    parcels) treating the reduced map as the total map. The reduction in size
+    was determined based on the maximum value between \texttt{PARCELS\_OBSERVATION\_DISTANCE}
+    and \texttt{AGENTS\_OBSERVATION\_DISTANCE}, ensuring that the agent only received
+    the most relevant spatial data necessary for making informed decisions.
+    Essentially, this optimization allowed the attention of the LLM to not be too
+    sparse, but bringing some extra problems, for example by removing any delivery
+    zone from the map since it was too far away while the current goal was to deliver
+    a parcel;
+
+  \item \texttt{HELP\_FIND\_DELIVERY}: This parameter was specifically designed to
+    assist the agent in locating delivery points more effectively. By setting it
+    to \texttt{true}, the system ensured that the closest delivery point (using Manhattan
+    Distance) was always included in the agent's prompt (not as coordinates but as
+    directions, eg. "right and up"), even if that particular delivery point was not
+    within the agent's immediate field of view. In fact, this parameter was implemented
+    to remedy the problem described in the \texttt{REDUCED\_MAP} point. This feature
+    provided the agent with valuable directional guidance, allowing it to make
+    better routing decisions and reducing the risk of wandering aimlessly in
+    search of a delivery location (or worse, by looping again and again), but
+    also reduced our ability to track the LLM ability in finding the delivery
+    point by itself (more on this in Section \ref{sec:prompts});
+
+  \item \texttt{HELP\_SIMULATE\_NEXT\_ACTIONS}: The goal of this parameter was to
+    enhance the agent's decision-making process by simulating and displaying the
+    expected outcomes of each possible action. When activated by setting it to
+    \texttt{true}, the prompt provided to the LLM would include a detailed
+    breakdown of how each available action would alter the surrounding
+    environment, by computing for each action the resulting map and attaching all
+    of them to the final prompt. In theory, this additional information could help
+    the agent anticipate and select the most favorable course of action. However,
+    experimental results indicated that enabling this feature led to suboptimal performance,
+    resulting in poor decision-making and inefficiencies, probably due to the size
+    of the prompt that was too big for the LLM to handle.
+\end{itemize}
+
+This design resulted in an implementation that was bringing the project in the wrong
+direction, because the whole ``no framework on top" idea was breaking down even if
+this didn't have anything to do with planning in a strict sense. Without those
+helps, the agent was not able to perform well in any environment, and the
+decision was made to start over with a new approach.
+
+Possible answers to ``Why didn't this work?" are:
+\begin{itemize}
+  \item
+\end{itemize}
+
+Still, this first approach was useful to better understand the direction of the project
+and all the subsequent iterations we needed to do.
+
+The code for this first implementation can be found in the \texttt{archive/raw\_llm\_agent.js}
+file inside the project repository \cite{projectrepo}.
 
 \section{Second Approach}
 \label{sec:second_approach}

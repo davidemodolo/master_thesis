@@ -1,4 +1,48 @@
 \chapter{Attachment - Prompts}
 \label{cha:attachment}
 
-\lipsum[1]
+\begin{codewindow}
+  [Prompt] \lstset{style=pythonstyle, caption={Summary of a prompt used in the first approach, more in Appendix},
+  label={lst:first_agent_promptApp}} \begin{lstlisting}
+You are a delivery agent in a web-based game and I want to test your ability. You are in a grid world (represented with a matrix) with some obstacles and some parcels to deliver. Parcels are generated at random on random free spots.
+The value of the parcels lowers as the time passes, so you should deliver them as soon as possible.
+Your view of the world is limited to a certain distance, so you can only see the parcels and the delivery points that are close to you.
+MAP:
+1 1 1 1 1
+1 1 P 1 1
+1 1 1 1 1
+2 A 1 1 1
+1 1 1 1 1
+
+LEGEND:
+- A: you (the Agent) are in this position;
+- 1: you can move in this position;
+- 2: you can deliver a parcel in this position (and also move there);
+- P: a parcel is in this position;
+- X: you are in the same position of a parcel;
+- Q: you are in the delivery/shipping point;
+
+ACTIONS you can do:
+- U: move up
+- D: move down
+- L: move left
+- R: move right
+- T: take a parcel
+- S: ship a parcel
+
+You have 1 parcels to deliver.
+Important rules:
+- If you have 0 parcels, you must look for the closest parcel to pick up.
+- If you are going to deliver >0 parcels and on the way you find 1 parcel, you should go and pick it up before shipping.
+- If you have at least 1 parcel, your goal should be to deliver it/them to the closest delivery point. The more parcels you have, the more important it is to deliver them as soon as possible.
+- If you can't see any delivery point, just move around to explore the map until one enters your field of view, then go and deliver the parcels.
+- If there is no parcel in the map, just move around to explore the map until one parcel spawns, then go and get it.
+
+You want to maximize your score by delivering the most possible number of parcels. You can pickup multiple parcels and deliver them in the same delivery point.
+Don't explain the reasoning and don't add any comment, just provide the action.
+Try to not go back and forth, it's a waste of time, so use the conversation history to your advantage.
+Example: if you want to go down, just answer 'D'.
+The closest delivery point is right and up from you.
+What is your next action?
+\end{lstlisting}
+\end{codewindow}

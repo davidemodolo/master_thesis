@@ -478,7 +478,7 @@ running, and interacting with models without relying on cloud services.
 
 \subsubsection{LLaMa 3.2}
 \begin{wrapfigure}
-  [9]{l}{.25\textwidth}
+  [9]{l}{.22\textwidth}
   \centering
   \def\stackalignment{l}\stackunder{ \includegraphics[width=\linewidth]{images/meta.png} }
   {\scriptsize \parbox[t]{\linewidth}{Source: \href{https://www.flaticon.com/free-icon/meta_6033716}{Meta icons created by Freepik - Flaticon}}}
@@ -497,7 +497,7 @@ version.
 \vspace{8mm}
 \subsubsection{Gemma 2}
 \begin{wrapfigure}
-  [8]{l}{.25\textwidth}
+  [8]{l}{.22\textwidth}
   \centering
   \def\stackalignment{l}\stackunder{ \includegraphics[width=\linewidth]{images/gemma.png} }
   {\scriptsize \parbox[t]{\linewidth}{Source: \href{https://logowik.com/google-gemma-ai-logo-vector-71178.html}{logowik}}}
@@ -514,7 +514,7 @@ The model tested in our experiments was the 9-billion-parameter version.
 \vspace{9mm}
 \subsubsection{DeepSeek-V3}
 \begin{wrapfigure}
-  [14]{l}{.25\textwidth}
+  [14]{l}{.22\textwidth}
   \centering
   \def\stackalignment{l}\stackunder{ \includegraphics[width=\linewidth]{images/ds.png} }
   {\scriptsize \parbox[t]{\linewidth}{Source: \href{https://github.com/deepseek-ai}{DeepSeek GitHub}}}
@@ -564,7 +564,7 @@ have not been officially confirmed. Estimates suggest that GPT-4 may have around
 1.76 trillion parameters, but this remains speculative\footnote{\url{https://en.wikipedia.org/wiki/GPT-4}}.
 
 \begin{wrapfigure}
-  [11]{r}{.25\textwidth}
+  [11]{r}{.22\textwidth}
   \centering
   \def\stackalignment{r}\stackunder{ \includegraphics[width=\linewidth]{images/openai.png} }
   {\scriptsize \parbox[t]{\linewidth}{Source: \href{https://www.vecteezy.com/png/22227364-openai-chatgpt-logo-icon}{Vecteezy}}}
@@ -615,6 +615,9 @@ Our tests were conducted during a period when the API exhibited the third behavi
 (Soft). However, due to frequent API updates, we cannot guarantee the
 reproducibility of these results. To more mitigate variability, we set the
 temperature parameter to zero during our tests, aiming for deterministic outputs.
+To limit the impact of unwanted tokens appearing in the output or vice versa, we
+decided to ignore any token that was not in the list of expected tokens and we assigned
+to the missing tokens the 20th log-probability minus the 19th one.
 
 Another crucial feature offered by OpenAI is the \texttt{logprobs} parameter. When
 specified, this parameter returns the log probabilities of the top tokens that
