@@ -22,39 +22,21 @@ the challenges and limitations of the problem, so it is important to describe it
 
 \vspace{1mm}
 \begin{codewindow}
-  [Prompt] \lstset{style=pythonstyle, caption={Summary of a prompt used in the first approach, more in Appendix},
+  [Text] \lstset{style=pythonstyle, caption={Scheme of a prompt used in the first approach, full in Appendix \ref{lst:apx:first_agent_prompt}},
   label={lst:first_agent_prompt}} \begin{lstlisting}
 [ROLE DESCRIPTION]
 
-MAP:
-1 1 1 1 1
-1 1 P 1 1
-1 1 1 1 1
-2 A 1 1 1
-1 1 1 1 1
+[MAP]
 
-LEGEND:
-- A: you (the Agent) are in this position;
-- 1: you can move in this position;
-- 2: you can deliver a parcel in this position (and also move there);
-- P: a parcel is in this position;
-- X: you are in the same position of a parcel;
-- Q: you are in the delivery/shipping point;
+[LEGEND]
 
-ACTIONS you can do:
-- U: move up
-- D: move down
-- L: move left
-- R: move right
-- T: take a parcel
-- S: ship a parcel
+[ACTIONS]
 
-You have 1 parcels to deliver.
+[PARCELS ALREADY PICKED]
 
 [RULES]
 
-[QUESTION DESCRIPTION]
-What is your next action?
+[QUESTION]
 \end{lstlisting}
 \end{codewindow}
 \vspace{1mm}
@@ -69,7 +51,7 @@ needed to describe the state of the environment, as shown in Listing
 
 \vspace{1mm}
 \begin{codewindow}
-  [Text] \lstset{style=pythonstyle, caption={Parsed Map Result with legend},
+  [Text] \lstset{style=pythonstyle, caption={Parsed Map Result with partial legend},
   label={lst:parced_map}} \begin{lstlisting}
     1 1 1 1 1
     1 1 P 1 1
@@ -89,9 +71,11 @@ needed to describe the state of the environment, as shown in Listing
 This implementation started as a full raw approach, letting the LLM also decide
 the goal to pursue. As various challenges and inefficiencies were identified during
 extensive testing, we progressively implemented a total of seven ``helping" parameters.
-These parameters were introduced with the objective of addressing specific
-issues observed during experimentation, and each of them played a significant role
-in shaping the overall functionality of the agent:
+
+\subsection{Helping Parameters}
+These parameters were introduced with the objective of addressing specific issues
+observed during experimentation, and each of them played a significant role in
+shaping the overall functionality of the agent:
 \begin{itemize}
   \item \texttt{ANTI\_LOOP}: This parameter was introduced to eliminate a common
     inefficiency in agent movement, wherein the agent would repeatedly traverse
@@ -149,12 +133,13 @@ in shaping the overall functionality of the agent:
     of the full map and then scaling all the coordinates (of the agent and the
     parcels) treating the reduced map as the total map. The reduction in size
     was determined based on the maximum value between \texttt{PARCELS\_OBSERVATION\_DISTANCE}
-    and \texttt{AGENTS\_OBSERVATION\_DISTANCE}, ensuring that the agent only received
-    the most relevant spatial data necessary for making informed decisions.
-    Essentially, this optimization allowed the attention of the LLM to not be too
-    sparse, but bringing some extra problems, for example by removing any delivery
-    zone from the map since it was too far away while the current goal was to deliver
-    a parcel;
+    and \texttt{AGENTS\_OBSERVATION\_DISTANCE} (from Server Configuration File,
+    see Section \ref{sub:server_configuration_event_handling}), ensuring that
+    the agent only received the most relevant spatial data necessary for making
+    informed decisions. Essentially, this optimization allowed the attention of
+    the LLM to not be too sparse, but bringing some extra problems, for example
+    by removing any delivery zone from the map since it was too far away while
+    the current goal was to deliver a parcel;
 
   \item \texttt{HELP\_FIND\_DELIVERY}: This parameter was specifically designed to
     assist the agent in locating delivery points more effectively. By setting it
@@ -172,35 +157,81 @@ in shaping the overall functionality of the agent:
   \item \texttt{HELP\_SIMULATE\_NEXT\_ACTIONS}: The goal of this parameter was to
     enhance the agent's decision-making process by simulating and displaying the
     expected outcomes of each possible action. When activated by setting it to
-    \texttt{true}, the prompt provided to the LLM would include a detailed
-    breakdown of how each available action would alter the surrounding
-    environment, by computing for each action the resulting map and attaching all
-    of them to the final prompt. In theory, this additional information could help
-    the agent anticipate and select the most favorable course of action. However,
-    experimental results indicated that enabling this feature led to suboptimal performance,
-    resulting in poor decision-making and inefficiencies, probably due to the size
-    of the prompt that was too big for the LLM to handle.
+    \texttt{true}, the prompt provided to the LLM included a detailed breakdown
+    of how each available action would alter the surrounding environment, by computing
+    for each action the resulting map and attaching all of them to the final prompt.
+    In theory, this additional information could help the agent anticipate and select
+    the most favorable course of action. However, experimental results indicated
+    that enabling this feature led to suboptimal performance, resulting in poor
+    decision-making and inefficiencies, probably due to the size of the prompt that
+    was too big for the LLM to handle.
 \end{itemize}
 
-This design resulted in an implementation that was bringing the project in the wrong
-direction, because the whole ``no framework on top" idea was breaking down even if
-this didn't have anything to do with planning in a strict sense. Without those
-helps, the agent was not able to perform well in any environment, and the
-decision was made to start over with a new approach.
+This design resulted in an implementation that was bringing the project in the
+wrong direction, because the whole ``no framework on top" idea was breaking down
+even if this didn't have anything to do with planning in a strict sense. Without
+those helps, the agent was not able to perform well in any environment, and the decision
+was made to start over with a new approach.
+
+Overall, while this initial approach did not yield the desired performance, it was
+an essential step for the next iterations of the agent's development.
+
+The code for this first implementation can be found in the \texttt{archive/raw\_llm\_agent.js}
+file inside the project repository \cite{projectrepo}.
+
+\subsection{Takeaways}
+Through this initial approach, we gained valuable insights into the challenges of
+designing an effective agent. The key lessons learned from this phase can be
+summarized as follows:
+
+Why did this approach not work as expected?
+\begin{itemize}
+  \item Unclear prompt style: the way information was structured in the prompt
+    was not optimal. This became particularly evident in the uncertainty computation,
+    where the agent frequently exhibited high uncertainty in its actions;
+
+  \item Over-reliance on helping parameter: providing excessive hints and
+    structured input to the agent hindered its ability to explore the
+    environment effectively. While guidance could be helpful, too much
+    assistance made the results too distant from what the LLM could achieve by
+    itself.
+\end{itemize}
+
+Key Takeaways from this phase:
+\begin{itemize}
+  \item Performance: when extensive guidance was provided, the results were still
+    acceptable but inferior to those obtained using PDDL-based solutions.
+    Initially, we considered implementing a PDDL version of the agent to serve as
+    a benchmark. However, as discussed in Section \ref{sub:pddl_based_solutions},
+    this comparison would have been unfair due to fundamental differences in
+    approach and assumptions;
+
+  \item Unintended biases in LLM behavior: Although not directly related to the
+    core functionality of the agent, an interesting observation emerged regarding
+    how the LLM interpreted the presence of other agents. The server allowed the
+    spawning of ``enemy" agents capable of blocking paths. While this feature
+    was not used in the main experiments, we discovered that simply including information
+    about these agents in the prompt led the LLM to assume that agents near parcels
+    were actively trying to steal them. In reality, these agents were merely obstacles
+    with no intent to compete for parcels. This behavior highlights inherent
+    biases in the LLM's training data, where similar context might have been associated
+    with adversarial interactions.
+\end{itemize}
+
+\section{Second Approach}
+\label{sec:second_approach}
+
+\subsection{Takeaways}
 
 Possible answers to ``Why didn't this work?" are:
 \begin{itemize}
   \item
 \end{itemize}
 
-Still, this first approach was useful to better understand the direction of the project
-and all the subsequent iterations we needed to do.
-
-The code for this first implementation can be found in the \texttt{archive/raw\_llm\_agent.js}
-file inside the project repository \cite{projectrepo}.
-
-\section{Second Approach}
-\label{sec:second_approach}
+What we brought home:
+\begin{itemize}
+  \item
+\end{itemize}
 
 \section{Final Agent}
 \label{sec:final_agent}

@@ -129,6 +129,26 @@ numberstyle=\tiny
 {4}{{{\color{orange}4}}}{1} {5}{{{\color{orange}5}}}{1} {6}{{{\color{orange}6}}}{1}
 {7}{{{\color{orange}7}}}{1} {8}{{{\color{orange}8}}}{1} {9}{{{\color{orange}9}}}{1}
 }
+
+% Custom prompt style
+\lstdefinestyle{promptstyle}{ backgroundcolor=
+\color{bggray}
+, commentstyle=
+\color{commentcolor}
+, keywordstyle=
+\color{keywordcolor}
+\bfseries, basicstyle=\ttfamily\footnotesize, breaklines=true, captionpos=b, keepspaces=true,
+numbers=left, numbersep=5pt, % Adjusted spacing between row numbers and code
+numberstyle=\tiny
+\color{gray}
+, showspaces=false, showstringspaces=false, tabsize=2, frame=none, literate= *{0}{{{\color{primary}0}}}{1}
+{1}{{{\color{primary}1}}}{1} {2}{{{\color{primary}2}}}{1} {3}{{{\color{primary}3}}}{1}
+{4}{{{\color{primary}4}}}{1} {5}{{{\color{primary}5}}}{1} {6}{{{\color{primary}6}}}{1}
+{7}{{{\color{primary}7}}}{1} {8}{{{\color{primary}8}}}{1} {9}{{{\color{primary}9}}}{1}
+}
+% Define prompt language
+\lstdefinelanguage{prompt}{ keywords={MAP, LEGEND, ACTIONS}, sensitive=true, comment=[l]{;},
+morecomment=[s]{\#|}{|\#} , morestring=[b]', morestring=[b]", }
 % Define a custom tcolorbox for a "code window" effect
 \newtcolorbox{codewindow}[1][]{ colback=bggray, colframe=black, arc=5mm, boxrule=0.5mm, width=\linewidth, left=5mm, top=2mm, bottom=0mm, right=3mm, title=#1 }
 % Document

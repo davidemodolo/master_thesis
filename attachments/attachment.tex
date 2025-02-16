@@ -1,10 +1,11 @@
 \chapter{Attachment - Prompts}
 \label{cha:attachment}
-
+\clearpage
 \begin{codewindow}
-  [Prompt] \lstset{style=pythonstyle, caption={Summary of a prompt used in the first approach, more in Appendix},
-  label={lst:first_agent_promptApp}} \begin{lstlisting}
-You are a delivery agent in a web-based game and I want to test your ability. You are in a grid world (represented with a matrix) with some obstacles and some parcels to deliver. Parcels are generated at random on random free spots.
+  [Prompt] \lstset{style=promptstyle, language=prompt, caption={Example of a prompt used in the first agent implementation, see Section \ref{sec:first_approach}},
+  label={lst:apx:first_agent_prompt}} \begin{lstlisting}
+You are a delivery agent in a web-based game and I want to test your ability. You are in a grid world (represented with a matrix) with some obstacles and some parcels to deliver.
+Parcels are generated at random on random free spots.
 The value of the parcels lowers as the time passes, so you should deliver them as soon as possible.
 Your view of the world is limited to a certain distance, so you can only see the parcels and the delivery points that are close to you.
 MAP:
