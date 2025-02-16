@@ -10,16 +10,44 @@ external structures remains a topic of investigation. The primary aim of this
 work is to assess whether LLMs can be effectively utilized as agents in dynamic
 environments without leveraging predefined frameworks or knowledge bases.
 
-To achieve this, a thorough analysis of existing methodologies is necessary.
-Traditional approaches such as PDDL and Reinforcement Learning provide
-structured and systematic ways to tackle planning problems. PDDL offers explainability
+To achieve this, we first conducted an analysis of existing methodologies in the
+literature. Traditional approaches such as PDDL and Reinforcement Learning
+provide structured and systematic ways to tackle planning problems. PDDL offers explainability
 and efficiency in constrained environments but lacks adaptability, making it
 impractical for real-time applications. On the other hand, Reinforcement
 Learning is highly adaptable and effective in changing environments but suffers
-from issues such as convergence to local minima and lack of explainability. Recent
-research has also explored planning capabilities of LLMs, with several studies
-investigating their reasoning abilities and limitations. The specific problem addressed
-in this thesis involves evaluating the capacity of an LLM, devoid of external
-structures, to solve logistics problems in dynamic settings.
+from issues such as convergence to local optima and lack of explainability.
 
-[TODO]
+Recent research has also explored planning capabilities of LLMs, with several studies
+investigating their reasoning abilities as well as planning skills.
+
+The specific problem addressed in this thesis involves evaluating the generative
+ability of ``raw" LLMs, devoid of external structures, to solve logistics
+problems in dynamic settings. [TODO MAKE THIS LONGER]
+
+We also analyzed some ways to evaluate the LLM uncertainty and used the log-probability
+based one to evaluate the uncertainty of an LLM in choosing the action. The approach
+required to generate a token that referred to a possible action and working on a
+bias for the logits to then compute the probability of correct.
+
+[EXPECTED RESULTS]
+
+The thesis is structured as follows:
+\begin{itemize}
+  \item Chapter \ref{cha:background} provides an overview of the background and related
+    work.
+
+  \item Chapter \ref{cha:experiment_setting} describes the experimental setting and
+    the environment used.
+
+  \item Chapter \ref{cha:agent_development} details the development of the agent.
+
+  \item Chapter \ref{cha:data_collection} explains the data collection process.
+
+  \item Chapter \ref{cha:results_discussion} presents the results and discusses the
+    findings.
+
+  \item Chapter \ref{cha:future_works} outlines potential future works.
+
+  \item Chapter \ref{cha:conclusions} concludes the thesis.
+\end{itemize}

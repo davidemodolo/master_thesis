@@ -7,7 +7,7 @@ framework designed to evaluate the performance of our LLM-driven agent.
 We begin by formally defining the problem, ensuring that our study is framed
 within a well-structured and precise context. We also outline the specific aspects
 of the problem that our research aims to investigate, clarifying our objectives
-and highlighting the the choices we made in our work.
+and highlighting the choices we made in our work.
 
 Following this, we offer a thorough explanation of the environment used to simulate
 the delivery platform; this section provides a detailed overview of the web-based
@@ -108,7 +108,7 @@ Deliveroo.js it's an Educational Game, developed by Marco Robol for the course
 on Autonomous Software Agents (ASA) by Prof. Paolo Giorgini, using the Treejs\footnote{\url{https://threejs.org/}}
 framework.
 
-The code for the server is open and che be accessed on GitHub \footnote{\url{https://github.com/unitn-ASA/Deliveroo.js}}
+The code for the server is open and can be accessed on GitHub \footnote{\url{https://github.com/unitn-ASA/Deliveroo.js}}
 as well as some example of agents (with different level of complexity)\footnote{\url{https://github.com/unitn-ASA/DeliverooAgent.js}}.
 
 \begin{figure}[h!]
@@ -120,7 +120,7 @@ as well as some example of agents (with different level of complexity)\footnote{
 \end{figure}
 
 The game can be played even by humans, by interacting in the browser; technically
-speaking, it is a web-based platform consisting on three main components
+speaking, it is a web-based platform consisting of three main components
 connected to each other via sockets (implemented with Socket.io\footnote{\url{https://socket.io/}}):
 \begin{itemize}
   \item \textbf{Game server}: it contains the entire logic of the game and it includes
@@ -258,11 +258,11 @@ were utilized in our tests:
     of the map, along with all the tiles in it. Tiles are currently sent as a dictionary
     \{\texttt{x: INT, y: INT, delivery: BOOL, spawner: BOOL}\} where \texttt{delivery}
     is true if the tile is a delivery zone and \texttt{spawner} is true if a
-    parcel can spawn on it.
+    parcel can spawn on it;
 
   \item \texttt{onYou} (id, name, x, y, score ): it sends the id, the name, the
     x and y coordinates and the score of the agent connected that the code is
-    piloting.
+    piloting;
 
   \item \texttt{onParcelsSensing} async (perceived\_parcels): it is an async function
     that sends the parcels that the agent can see at any time. The parcels are
@@ -282,11 +282,11 @@ possibilities for research and applications in various domains.
 One of the core aspects of LLMs is their autoregressive nature, meaning they generate
 text one token at a time (given the current implementation, but alternative solution
 are currently being studied, for example by Meta AI\footnote{\url{https://ai.meta.com/}}
-in the paper ``Better \& Faster Large Language Models via Multi-token Prediction"
-by Gloeckle et al.\cite{gloeckle2024betterfasterlarge}), predicting the next
-most likely token based on the context provided. This capability is what allows LLMs
-to generate coherent and contextually relevant responses. The way these systems
-operate can be broken down into a (simplified) step-by-step process:
+in the paper `Better \& Faster Large Language Models via Multi-token Prediction'
+by Gloeckle et al.\cite{gloeckle2024betterfasterlarge}), predicting the next most
+likely token based on the context provided. This capability is what allows LLMs
+to generate coherent and contextually relevant responses. The way these systems operate
+can be broken down into a (simplified) step-by-step process:
 
 \begin{itemize}
   \item The prompt (the request) is tokenized, which means it is divided into
@@ -313,24 +313,25 @@ operate can be broken down into a (simplified) step-by-step process:
 \end{figure}
 \footnotetext{{\url{https://platform.openai.com/tokenizer}}}
 
-One key element of this process is how the next token is selected. The winning token
-is picked from a probability distribution obtained through the softmax function.
-However, if selection were purely deterministic, the model would always generate
-the same output given the same prompt, making it rigid and predictable. To
-introduce variability and prevent repetitive patterns, a controlled amount of randomness
-is introduced using the \texttt{temperature} parameter.
+One key element of this process is how the next token is selected. The winning
+token is picked from a probability distribution obtained through the softmax
+function. However, if selection were purely deterministic, the model would always
+generate the same output given the same prompt, making it rigid and predictable.
+To introduce variability and prevent repetitive patterns, a controlled amount of
+randomness is introduced using the \texttt{temperature} parameter.
 
-The temperature parameter plays a crucial role in regulating randomness in text
-generation: this mechanism explains why the same prompt can yield different outputs
-when used multiple times: because the token selection is influenced by this
-controlled randomness.
+The temperature parameter plays a crucial role in regulating randomness in text generation:
+this mechanism explains why the same prompt can yield different outputs when
+used multiple times: because the token selection is influenced by this controlled
+randomness.
 
-Beyond temperature, another factor that influences token selection is the logit bias\footnote{\url{https://www.vellum.ai/llm-parameters/logit-bias}}.
-Logit bias allows direct intervention in the probability of specific tokens being
-chosen during text generation. Instead of relying solely on the model's learned
-probabilities, users can manually adjust the likelihood of certain tokens appearing
-by modifying the logits (the unnormalized probabilities) before applying the softmax
-function.
+Beyond temperature, another factor that influences token selection is the logit
+bias\footnote{\url{https://www.vellum.ai/llm-parameters/logit-bias}}. Logit bias
+allows direct intervention in the probability of specific tokens being chosen
+during text generation. Instead of relying solely on the model's learned probabilities,
+users can manually adjust the likelihood of certain tokens appearing by
+modifying the logits (the unnormalized probabilities) before applying the
+softmax function.
 
 The logit bias mechanism operates as follows:
 
@@ -342,11 +343,11 @@ The logit bias mechanism operates as follows:
     eliminating it from consideration altogether.
 \end{itemize}
 
-This approach gives users more control over text generation, allowing them to guide
-the model toward preferred outputs while avoiding undesired words or phrases. A
-simplified implementation of how logit bias works can be seen in the Python code
-snippet in Listing \ref{lst:logit_bias}, where we want to increase the likelihood
-of the word ``fox'' and decrease the likelihood of the word ``quick''.
+This approach gives users more control over text generation, allowing them to
+guide the model toward preferred outputs while avoiding undesired words or
+phrases. A simplified implementation of how logit bias works can be seen in the Python
+code snippet in Listing \ref{lst:logit_bias}, where we want to increase the
+likelihood of the word ``fox'' and decrease the likelihood of the word ``quick''.
 
 \vspace{10mm}
 \begin{codewindow}
@@ -382,42 +383,42 @@ probs = torch.nn.functional.softmax(logits, dim=-1)
 \vspace{10mm}
 
 This technique is particularly useful in scenarios where the generated text must
-adhere to specific constraints. For example, logit bias can be used for content
-moderation, ensuring that the model avoids generating harmful, offensive, or inappropriate
-content. By assigning a strong negative bias to certain tokens used to build
-specific words or sentences, users can effectively steer the model away from producing
+adhere to specific constraints. For example, logit bias can be used for content moderation,
+ensuring that the model avoids generating harmful, offensive, or inappropriate
+content. By assigning a strong negative bias to certain tokens used to build specific
+words or sentences, users can effectively steer the model away from producing
 undesirable responses.
 
-Not only, there are some cases where an LLM has been expanded with custom and
-private information, via fine-tuning or Retrieval Augmented Generation (as we
-cited in Section \ref{sub:llms_uncertainty}). In this context, we may want to force
-the model to not generate some specific content that may be useful for the overall
-response but should not be shared.
+Not only, there are some cases where an LLM has been expanded with custom and private
+information, via fine-tuning or Retrieval Augmented Generation (as we cited in Section
+\ref{sub:llms_uncertainty}). In this context, we may want to force the model to
+not generate some specific content that may be useful for the overall response
+but should not be shared.
 
-On the other hand, logit bias can be leveraged to override built-in model
-safeguards. In some cases, AI models have safety mechanisms that prevent them
-from answering certain types of questions, responding with phrases like ``I'm sorry,
-but I can't provide that information." By applying a negative logit bias to the
-tokens that generate the words that build this response, users can force the model
-to produce an alternative reply, whether it be a reworded refusal or even an
-answer to the original question.
+On the other hand, logit bias can be leveraged to override built-in model safeguards.
+In some cases, AI models have safety mechanisms that prevent them from answering
+certain types of questions, responding with phrases like ``I'm sorry, but I can't
+provide that information." By applying a negative logit bias to the tokens that generate
+the words that build this response, users can force the model to produce an
+alternative reply, whether it be a reworded refusal or even an answer to the original
+question.
 
-Overall, logit bias is a powerful tool for modelling model behavior, allowing
-developers to enforce preferred linguistic patterns, avoid specific terminology,
-and customize AI responses according to their needs. When combined with temperature
-adjustments and other generation techniques, it provides a robust framework for
-controlling LLM output and ensuring its alignment with desired objectives.
+Overall, logit bias is a powerful tool for modelling model behavior, allowing developers
+to enforce preferred linguistic patterns, avoid specific terminology, and customize
+AI responses according to their needs. When combined with temperature
+adjustments and other generation techniques, it provides a robust framework for controlling
+LLM output and ensuring its alignment with desired objectives.
 
 \subsection{Open Source Models}
 
-The term `Large' in Large Language Models (LLMs) refers to their extensive number
+The term ``Large" in Large Language Models (LLMs) refers to their extensive number
 of parameters and the vast datasets used during training. Training these models
 is a resource-intensive process, both in terms of computational power and time.
 However, some organizations choose to release their models as open source,
 allowing the community to access and utilize them freely.
 
-In the context of LLMs, the term `open source' differs from its traditional usage
-in software development\footnote{\url{https://promptengineering.org/llm-open-source-vs-open-weights-vs-restricted-weights/}}.
+In the context of LLMs, the term ``open source" differs from its traditional
+usage in software development\footnote{\url{https://promptengineering.org/llm-open-source-vs-open-weights-vs-restricted-weights/}}.
 Specifically, there is a nuanced distinction that categorizes publicly available
 models into two primary types:
 
@@ -433,16 +434,16 @@ models into two primary types:
     comprehend or modify its underlying structure.
 \end{itemize}
 
-In the following subsections, we will present some open models we tested in the
-early stages of our research. The results analyzed in Chapter \ref{cha:results_discussion}
-do not consider these models due to certain limitations, which we will discuss
-shortly. Nonetheless, they are worth mentioning as they provided a valuable
-starting point during the initial phases of our project.
+In the following subsections, we will present some open models we tested in the early
+stages of our research. The results analyzed in Chapter
+\ref{cha:results_discussion} do not consider these models due to certain
+limitations, which we will discuss shortly. Nonetheless, they are worth mentioning
+as they provided a valuable starting point during the initial phases of our project.
 
 \subsubsection{Challenges with Open Source Models}
 
-One significant challenge we encountered with open source models was the implementation
-of the logit bias mechanism. While the example in Listing \ref{lst:logit_bias}
+One significant challenge we encountered with open source models was the
+implementation of the logit bias mechanism. While the example in Listing \ref{lst:logit_bias}
 may suggest simplicity, the reality is more complex. Implementing this mechanism
 requires:
 
@@ -455,20 +456,20 @@ requires:
     them to incorporate the logit bias.
 \end{itemize}
 
-These steps demand substantial time, and in addition, running those models locally
-requires large computational resources; all of this for something not essential
-to the core objectives of our project (since closed models provide this feature out
-of the box).
+These steps demand substantial time, and in addition, running those models
+locally requires large computational resources; all of this for something not essential
+to the core objectives of our project (since closed models provide this feature
+out of the box).
 
-Moreover, during initial tests, we observed difficulties in constraining the
-Open Source models to produce specific tokens from a list without altering the
-logit bias. For instance, when prompted to ``Answer with just a single letter
-between U, D, L, R." (the explanation for this prompt will be given in Section
-\ref{sec:prompt_creation_choices}) the model often responded with full sentences
-like "Sure, the answer is U!" Truncating such responses to a single token would result
-in outputs like ``Sure" which is not the desired outcome. This is a problem that
-we didn't have with the closed source models, that we will discuss in the next
-sub-section \ref{sub:closed_source_models_openai}.
+Moreover, during initial tests, we observed difficulties in constraining the Open
+Source models to produce specific tokens from a list without altering the logit bias.
+For instance, when prompted to ``Answer with just a single letter between U, D, L,
+R." (the explanation for this prompt will be given in Section \ref{sec:prompt_creation_choices})
+the model often responded with full sentences like "Sure, the answer is U!". Truncating
+such responses to a single token would result in outputs like ``Sure" which is
+not the desired outcome. This is a problem that we didn't have with the closed source
+models, that we will discuss in the next sub-section
+\ref{sub:closed_source_models_openai}.
 
 So, open source models have been tested only in the first instance of the project,
 to test the logic of the agent without wasting credit with OpenAI API.
@@ -592,10 +593,10 @@ in the generated output by assigning bias values ranging from -100 to 100.
 However, a limitation of closed-source models is the lack of transparency
 regarding updates or changes. Users may be unaware of modifications that could affect
 model behavior. For instance, there have been instances where the behavior of the
-logit\_bias parameter changed without prior (or `at run-time') notice. We have
-identified three primary behaviors that the logit\_bias parameter can have
-depending on the version of the API, which appears to be independent from any update
-of the models themselves:
+logit\_bias parameter changed without prior (or ``at run-time") notice. We have identified
+three primary behaviors that the logit\_bias parameter can have depending on the
+version of the API, which appears to be independent from any update of the
+models themselves:
 \begin{enumerate}
   \item \textbf{No change}: The API does not apply the logit\_bias at all,
     resulting in outputs identical to those generated without using the
@@ -612,29 +613,30 @@ of the models themselves:
     greatly decreases its likelihood, but it may still appear.
 \end{enumerate}
 
-Our tests were conducted during a period when the API exhibited the third behavior
-(Soft). However, due to frequent API updates, we cannot guarantee the
-reproducibility of these results. To more mitigate variability, we set the
-temperature parameter to zero during our tests, aiming for deterministic outputs.
-To limit the impact of unwanted tokens appearing in the output or vice versa, we
-decided to ignore any token that was not in the list of expected tokens and we assigned
-to the missing tokens the 20th log-probability minus the 19th one.
+Our tests were conducted during a period when the API exhibited the third
+behavior (Soft). However, due to frequent API updates, we cannot guarantee the reproducibility
+of these results. To more mitigate variability, we set the temperature parameter
+to zero during our tests, aiming for deterministic outputs. To limit the impact of
+unwanted tokens appearing in the output or vice versa, we decided to ignore any
+token that was not in the list of expected tokens and we assigned to the missing
+tokens the 20th log-probability minus the 19th one.
 
-Another crucial feature offered by OpenAI is the \texttt{logprobs} parameter. When
-specified, this parameter returns the log probabilities of the top tokens that
-the model may generate as the `next token'.
+Another crucial feature offered by OpenAI is the \texttt{logprobs} parameter.
+When specified, this parameter returns the log probabilities of the top tokens that
+the model may generate as the ``next token".
 
 This information is essential for computing the uncertainty of the model's
 predictions, as detailed in Section \ref{ssub:tokens_log_probability}. It's
 important to note that also the behavior of the \texttt{logprobs} parameter can change
-over time. For instance, when the paper ``Robots That Ask For Help: Uncertainty
-Alignment for Large Language Model Planners" was released, the \texttt{logprobs}
-parameter returned a maximum of 5 tokens. Since then, this limit has been increased
-to a maximum of 20 tokens. In the future, it may be adjusted again, so it's
-important to keep this in mind when working with the API.
+over time. For instance, when the paper `Robots That Ask For Help: Uncertainty Alignment
+for Large Language Model Planners' was released, the \texttt{logprobs} parameter
+returned a maximum of 5 tokens. Since then, this limit has been increased to a
+maximum of 20 tokens. In the future, it may be adjusted again, so it's important
+to keep this in mind when working with the API.
 
 Pricing per 1 million tokens for all the OpenAI models used can be seen in Table
-\ref{tab:pricing}; the functioning of caching is explained in Section \ref{sec:prompt_creation_choices}.
+\ref{tab:pricing}; the functioning of caching is explained in Section
+\ref{sec:prompt_creation_choices}.
 
 \vspace{3mm}
 \begin{table}[h]
@@ -656,42 +658,42 @@ Pricing per 1 million tokens for all the OpenAI models used can be seen in Table
 
 \subsubsection{GPT-4o-mini}
 GPT-4o-mini, developed by OpenAI\footnote{\url{https://openai.com/research/gpt-4o}},
-is a lightweight variant of the GPT-4o architecture, optimized for efficiency
-while maintaining strong performance across a range of tasks. It is designed to deliver
-fast inference and lower computational costs, making it suitable for deployment
-in real-time applications and on-device AI systems. While OpenAI has not publicly
-disclosed the parameter count, it is positioned as a more efficient alternative
+is a lightweight variant of the GPT-4o architecture, optimized for efficiency while
+maintaining strong performance across a range of tasks. It is designed to
+deliver fast inference and lower computational costs, making it suitable for deployment
+in real-time applications and on-device AI systems. While OpenAI has not
+publicly disclosed the parameter count, it is positioned as a more efficient alternative
 to larger models in the GPT-4 family.
 
-The main model used for the tests in our experiments was indeed GPT-4o-mini, selected
-for its balance of performance and pricing.
+The main model used for the tests in our experiments was indeed GPT-4o-mini,
+selected for its balance of performance and pricing.
 
 \subsubsection{GPT-4o}
-GPT-4o is OpenAI's flagship multimodal model, capable of processing and
-generating text, images, and audio in real time. It represents a significant leap
-in efficiency and latency, outperforming previous iterations such as GPT-4-turbo
-while operating at a lower computational cost. Unlike its predecessors, GPT-4o
-is natively trained across multiple modalities rather than combining separate
-models for different inputs. Though OpenAI has not released detailed architectural
-specifications, benchmark results indicate substantial improvements in reasoning,
-multilingual proficiency, and response speed.
+GPT-4o is OpenAI's flagship multimodal model, capable of processing and generating
+text, images, and audio in real time. It represents a significant leap in
+efficiency and latency, outperforming previous iterations such as GPT-4-turbo while
+operating at a lower computational cost. Unlike its predecessors, GPT-4o is natively
+trained across multiple modalities rather than combining separate models for different
+inputs. Though OpenAI has not released detailed architectural specifications, benchmark
+results indicate substantial improvements in reasoning, multilingual proficiency,
+and response speed.
 
-It has been used less than GPT-4o-mini because of the higher cost and the fact
-that, since from the first tests, the results were almost identical to the mini
-version.
+It has been used less than GPT-4o-mini because of the higher cost and the fact that,
+since from the first tests, the results were almost identical to the mini version.
 
 \paragraph{AzureAPI}
-GPT-4o was accessed via the Azure OpenAI API, provided by the University of
-Trento, offering a secure and private interface for interacting with the model.
-To facilitate communication between the agent's JavaScript code and the API, a lightweight
-Python server was developed. The server's code is available on GitHub\footnote{\url{https://github.com/davidemodolo/master_thesis_project/blob/main/azureAPI/server.py}}.
+\label{par:azureapi} GPT-4o was accessed via the Azure OpenAI API, provided by the
+University of Trento, offering a secure and private interface for interacting
+with the model. To facilitate communication between the agent's JavaScript code and
+the API, a lightweight Python server was developed. The server's code is available
+on GitHub\footnote{\url{https://github.com/davidemodolo/master_thesis_project/blob/main/azureAPI/server.py}}.
 
 \subsubsection{GPT-3.5-turbo}
-GPT-3.5-turbo is a high-performance variant of OpenAI's GPT-3.5 model. It
-provides strong general-purpose capabilities while being more accessible for
-applications requiring large-scale deployment. Though it does not match GPT-4-level
-reasoning abilities, it remains competitive in many NLP benchmarks and is widely
-used for production AI services.
+GPT-3.5-turbo is a high-performance variant of OpenAI's GPT-3.5 model. It provides
+strong general-purpose capabilities while being more accessible for applications
+requiring large-scale deployment. Though it does not match GPT-4-level reasoning
+abilities, it remains competitive in many NLP benchmarks and is widely used for production
+AI services.
 
-Unfortunately, this model has been the weakest in our tests; we will discuss
-this in depth in the Section \ref{sec:models_comparison}.
+Unfortunately, this model has been the weakest in our tests; we will discuss this
+in depth in the Section \ref{sec:models_comparison}.

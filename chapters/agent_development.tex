@@ -1,30 +1,49 @@
 \chapter{Agent Development}
 \label{cha:agent_development}
 
-In this chapter we present the iterative development process of the agent. We describe
-the successive phases of its evolution, from the initial prototype to the final
-implementation. During this journey, several challenges and unexpected issues
+In this chapter we present the iterative development of the agent. We describe the
+successive phases of its evolution, from the initial prototype to the final
+implementation. During this process, several challenges and unexpected issues
 emerged. For each phase, we detail the encountered problems and the approaches
 adopted to overcome them, explaining the reasoning behind the design choices.
 The majority of the choices taken in the crafting of the various prompt will be
 discussed in Chapter \ref{cha:data_collection}, while reporting here all the discarded
 ones.
 
+\section{Development information}
+\label{sec:development_information}
+
+The go-to programming language for AI development is Python. However, we chose
+to use JavaScript for this project for several reasons. First, both the server
+and the example agents were already implemented in JavaScript, making it a natural
+choice for consistency. Second, thanks to the availability of the project of the
+Autonomous Software Agents course, our initial plan was to use an existing
+JavaScript-based benchmark from the course. Although we ultimately decided against
+using this benchmark, as explained later, JavaScript remained our language of choice.
+
+Additionally, since there is no more a dedicated JavaScript library for the
+Azure OpenAI API, instead of manually recreating the necessary API calls we opted
+for a more efficient approach by setting up a lightweight Python server to act as
+a middleman. This solution, discussed in Section \ref{par:azureapi}, allowed us
+to integrate Azure's services seamlessly while maintaining JavaScript for the
+core development.
+
 \section{First Approach}
 \label{sec:first_approach}
 
-In this initial phase of the development and testing process, a trial-and-error methodology
-was adopted to iteratively refine the system's behavior and try to optimize performance.
-Unfortunately, this led to moving away from the definition of the problem and,
-in combination with the poor performance of the agent, it was decided to start over
-with a new approach. Nonetheless, this first attempt was crucial in understanding
-the challenges and limitations of the problem, so it is important to describe it.
+In this initial phase of the development and testing process, a trial-and-error
+methodology was adopted to iteratively refine the system's behavior and try to
+optimize performance. Unfortunately, this led to moving away from the definition
+of the problem and, in combination with the poor performance of the agent, it
+was decided to start over with a new approach. Nonetheless, this first attempt
+was crucial in understanding the challenges and limitations of the problem, so it
+is important to describe it.
 
 \vspace{1mm}
 \begin{codewindow}
   [Text] \lstset{style=pythonstyle, caption={Scheme of a prompt used in the first approach, full in Appendix \ref{lst:apx:first_agent_prompt}},
   label={lst:first_agent_prompt}} \begin{lstlisting}
-[ROLE DESCRIPTION]
+[ROLE]
 
 [MAP]
 
@@ -41,13 +60,12 @@ the challenges and limitations of the problem, so it is important to describe it
 \end{codewindow}
 \vspace{1mm}
 
-The approach began by parsing crucial information from the server, which served
-as the foundation for understanding how the LLM would interact with it. The main
-point of discuss in the parsing topic was the map, that was represented as a
-multi-line string like the one in Listing \ref{lst:parced_map}. The first prompt
-sent to the LLM was crafted by concatenating the map with all the other information
-needed to describe the state of the environment, as shown in Listing
-\ref{lst:first_agent_prompt}.
+The approach began by parsing crucial information from the server, which served as
+the foundation for understanding how the LLM would interact with it. The main
+point of discuss in the parsing topic was the map, that was represented as a multi-line
+string like the one in Listing \ref{lst:parced_map}. The first prompt sent to
+the LLM was crafted by concatenating the map with all the other information
+needed to describe the state of the environment, as shown in Listing \ref{lst:first_agent_prompt}.
 
 \vspace{1mm}
 \begin{codewindow}
@@ -68,14 +86,15 @@ needed to describe the state of the environment, as shown in Listing
 \end{codewindow}
 \vspace{1mm}
 
-This implementation started as a full raw approach, letting the LLM also decide
-the goal to pursue. As various challenges and inefficiencies were identified during
-extensive testing, we progressively implemented a total of seven ``helping" parameters.
+This implementation started as a full raw approach, letting the LLM also decide the
+goal to pursue. As various challenges and inefficiencies were identified during
+extensive testing, we progressively implemented a total of seven ``helping"
+parameters.
 
 \subsection{Helping Parameters}
-These parameters were introduced with the objective of addressing specific issues
-observed during experimentation, and each of them played a significant role in
-shaping the overall functionality of the agent:
+These parameters were introduced with the objective of addressing specific
+issues observed during experimentation, and each of them played a significant role
+in shaping the overall functionality of the agent:
 \begin{itemize}
   \item \texttt{ANTI\_LOOP}: This parameter was introduced to eliminate a common
     inefficiency in agent movement, wherein the agent would repeatedly traverse
@@ -167,24 +186,25 @@ shaping the overall functionality of the agent:
     was too big for the LLM to handle.
 \end{itemize}
 
-This design resulted in an implementation that was bringing the project in the
-wrong direction, because the whole ``no framework on top" idea was breaking down
-even if this didn't have anything to do with planning in a strict sense. Without
-those helps, the agent was not able to perform well in any environment, and the decision
-was made to start over with a new approach.
+This design resulted in an implementation that was bringing the project in the wrong
+direction, because the whole ``no framework on top" idea was breaking down even if
+this didn't have anything to do with planning in a strict sense. Without those
+helps, the agent was not able to perform well in any environment, and the
+decision was made to start over with a new approach.
 
-Overall, while this initial approach did not yield the desired performance, it was
-an essential step for the next iterations of the agent's development.
+Overall, while this initial approach did not yield the desired performance, it
+was an essential step for the next iterations of the agent's development.
 
 The code for this first implementation can be found in the \texttt{archive/raw\_llm\_agent.js}
 file inside the project repository \cite{projectrepo}.
 
 \subsection{Takeaways}
-Through this initial approach, we gained valuable insights into the challenges of
-designing an effective agent. The key lessons learned from this phase can be
-summarized as follows:
+Through this initial approach, we gained valuable insights into the challenges
+of designing an effective agent. The key lessons learned from this phase can be summarized
+as follows.
 
-Why did this approach not work as expected?
+\paragraph{Why this approach has been discarded?}
+Several key issues made this method not suitable for the project's objectives:
 \begin{itemize}
   \item Unclear prompt style: the way information was structured in the prompt
     was not optimal. This became particularly evident in the uncertainty computation,
@@ -197,7 +217,7 @@ Why did this approach not work as expected?
     itself.
 \end{itemize}
 
-Key Takeaways from this phase:
+\paragraph{Key Takeaways from this phase}
 \begin{itemize}
   \item Performance: when extensive guidance was provided, the results were still
     acceptable but inferior to those obtained using PDDL-based solutions.
@@ -221,20 +241,105 @@ Key Takeaways from this phase:
 \section{Second Approach}
 \label{sec:second_approach}
 
+In our exploration of different strategies for designing an LLM-driven agent,
+this second approach was the weakest one. The fundamental idea was to adopt a "full
+raw" approach, where the model received all available unprocessed data from the
+server without any pre-processing or filtering. The hypothesis was that by exposing
+the LLM to as much raw information as possible, it might be able to infer
+meaningful patterns and determine the best course of action on its own, giving us
+the ability to evaluate the LLM's planning capabilities without any external structure.
+\vspace{1mm}
+\begin{codewindow}
+  [Text] \lstset{style=pythonstyle, caption={Scheme of a prompt used in the second approach, full in Appendix \ref{lst:apx:second_agent_prompt}},
+  label={lst:second_agent_prompt}} \begin{lstlisting}
+[ROLE]
+
+Raw 'onMap' response: [JSON]
+
+Raw 'onYou' response: [JSON]
+
+Raw 'onParcelsSensing' response: [JSON]
+
+[ACTIONS]
+
+[QUESTION]
+\end{lstlisting}
+\end{codewindow}
+\vspace{1mm}
+
+To achieve this, the agent's prompt was constructed as a simple collection of "name
+of the call - JSON result" pairs. Unlike other approaches that structured data into
+a more human-readable or semantically meaningful format, this method provided
+the LLM with a direct dump of server responses. The only additional elements in the
+prompt were the list of available actions and a loosely defined query requesting
+the next step (necessary to compute the uncertainty).
+
+At first glance, this approach seemed promising in that it completely avoided
+manual interpretation of server responses, reducing the need for custom logic or
+intermediate representations. If successful, it could have allowed for a highly adaptable
+agent that functioned independently of predefined schemas or rigid data structures.
+
+However, in practice, this approach performed poorly. While it occasionally
+worked in very small maps, it became unreliable and inefficient as soon as the environment
+grew even slightly more complex. The agent frequently took suboptimal paths, exhibited
+excessive backtracking, and often failed to reach its goal efficiently.
+
+Additionally, for the agent to work correctly in such small maps, the parameter
+\texttt{USE\_HISTORY} from the first implementation was set to \texttt{true}, allowing
+the LLM to leverage the `action-result' history.
+
+The lack of structured guidance made it difficult for the model to consistently produce
+useful responses, ultimately leading us to discard this approach in favor of
+more refined strategies.
+
 \subsection{Takeaways}
 
-Possible answers to ``Why didn't this work?" are:
+Even if this approach was the weakest one and has been discarded very soon, it
+provided us with valuable insights into the limitations of the LLM in processing
+raw data. The key lessons learned from this phase can be summarized as follows.
+
+\paragraph{Why this approach has been discarded?}
 \begin{itemize}
-  \item
+  \item Arbitrary Naming of API Calls: The names of server calls were not
+    standardized and could change depending on the server's development. For instance,
+    a call named "onMap" might return a list of map tiles, but there was no inherent
+    guarantee of this behavior. Moreover, without explicit context, even
+    we—humans—found it difficult to interpret certain responses.
+
+  \item Lack of Context and Poorly Structured Input: The raw JSON data lacked
+    structured context, making it challenging for the LLM to infer the correct course
+    of action. Additionally, the query format itself was suboptimal. For example,
+    if the prompt simply asked, "Go there, give me the next step to go there,"
+    the model might struggle to determine that the immediate goal was not just
+    reaching (x, y) but selecting the best intermediate step that moved the agent
+    closer to that final destination.
 \end{itemize}
 
-What we brought home:
+\paragraph{Key Takeaways from this phase}
 \begin{itemize}
-  \item
+  \item LLM Inference Capabilities: Surprisingly, the LLM was still able to extract
+    some meaningful information from the unstructured data. While the results
+    were inconsistent, there were instances where the model successfully inferred
+    useful actions despite the messy prompt.
+
+  \item Significant Impact of Prompt Engineering: Small modifications to the
+    prompt led to drastic changes in the agent's behavior. This highlighted the critical
+    role of prompt engineering in optimizing LLM performance, a topic we will
+    explore in detail in Section \ref{sec:prompt_creation_choices}.
 \end{itemize}
 
 \section{Final Agent}
 \label{sec:final_agent}
 
-\section{Closest Cell to the Goal}
+This was the final approach; Rework of the way prompt are created for better structuring
+and testing, before it was a string created at runtime with a series of if/else,
+now they are in a folder and the variables are replaced using a regex; Tested
+also rag but it was like cheating; used to create the heatmaps inside Section \ref{sec:heatmap_generation},
+mainly with GPT-4o-mini. Divided in pickup and delivery by us, not inferred from
+the state. Used both stateless and stateful (with history) Different uncertainty
+handling methods, raw, weighted and stop. Weighted has been used in the stateful
+because in case of wrong action having the largest probability, over time the randomly
+chosen action will lead to the correct action.
+
+\section{Extra: Closest Cell to the Goal}
 \label{sec:closest_cell_to_the_goal}

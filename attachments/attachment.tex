@@ -47,3 +47,28 @@ The closest delivery point is right and up from you.
 What is your next action?
 \end{lstlisting}
 \end{codewindow}
+
+\clearpage
+\begin{codewindow}
+  [Prompt] \lstset{style=promptstyle, language=prompt, caption={Example of a prompt used in the second agent implementation, see Section \ref{sec:second_approach}},
+  label={lst:apx:second_agent_prompt}} \begin{lstlisting}
+You are a delivery agent in a web-based game I am going to give you the raw information I receive from the server and the possible actions. You have to take (pickup) the parcel and ship (deliver) it in a delivery tile.
+Don't loop using the same moves.
+If the information does not change, it means you are choosing the wrong actions.
+Raw 'onMap' response: {"width":2,"height":5,"tiles":[{"x":0,"y":0,"delivery":false},{"x":0,"y":1,"delivery":true},{"x":1,"y":0,"delivery":false},{"x":1,"y":1,"delivery":false},{"x":2,"y":0,"delivery":false},{"x":2,"y":1,"delivery":false},{"x":3,"y":0,"delivery":false},{"x":3,"y":1,"delivery":false},{"x":4,"y":0,"delivery":false},{"x":4,"y":1,"delivery":false}]}
+
+Raw 'onYou' response: {"id":"75d4e78ed8e","name":"raw_llm_agent","x":3,"y":1,"score":0}
+
+Raw 'onParcelsSensing' response: [{"id":"p0","x":3,"y":0,"carriedBy":null,"reward":10}]
+
+ACTIONS you can do:
+U): move up
+D): move down
+L): move left
+R): move right
+T): take the parcel that is in your tile
+S): ship a parcel (you must be in a delivery=true tile)
+Don't explain the reasoning and don't add any comment, just provide the action.
+What is your next action?
+\end{lstlisting}
+\end{codewindow}
