@@ -15,11 +15,13 @@ ones.
 
 The go-to programming language for AI development is Python. However, we chose
 to use JavaScript for this project for several reasons. First, both the server
-and the example agents were already implemented in JavaScript, making it a natural
-choice for consistency. Second, thanks to the availability of the project of the
-Autonomous Software Agents course, our initial plan was to use an existing
-JavaScript-based benchmark from the course. Although we ultimately decided against
-using this benchmark, as explained later, JavaScript remained our language of choice.
+and the example agents were already implemented in JavaScript; so a JavaScript interface
+to communicate with the server was already available. This allowed us to focus
+only on the agent's logic, without having to worry about the server's implementation.
+Second, thanks to the availability of the project of the Autonomous Software Agents
+course, our initial plan was to use an existing JavaScript-based benchmark from
+the course. Although we ultimately decided against using this benchmark, as
+explained later, JavaScript remained our language of choice.
 
 Additionally, since there is no more a dedicated JavaScript library for the
 Azure OpenAI API, instead of manually recreating the necessary API calls we opted
@@ -304,7 +306,7 @@ raw data. The key lessons learned from this phase can be summarized as follows.
     standardized and could change depending on the server's development. For instance,
     a call named "onMap" might return a list of map tiles, but there was no inherent
     guarantee of this behavior. Moreover, without explicit context, even
-    we—humans—found it difficult to interpret certain responses.
+    we—humans—found it difficult to interpret certain responses;
 
   \item Lack of Context and Poorly Structured Input: The raw JSON data lacked
     structured context, making it challenging for the LLM to infer the correct course
@@ -320,7 +322,7 @@ raw data. The key lessons learned from this phase can be summarized as follows.
   \item LLM Inference Capabilities: Surprisingly, the LLM was still able to extract
     some meaningful information from the unstructured data. While the results
     were inconsistent, there were instances where the model successfully inferred
-    useful actions despite the messy prompt.
+    useful actions despite the messy prompt;
 
   \item Significant Impact of Prompt Engineering: Small modifications to the
     prompt led to drastic changes in the agent's behavior. This highlighted the critical
@@ -331,15 +333,158 @@ raw data. The key lessons learned from this phase can be summarized as follows.
 \section{Final Agent}
 \label{sec:final_agent}
 
-This was the final approach; Rework of the way prompt are created for better structuring
-and testing, before it was a string created at runtime with a series of if/else,
-now they are in a folder and the variables are replaced using a regex; Tested
-also rag but it was like cheating; used to create the heatmaps inside Section \ref{sec:heatmap_generation},
-mainly with GPT-4o-mini. Divided in pickup and delivery by us, not inferred from
-the state. Used both stateless and stateful (with history) Different uncertainty
-handling methods, raw, weighted and stop. Weighted has been used in the stateful
-because in case of wrong action having the largest probability, over time the randomly
-chosen action will lead to the correct action.
+This represents the final iteration of our approach, incorporating substantial improvements
+in both prompt generation and the overall structure of the agent's implementation.
+
+Initially, prompts were dynamically constructed at runtime using a series of if/else
+conditions, which made them difficult to manage, debug, and scale. That approach
+lacked flexibility, as any modification required changes to the core logic of the
+agent, increasing complexity and reducing maintainability.
+
+\subsection{Prompt Management System}
+In the revised approach, we transitioned to a structured prompt management system
+where predefined templates are stored in a dedicated folder (\texttt{prompts} folder
+in the GitHub repository \cite{projectrepo}). These templates use variable placeholders
+that are replaced dynamically via regex-based substitutions. This change
+provided multiple advantages: it improved readability, ensured consistency
+across different prompts, and made modifications significantly easier. Instead
+of altering the logic of the agent itself, changes could now be made directly at
+the prompt level, allowing for rapid experimentation and iteration. Additionally,
+this structured approach facilitated more systematic testing, as different versions
+of the prompts could be evaluated with minimal effort. Overall, this refinement not
+only enhanced the reliability of the agent but also contributed to a more efficient
+development workflow.
+
+\subsection{Agent Refactoring}
+Beyond improving prompt handling, a major structural refactoring was undertaken
+to optimize the agent's implementation. The original codebase was relatively monolithic,
+with large, complex functions handling multiple aspects of decision-making. This
+made debugging and extending functionality cumbersome. In the final version, the
+implementation was restructured into a more modular design, with a greater number
+of smaller, well-defined functions handling specific tasks. This decomposition significantly
+reduced code redundancy, improved readability, and made the agent easier to modify.
+One of the key benefits of this modular approach was its impact on the data
+acquisition process. Since the agent's core logic was now more flexible,
+adapting it for different data collection tasks required minimal effort. Simple function
+modifications or prompt adjustments were often sufficient to tailor the agent's behavior
+to new requirements. This ability to rapidly reconfigure the agent streamlined
+experimentation and allowed us to gather diverse datasets efficiently, ultimately
+improving the quality and scope of our evaluations.
+
+\subsection{RAG Experiments}
+We also explored the potential of Retrieval-Augmented Generation (RAG) as a way to
+enhance the agent's decision-making process. The initial idea was to categorize
+the parcels \emph{a posteriori} based on predefined classes and provide the LLM with
+priority information for each category (example in Listing
+\ref{lst:parcel_categorization}). This would have allowed the model to make more
+informed decisions by leveraging structured context about the importance of
+different types of parcels. However, while this approach showed promise, it was ultimately
+considered too far from the core objectives of this thesis and was therefore not
+pursued further.
+
+\vspace{1mm}
+\begin{codewindow}
+  [JavaScript Code] \lstset{style=jsstyle, language=JavaScript, caption={Discarded implementatio of \emph{a posteriori} parcel categorization},
+  label={lst:parcel_categorization}} \begin{lstlisting}
+if (PARCEL_CATEGORIZATION) {
+  for (let parcel of rawOnParcelsSensing) {
+    const parcelIdNumber = parseInt(parcel.id.substring(1));
+    parcel.food = parcelIdNumber % 2 === 0 ? "banana" : "pineapple";
+  }
+}
+\end{lstlisting}
+\end{codewindow}
+\vspace{1mm}
+
+Another experimental RAG-based approach involved providing the agent with direct
+information about past actions, such as: ``The last time you were in position\texttt{(x,
+y)}, you attempted to move up, but the path was blocked". While this could be a
+useful strategy for a ``blind" agent (one without direct state awareness) its application
+in our case would have led to a problematic behavior. The agent would work by
+just performing random actions, gathering information about the blocked/suboptimal
+paths and then relying entirely on the RAG-generated feedback to navigate. This
+effectively bypassed the agent's core decision-making process, turning it into a
+reactive system rather than a proactive one. Given our focus on autonomous
+decision-making, this approach was deemed unsuitable.
+
+Nonetheless, these experiments highlighted the potential of RAG for different
+types of autonomous agents and may be worth exploring in future research.
+
+\subsection{Stateless and Stateful Agents}
+
+The final agent played a crucial role in generating the heatmaps discussed in Section
+\ref{sec:heatmap_generation}, primarily leveraging GPT-4o-mini. Task categorization
+into \texttt{pickup} and \texttt{delivery} was handled by computing the number of
+parcels currently in possession of the agent, rather than inferred dynamically
+from the environment state. While an automated approach could have been explored,
+manually assigning these tasks ensured clarity and allowed for more controlled
+testing conditions.
+
+Both stateless and stateful configurations of the agent were developed and
+tested. The stateless version made decisions based solely on the current state,
+while the stateful version incorporated historical context to refine its choices
+over time thanks to the \texttt{action-result} feedback in the conversation history.
+
+\subsection{Uncertainty Handling}
+To handle uncertainty in decision-making, we experimented with three different
+approaches:
+\begin{itemize}
+  \item \textbf{Raw probability selection}: The agent directly selected the action
+    with the highest probability, without any additional modifications. This approach
+    was straightforward, but led to suboptimal (or totally wrong) paths when the
+    highest-probability action was incorrect;
+
+  \item \textbf{Weighted selection}: Instead of always choosing the most probable
+    action, the agent sampled actions based on their probabilities. This method was
+    particularly effective in the stateful configuration: if an incorrect action
+    initially had the highest probability, randomness allowed the agent to eventually
+    correct itself over multiple iterations on the same spot;
+
+  \item \textbf{Stopping mechanism}: This approach follows literally the process
+    explained in the paper `Robots That Ask For Help: Uncertainty Alignment for Large
+    Language Model Planners' (explained in Section \ref{ssub:tokens_log_probability}):
+    by filtering the actions after the computation of the scaled log-probability
+    of each action, if the resulting set of possible actions was not a singleton
+    the agent would stop waiting for the user input. This method was implemented
+    for completeness in the development, but not tested automatically since it
+    would have required human intervention.
+\end{itemize}
+Among these methods, weighted selection proved to be the most effective for data
+acquisition and testing, as it leveraged randomness to improve path accuracy.
+This experiment demonstrated that even when an LLM-based agent lacks perfect
+reasoning abilities, incorporating controlled stochasticity can help guide it toward
+better long-term performance.
+
+\subsection{Takeaways}
+
+We can summarize the biggest improvements in the final agent as ``prompt
+management'' and ``agent refactoring''. The key lessons learned from this phase can
+be summarized as follows.\\The change in the prompt management provided multiple
+advantages:
+\begin{itemize}
+  \item Improved readability: The separation of logic from text made prompts
+    easier to understand and modify;
+
+  \item Consistency and maintainability: Storing prompts as templates reduced
+    duplication and made debugging simpler;
+
+  \item Faster experimentation: Changes could be made at the prompt level
+    without modifying the agent's core logic;
+
+  \item Better testing and evaluation: Different prompt versions could be
+    systematically compared with minimal effort.
+\end{itemize}
+The refactoring of the agent structure also brought several advantages:
+\begin{itemize}
+  \item More modular design: Smaller, well-defined functions improved readability
+    and maintainability.
+
+  \item Reduced code redundancy: Reusable components simplified implementation
+    and debugging.
+
+  \item Greater flexibility: The agent could be easily adapted for new tasks, making
+    data acquisition faster and more efficient.
+\end{itemize}
 
 \section{Extra: Closest Cell to the Goal}
 \label{sec:closest_cell_to_the_goal}

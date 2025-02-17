@@ -51,6 +51,7 @@ roundcorner=5pt
 \usepackage{listings}
 \usepackage[x11names]{xcolor}
 \definecolor{code-bg}{RGB}{230, 230, 230}
+\definecolor{code-border}{RGB}{104, 104, 104}
 \definecolor{code-bg-new}{RGB}{245, 245, 245}
 \definecolor{primary}{RGB}{5, 91, 0}
 \usepackage{pgfplots}
@@ -150,7 +151,7 @@ numberstyle=\tiny
 \lstdefinelanguage{prompt}{ keywords={MAP, LEGEND, ACTIONS}, sensitive=true, comment=[l]{;},
 morecomment=[s]{\#|}{|\#} , morestring=[b]', morestring=[b]", }
 % Define a custom tcolorbox for a "code window" effect
-\newtcolorbox{codewindow}[1][]{ colback=bggray, colframe=black, arc=5mm, boxrule=0.5mm, width=\linewidth, left=5mm, top=2mm, bottom=0mm, right=3mm, title=#1 }
+\newtcolorbox{codewindow}[1][]{ colback=bggray, colframe=code-border, arc=0mm, boxrule=0.5mm, width=\linewidth, left=5mm, top=2mm, bottom=0mm, right=3mm, title=#1 }
 % Document
 \begin{document}
   % Cover
