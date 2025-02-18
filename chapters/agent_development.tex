@@ -256,11 +256,11 @@ the ability to evaluate the LLM's planning capabilities without any external str
   label={lst:second_agent_prompt}} \begin{lstlisting}
 [ROLE]
 
-Raw 'onMap' response: [JSON]
+Raw `onMap' response: [JSON]
 
-Raw 'onYou' response: [JSON]
+Raw `onYou' response: [JSON]
 
-Raw 'onParcelsSensing' response: [JSON]
+Raw `onParcelsSensing' response: [JSON]
 
 [ACTIONS]
 
@@ -384,7 +384,7 @@ pursued further.
 
 \vspace{1mm}
 \begin{codewindow}
-  [JavaScript Code] \lstset{style=jsstyle, language=JavaScript, caption={Discarded implementatio of \emph{a posteriori} parcel categorization},
+  [JavaScript Code] \lstset{style=jsstyle, language=JavaScript, caption={Discarded implementation of an example of \emph{a posteriori} parcel categorization},
   label={lst:parcel_categorization}} \begin{lstlisting}
 if (PARCEL_CATEGORIZATION) {
   for (let parcel of rawOnParcelsSensing) {
@@ -426,8 +426,8 @@ while the stateful version incorporated historical context to refine its choices
 over time thanks to the \texttt{action-result} feedback in the conversation history.
 
 \subsection{Uncertainty Handling}
-To handle uncertainty in decision-making, we experimented with three different
-approaches:
+\label{sub:uncertainty_handling} To handle uncertainty in decision-making, we
+experimented with three different approaches:
 \begin{itemize}
   \item \textbf{Raw probability selection}: The agent directly selected the action
     with the highest probability, without any additional modifications. This approach
@@ -477,10 +477,10 @@ advantages:
 The refactoring of the agent structure also brought several advantages:
 \begin{itemize}
   \item More modular design: Smaller, well-defined functions improved readability
-    and maintainability.
+    and maintainability;
 
   \item Reduced code redundancy: Reusable components simplified implementation
-    and debugging.
+    and debugging;
 
   \item Greater flexibility: The agent could be easily adapted for new tasks, making
     data acquisition faster and more efficient.
@@ -488,3 +488,80 @@ The refactoring of the agent structure also brought several advantages:
 
 \section{Extra: Closest Cell to the Goal}
 \label{sec:closest_cell_to_the_goal}
+
+As part of the iterative process of refining our agent, we also tried to systematically
+isolate and address specific challenges by progressively reducing the complexity
+of the final problem. This incremental approach not only helped us pinpoint
+potential weaknesses in the agent's decision-making process but also provided
+deeper insights into the LLM's underlying behaviors and limitations.
+
+To achieve this, we conducted a series of controlled experiments, including:
+\begin{itemize}
+  \item \textbf{Testing on smaller, simplified maps}: By reducing environmental complexity,
+    we could more easily observe the agent's decision-making patterns and
+    identify whether failures were due to reasoning errors or external factors;
+
+  \item \textbf{Using custom, ``disposable" prompts}: We introduced minor variations
+    in prompt structures to assess how sensitive the LLM was to different formulations
+    of the problem. This helped us determine whether misinterpretations were
+    caused by the model itself or by the way the information was presented.
+
+  \item \textbf{Decomposing the final goal into smaller, manageable sub-goals}: Breaking
+    down the problem into intermediate objectives allowed us to test whether the
+    agent could handle incremental progress rather than needing to solve the entire
+    task at once. This approach is further detailed in the following paragraphs.
+\end{itemize}
+
+One key issue we wanted to investigate was why the agent often failed to select
+the optimal action leading toward the goal. Was the model inherently incapable of
+making the correct choice, or was the issue rooted in the way the prompt was
+structured? To better understand this, we designed an experiment that introduced
+a two-step decision-making process (visible in Figure \ref{fig:extra}):
+\begin{itemize}
+  \item \textbf{Identifying the best neighboring tile}: Before making a move,
+    the agent was first asked to determine the most optimal adjacent tile to
+    step toward, effectively transforming the problem into a local optimization task.
+
+  \item \textbf{Selecting the best action to reach that tile}: Once the target tile
+    was identified, the agent was then tasked with choosing the appropriate
+    action to move in that direction.
+\end{itemize}
+
+\vspace{7mm}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{images/extra.pdf}
+  \caption{Two-steps decision making example}
+  \label{fig:extra}
+\end{figure}
+\vspace{7mm}
+
+This method effectively reframed the problem from a complex, global pathfinding
+challenge into a series of simpler, localized decisions. We hypothesized that
+this decomposition would improve performance by reducing the cognitive load on
+the LLM and allowing it to focus on smaller, well-defined tasks.
+
+However, despite these modifications, the results did not align with our expectations.
+The primary issue was that if the agent misidentified the best neighboring tile
+by choosing a position that actually increased the distance to the goal, then even
+a perfectly chosen direction would still lead to suboptimal behavior.
+
+Another significant factor was the role of uncertainty computation in the LLM response.
+When relying on the raw output of the LLM (`Raw probability selection' in Section
+\ref{sub:uncertainty_handling}), results were often inconsistent or outright incorrect.
+To address this, we experimented also with the uncertainty-weighted random action
+selection approach (`Weighted selection' in Section
+\ref{sub:uncertainty_handling}), where decisions were influenced by the model's
+confidence levels. Unfortunately, this introduced additional challenges, as interpreting
+the results became even more complex.
+
+Ultimately, this experiment underscored the limitations of LLM-based decision-making
+in logistics scenarios where local optimizations must align with global
+objectives. The agent's inability to consistently select the correct neighboring
+tile demonstrated how small errors at the decision-making level could compound,
+leading to inefficient or even counterproductive actions.
+
+However, as we will explore in Chapter \ref{cha:results_discussion}, newer LLM
+models exhibit notable improvements in our task, suggesting that continued advancements
+in the technology may help overcome these challenges and enhance overall performance
+in complex logistics tasks.
