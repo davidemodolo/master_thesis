@@ -1,53 +1,103 @@
 \chapter{Introduction}
 \label{cha:introduction}
 
-This thesis explores the capabilities of Large Language Models (LLMs) in the
-context of a logistics problem. Artificial intelligence has made significant strides
-in generative systems, particularly with the advent of LLMs, which are capable of
-producing coherent and contextually relevant text based on input prompts.
-However, their ability to autonomously plan and achieve goals without additional
-external structures remains a topic of investigation. The primary aim of this
-work is to assess whether LLMs can be effectively utilized as agents in dynamic
-environments without leveraging predefined frameworks or knowledge bases.
+Artificial intelligence (AI) has undergone remarkable advancements in recent
+years, particularly in the field of natural language processing (NLP). Among
+these advancements, Large Language Models (LLMs) have emerged as powerful generative
+systems capable of producing coherent, contextually relevant, and human-like text
+based on input prompts. These models have demonstrated impressive capabilities
+across a variety of tasks, including text generation, summarization, question-answering,
+and even code generation. However, their ability to autonomously plan, make decisions,
+and execute complex tasks in dynamic environments without the aid of predefined
+external frameworks remains an open area of research.
 
-To achieve this, we first conducted an analysis of existing methodologies in the
-literature. Traditional approaches such as PDDL and Reinforcement Learning
-provide structured and systematic ways to tackle planning problems. PDDL offers explainability
-and efficiency in constrained environments but lacks adaptability, making it
-impractical for real-time applications. On the other hand, Reinforcement
-Learning is highly adaptable and effective in changing environments but suffers
-from issues such as convergence to local optima and lack of explainability.
+This thesis explores the potential of LLMs as autonomous agents in the context
+of a logistics problem. The primary objective is to investigate whether an LLM,
+without the support of external knowledge bases, predefined planning frameworks,
+or reinforcement learning (RL) structures, can effectively generate action plans
+and navigate dynamic settings. While traditional AI approaches rely on
+structured planning paradigms, such as the Planning Domain Definition Language (PDDL)
+and reinforcement learning, LLMs introduce a novel, unstructured paradigm for decision-making
+and action selection. The key research question addressed in this thesis is
+whether such unstructured generative models can function effectively as
+autonomous agents and, if so, to what extent they can exhibit planning
+capabilities.
 
-Recent research has also explored planning capabilities of LLMs, with several studies
-investigating their reasoning abilities as well as planning skills.
+\section{Background and Motivation}
 
-The specific problem addressed in this thesis involves evaluating the generative
-ability of ``raw" LLMs, devoid of external structures, to solve logistics
-problems in dynamic settings. [TODO MAKE THIS LONGER]
+The field of automated planning has traditionally relied on well-defined frameworks
+such as PDDL and reinforcement learning. PDDL provides a structured and
+explainable approach to planning, making it effective in constrained environments
+where the problem space can be explicitly defined. However, its rigidity and lack
+of adaptability to real-time changes make it less suitable for dynamic environments
+where new constraints or unforeseen events can arise. On the other hand, reinforcement
+learning has proven to be highly effective in environments that require adaptability
+and continuous learning. Despite its strengths, RL suffers from challenges such as
+convergence issues, sample inefficiency, and a lack of interpretability, which
+make its decision-making process difficult to explain.
 
-We also analyzed some ways to evaluate the LLM uncertainty and used the log-probability
-based one to evaluate the uncertainty of an LLM in choosing the action. The approach
-required to generate a token that referred to a possible action and working on a
-bias for the logits to then compute the probability of correct.
+In contrast, recent research has suggested that LLMs may possess an emergent capability
+for reasoning and decision-making without explicit training on structured planning
+problems. Several studies have explored how LLMs can generate step-by-step
+reasoning processes when prompted correctly, leading to promising applications in
+planning and problem-solving. However, the extent to which LLMs can independently
+generate effective action sequences, particularly in real-world logistics
+scenarios, remains underexplored. This thesis aims to fill this gap by analyzing
+the ability of ``raw" LLMs, those not supplemented with external tools, to perform
+decision-making in logistics tasks.
 
-[EXPECTED RESULTS]
+\section{Research Approach}
 
-The thesis is structured as follows:
+To investigate this, we begin by conducting a comprehensive analysis of existing
+methodologies and comparing them with an LLM-based approach. We design a series
+of experiments that assess the ability of an LLM to generate meaningful and
+coherent actions in response to logistics challenges.
+
+A key aspect of this study is evaluating the model's uncertainty in decision-making.
+Specifically, we define various techniques for measuring uncertainty and adopt a
+log-probability-based approach, which involves generating tokens corresponding to
+possible actions, applying biases to the logits, and computing the probability of
+selecting the correct action. By analyzing these probabilities, we gain insights
+into the confidence levels of the LLM when making decisions.
+
+We systematically examined the strengths and limitations of LLM-based planning.
+Through this investigation, we aim to identify the specific conditions under which
+LLMs can serve as effective autonomous agents and highlight their inherent challenges.
+
+\section{Thesis Structure}
+
+This thesis is structured as follows:
+
 \begin{itemize}
-  \item Chapter \ref{cha:background} provides an overview of the background and related
-    work.
+  \item \textbf{Chapter \ref{cha:background}} provides an overview of the
+    theoretical foundations relevant to this research, with a deep focus on prior
+    work on LLM-based planning methods.
 
-  \item Chapter \ref{cha:experiment_setting} describes the experimental setting and
-    the environment used.
+  \item \textbf{Chapter \ref{cha:experiment_setting}} describes the experimental
+    setup used to evaluate the capabilities of LLMs in planning tasks. This includes
+    a formal problem definition, a description of the web-based environment used
+    for simulations, and a discussion of the models selected for evaluation;
 
-  \item Chapter \ref{cha:agent_development} details the development of the agent.
+  \item \textbf{Chapter \ref{cha:agent_development}} details the iterative
+    development of the LLM-based agent. It outlines the initial approach, the
+    challenges encountered, and the modifications made to refine the agent's performance
+    over successive iterations.
 
-  \item Chapter \ref{cha:data_collection} explains the data collection process.
+  \item \textbf{Chapter \ref{cha:data_collection}} explains the process of data
+    collection, including the design of prompts, structuring of experiments, and
+    generation of special heatmaps to visualize the uncertainty of the agent in the
+    different scenarios;
 
-  \item Chapter \ref{cha:results_discussion} presents the results and discusses the
-    findings.
+  \item \textbf{Chapter \ref{cha:results_discussion}} presents the experimental
+    results and provides an in-depth discussion of the findings. It evaluates the
+    performance of the LLM-based agent under various conditions and highlights the
+    key insights gained from the experiments.
 
-  \item Chapter \ref{cha:future_works} outlines potential future works.
+  \item \textbf{Chapter \ref{cha:future_works}} outlines potential directions
+    for future research, including improvements to the current approach [TODO
+    add more]
 
-  \item Chapter \ref{cha:conclusions} concludes the thesis.
+  \item \textbf{Chapter \ref{cha:conclusions}} summarizes the key insights
+    gained from this study, limitations, and potential areas for further
+    exploration.
 \end{itemize}

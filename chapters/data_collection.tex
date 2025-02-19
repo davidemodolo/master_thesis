@@ -1,0 +1,197 @@
+\chapter{Data Collection}
+\label{cha:data_collection}
+
+In this chapter, we provide a detailed account of the data collection process undertaken
+for our experiments, outlining the key steps involved in designing, implementing,
+and refining our methodology.
+
+We begin by presenting the various prompts used in our study, explaining their specific
+applications within each experimental setup.
+
+Next, we delve into the rationale behind our prompt design choices, grounding our
+decisions in relevant literature, highlighting key findings from previous
+research that informed our approach.
+
+Moreover, due to the limited effectiveness of the first implementations of the agent,
+we initially hypothesized that the map included in the prompt occupied too much
+space, potentially leading to overly sparse attention distribution. To better
+understand this effect, we visualized the attention to see how the model processes
+the map-related information analyzing the results. Additionally, we explored two
+different approaches to reduce the number of tokens or characters in the prompt.
+While one approach led to a slight improvement, the other proved to be largely ineffective
+in practice.
+
+Finally, we outline the overall structure of our experiments and introduce the
+generation of specialized heatmaps, designed to illustrate the agent's uncertainty
+in selecting actions. These visualizations provide valuable insights on the
+model's generative capabilities and highlight areas for further investigation.
+
+\section{Prompts}
+\label{sec:prompts}
+
+This section provides an overview of the prompts used in our experiments,
+detailing the specific choices behind each specific part of them. We employed a variety
+of prompts to evaluate different aspects of the problem, but the core ones are
+the pickup (Listing \ref{lst:pickup_prompt}) and deliver (Listing \ref{lst:deliver_prompt}).
+Each prompt was carefully crafted to test specific hypotheses and gather relevant
+data. The prompts were designed to be concise yet comprehensive, ensuring that they
+effectively elicited the desired responses from the model.
+
+\begin{codewindow}
+  [Text] \lstset{style=promptstyle, language=prompt, caption={Pickup prompt used in the experiments},
+  label={lst:pickup_prompt}} \begin{lstlisting}
+You are a delivery agent in a web-based delivery game where the map is a matrix.
+I am going to give you the raw information I receive from the server and the possible actions.
+Map width: {width}
+Map height: {height}
+Tiles are arranged as {height} rows in {width} columns:
+{tiles}
+The parcel you need to take is in the spot ({parcelX}, {parcelY}).
+You are on the spot ({agentX}, {agentY}).
+The actions you can do ONLY if the next tile is available are:
+U) move up
+D) move down
+L) move left
+R) move right
+T) take the parcel that is in your tile
+S) ship a parcel (you must be in a delivery tile)
+
+Your final goal is to go to a tile with the parcel and (T)ake it, I need the best action that will get you there.
+Don't explain the reasoning and don't add any comment, just provide the action's letter.
+What is your next action?
+\end{lstlisting}
+\end{codewindow}
+
+\begin{codewindow}
+  [Text] \lstset{style=promptstyle, language=prompt, caption={Deliver prompt used in the experiments},
+  label={lst:deliver_prompt}} \begin{lstlisting}
+You are a delivery agent in a web-based delivery game where the map is a matrix.
+I am going to give you the raw information I receive from the server and the possible actions.
+Map width: {width}
+Map height: {height}
+Tiles are arranged as {height} rows in {width} columns:
+{tiles}
+You are on the spot ({agentX}, {agentY}).
+The actions you can do are:
+U) move up
+D) move down
+L) move left
+R) move right
+T) take the parcel that is in your tile
+S) ship a parcel (you must be in a delivery tile)
+
+You have a parcel to ship, your final goal is to go to the delivery zone (delivery = true) and (S)hip the parcel, I need the best action that will get you there.
+Don't explain the reasoning and don't add any comment, just provide the action's letter.
+What is your next action?
+\end{lstlisting}
+\end{codewindow}
+
+[description of the prompts]
+
+Overall, our prompt design choices were guided by a combination of theoretical insights
+and empirical findings, ensuring that our data collection process was both
+rigorous and informative.
+
+\section{Prompt Creation Choices}
+\label{sec:prompt_creation_choices}
+
+This section provides an overview on the choices that led to the creation of the
+prompts used in our experiments. Here such choices will be explained in order in
+which they appear in the prompt (we will use the Pickup prompt in Listing \ref{lst:pickup_prompt}
+as reference).
+
+\subsection{Role Prompting}
+Assigning specific roles or personas to Large Language Models (LLMs) within
+prompts, known as "role prompting," has been shown to enhance their performance
+on various tasks. This technique involves instructing the model to assume a particular
+identity, such as a "math professor" or "geographer," to guide its responses more
+effectively.
+
+The concept of role prompting has been explored in several studies. For instance,
+the paper "Better Zero-Shot Reasoning with Role-Play Prompting" (August 2023) demonstrated
+that strategically designed role-play prompts can significantly improve LLMs'
+reasoning abilities across diverse benchmarks. Similarly, "Role-Play Zero-Shot Prompting
+with Large Language Models for Open-Domain Human-Machine Conversation" (June 2024)
+investigated the use of role-play prompts to enhance conversational agents' performance
+without additional fine-tuning.
+
+In our experiments, we employed role prompting to encourage the model to adopt
+the persona of a "delivery agent," thereby focusing its attention on the task at
+hand. By framing the prompts in this manner, we aimed to guide the model's responses
+towards generating coherent and contextually relevant actions.
+
+\subsection{Map Encoding to Reduce Attention Sparsity}
+
+The map problem explained in next section, but to summarize, the map was
+included to the agent as raw json, but the LLM attention was too sparse. We
+tried to encode the map to reduce the number of characters but it used even more
+tokens.
+
+\subsubsection{Visualize the Attention}
+\label{sec:visualize_the_attention}
+
+Used BERT for fast implementation and processing, since it is a Transformer
+based model too.
+
+[plot attention full prompt]
+
+[prompt]
+
+[plot attention no map prompt]
+
+[plot attention difference]
+
+[list of tokens sorted by $\sum$ Attention plot 1]
+
+[list of tokens sorted by $\sum$ Attention plot 2]
+
+Special character took much attention, of course is the second plot is not totally
+correct since the attention is split along all the tokens and we removed them,
+but it gives a good idea that special characters from JSON get a lot of
+attention.
+
+Tested also with encoded map (paper "LLMs Can Understand Encrypted Prompt: Towards
+Privacy-Computing Friendly Transformers"). Result: less characters, more tokens,
+so this approach to reduce attention sparsity is not valid.
+\paragraph{Emerging behavior: encoded question decoded answer}
+[EG. Emerging behavior: ask in BASE64, correct answer]
+
+\subsubsection{Emerging behavior: math capabilities}
+
+We also investigated the impact of including action-related information in the
+prompts. Interestingly, we found that the presence of such information did not
+significantly affect the model's performance, suggesting that the model may have
+developed emerging behaviors that enable it to infer actions without explicit cues.
+This observation aligns with findings from recent research on emerging behaviors
+in language models. [emerging behavior: math, in fact it worked even without a
+map]
+
+\subsection{Question structure}
+
+To ensure the robustness of our experiments, we included prompts that required
+the model to generate a single token response.
+
+[Cite knowno]
+
+This approach is also used by some benchmarks to evaluate the performance of language
+models on specific tasks.
+
+\subsection{Goal positioning}
+
+The goal was at the end due to [golden needle]
+
+\section{Leveraging Prompt Caching}
+As you can see, the "changing part" of the prompt (such as position of the agent)
+was at the end of the prompt, to leverage the caching API of the model.
+
+\section{Heatmap Generation}
+\label{sec:heatmap_generation}
+
+What are, how they are generated, how to read them, why they are useful. How
+they are organized in the repo.
+
+Last, we considered the orientation of the map included in the prompts. While
+the specific details of this analysis will be discussed in the Results and
+Discussion chapter, it is worth noting that the way the map is presented to the model
+shows a bias towards a specific orientation (a programming matrix and not a
+cartesian plane).
