@@ -45,13 +45,13 @@ generating its own understanding of the environment and devising its own
 strategies for completing the given tasks.
 
 \subsection{Our Task}
-Specifically, our problem formulation is centered around asking the LLM to provide
-only the \emph{next step} that moves the agent closer to the goal, rather than generating
-an entire solution at once. This step-by-step approach enables the model to
-iteratively refine its path based on new observations using the conversation
-history as ``action-result" feedback. Furthermore, we assess the reliability of each
-generated step by computing the uncertainty of the model's response using the methodology
-detailed in Section \ref{ssub:tokens_log_probability}.
+\label{sub:our_task} Specifically, our problem formulation is centered around asking
+the LLM to provide only the \emph{next step} that moves the agent closer to the
+goal, rather than generating an entire solution at once. This step-by-step
+approach enables the model to iteratively refine its path based on new
+observations using the conversation history as ``action-result" feedback.
+Furthermore, we assess the reliability of each generated step by computing the uncertainty
+of the model's response using the methodology detailed in Section \ref{ssub:tokens_log_probability}.
 
 By taking this approach, we aim to answer these questions about the problem-solving
 skills of LLMs in logistics problems:
