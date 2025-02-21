@@ -166,12 +166,12 @@ discussed in Section \ref{sub:our_task}, this design decision was made to simula
 an unpredictable and rapidly changing environment.
 
 To address this concern, we first aimed to understand how the model processed
-map-related information. Ideally, we would have examined the model’s attention
-scores directly, but unfortunately, OpenAI’s API does not provide access to
+map-related information. Ideally, we would have examined the models's attention
+scores directly, but unfortunately, OpenAIss API does not provide access to
 these scores. As a result, we had to rely on a qualitative analysis instead. To achieve
 this, we leveraged BERT, another Transformer-based architecture, to visualize
 attention patterns in our original prompt. The results revealed that a significant
-portion of the model’s attention was focused on tokens related to JSON syntax rather
+portion of the models's attention was focused on tokens related to JSON syntax rather
 than the meaningful content of the prompt itself. This suggested that structural
 elements, rather than semantic information, were drawing a disproportionate
 amount of attention.
@@ -179,20 +179,21 @@ amount of attention.
 Based on this observation, we attempted to reduce the presence of JSON syntax within
 the prompt while preserving the essential information. We then repeated the same
 attention analysis using this modified version. The results showed a notable shift
-in the distribution of attention. Specifically, when we examined the tokens receiving
-the highest attention—excluding punctuation, as well as the special starting and
-ending tokens—we found that in the original prompt, only 23 out of the top 50 tokens
+in the distribution of attention, even if the two prompts contained virtually
+the same information. Specifically, when we examined the tokens receiving the
+highest attention — excluding punctuation, as well as the special starting and ending
+tokens — we found that in the original prompt, only 23 out of the top 50 tokens
 were meaningful words. In contrast, in the revised prompt, this number increased
 to 31 out of 50, indicating a more focused attention on relevant content.
 
-For this test, we used an older version of the "Pickup prompt," which is explained
-in detail in Section \ref{sec:second_approach}. As demonstrated in Table
-\ref{tab:prompt_comparison}, the revised version of the prompt not only contained
-more words but also explicitly included the term pickup, which is the key focus
-of our task. Notably, this term was entirely absent from the top attention-receiving
-tokens in the initial prompt.
+For this test, we used an older version of the ``Pickup prompt", which is explained
+in detail in Section \ref{sec:second_approach}, with a small 2x5 map. As demonstrated
+in Table \ref{tab:prompt_comparison}, the revised version of the prompt not only
+contained more words in the top 50 tokens, but also explicitly included the term
+\textbf{pickup}, which is the key focus of our task. Notably, this term was entirely
+absent from the top attention-receiving tokens in the initial prompt.
 
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \begin{tabular}{|c|c|}
     \hline
@@ -236,51 +237,75 @@ tokens in the initial prompt.
 \end{table}
 
 To further analyze the impact of this change, we collected attention scores from
-both the old and new prompt versions. We then removed the tokens corresponding to
-the map representation and plotted the difference between the two distributions.
-The resulting visualization is presented in Figure \ref{fig:difference}. Interpreting
-this figure is not entirely straightforward, and we acknowledge that it is
-unclear to what extent this analysis can serve as a direct proxy for a GPT-based
-model. However, one noticeable trend is that the diagonal elements exhibit a
-lower overall attention intensity (indicated by the presence of purple and dark blue
-regions). Meanwhile, most of the remaining areas show a delta close to zero (represented
-in aqua blue), suggesting that the changes we introduced led to a redistribution
-of attention without introducing excessive noise or unintended biases.
+both the old and new prompt versions. We then removed the tokens corresponding
+to the map representation in both prompts and plotted the difference between the
+attention in the remaining common 264 tokens. The resulting visualization is presented
+in Figure \ref{fig:difference} as $old\_prompt\_attention - new\_prompt\_attentio
+n$. Interpreting this figure is not entirely straightforward, and we acknowledge
+that it is unclear to what extent this analysis can serve as a direct proxy for a
+GPT-based model. However, one noticeable trend is that the diagonal elements exhibit
+a lower overall attention intensity (indicated by the presence of purple and
+dark blue regions). Meanwhile, most of the remaining areas show a delta close to
+zero (represented in aqua blue), suggesting that the changes we introduced led
+to a redistribution of attention without introducing excessive noise or
+unintended biases. While this number does not have a direct interpretative meaning,
+for completeness, we note that the total sum of the difference matrix is about $-
+15.34476$, indicating more attention in the new version of the prompt.
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
   \centering
   \includegraphics[width=0.8\textwidth]{images/difference.png}
-  \caption{Caption}
+  \caption{Attention Difference between Old and New Prompts 264 common tokens. Full
+  resolution available in the repository \cite{projectrepo}.}
   \label{fig:difference}
 \end{figure}
 
 \subsubsection{Emerging behavior: encoded question decoded answer}
 
-Another strategy we explored to reduce the space occupied by the map in the prompt
-was to encode it. Our goal was to compress the map representation while ensuring
+Another strategy we explored to reduce the space occupied by the map in the
+prompt was to encode it. Our goal was to compress the map representation while ensuring
 that the model could still understand the relevant information.
 
-A relevant study on this topic is presented in the paper `LLMs Can Understand Encrypted
-Prompt: Towards Privacy-Computing Friendly Transformers" \cite{liu2023llmsunderstandencryptedprompt}.
-The authors of this paper aimed to preserve user privacy by encrypting prompts
-before sending them to a language model. Their findings demonstrated that the model
-was able to comprehend and respond appropriately to encrypted prompts. This
-suggested that LLMs possess an inherent ability to process encoded text
-meaningfully.
+A relevant study on this topic is presented in the paper `LLMs Can Understand
+Encrypted Prompt: Towards Privacy-Computing Friendly Transformers"
+\cite{liu2023llmsunderstandencryptedprompt}. The authors of this paper aimed to preserve
+user privacy by encrypting prompts before sending them to a language model.
+Their findings demonstrated that the model was able to comprehend and respond
+appropriately to encrypted prompts. This suggested that LLMs possess an inherent
+ability to process encoded text meaningfully.
 
-Inspired by these results, we conducted an experiment to determine whether a similar
-encoding approach could be used to reduce the space occupied by the map while preserving
-its usability within the prompt. Specifically, we investigated whether the model
-could still interpret a compressed version of the map if it were encoded.
+Inspired by these results, we conducted an experiment to determine whether a
+similar encoding approach could be used to reduce the space occupied by the map
+while preserving its usability within the prompt. Specifically, we investigated
+whether the model could still interpret a compressed version of the map if it
+were encoded.
+
+\vspace{5mm}
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=0.98\textwidth]{images/texttob64.png}
+  \caption{Base64 encoding of a sample text}
+  {\emph{Source: base64.guru}\footnotemark} \label{fig:texttob64}
+\end{figure}
+\footnotetext{\url{https://base64.guru/converter/encode/text}}
+\vspace{5mm}
 
 To validate this, we first examined the model's ability to process encoded
 prompts by testing a simple case. As shown in Figure \ref{fig:b64gpt}, the model
-successfully understood the meaning of the question "Can you tell me how many apples
-remain and their color if I have two red apples and two green apples and I eat one
-of both?" even when the entire prompt was encoded in BASE64 (see Figure
-\ref{fig:texttob64}). Notably, the model did not generate a decoding function before
-answering. Instead, it directly processed the encoded prompt and returned a response
-in plain English, demonstrating its ability to work with BASE64-encoded text.
+successfully understood the meaning of the question ``Can you tell me how many
+apples remain and their color if I have two red apples and two green apples and
+I eat one of each?" even when the entire prompt was encoded in BASE64 (see Figure
+\ref{fig:texttob64}). Notably, the model did not generate a decoding function
+before answering. Instead, it directly processed the encoded prompt and returned
+a response in plain English, demonstrating its ability to work with BASE64-encoded
+text.
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=0.66\textwidth]{images/b64gpt.png}
+  \caption{GPT-4o-mini response to a BASE64-encoded question}
+  {\emph{Source: GPT-4o-mini via OpenAI web interface}} \label{fig:b64gpt}
+\end{figure}
 
 Encouraged by these results, we attempted to apply a similar encoding strategy to
 the map representation while also aiming to reduce the number of characters in the
@@ -300,7 +325,7 @@ Listing \ref{lst:double_enc}:
   \item Finally, we inserted this doubly encoded map into the prompt.
 \end{enumerate}
 
-\vspace{10mm}
+\vspace{5mm}
 \begin{codewindow}
   [Python Code] \lstset{style=pythonstyle, language=Python, caption={Example of double encoding algorithm},
   label={lst:double_enc}} \begin{lstlisting}
@@ -313,116 +338,117 @@ compressed_base64 = base64.b64encode(compressed_data).decode('utf-8')
 [...]
 \end{lstlisting}
 \end{codewindow}
-\vspace{10mm}
+\vspace{5mm}
 
-While this method did succeed in reducing the number of characters by X\%, the
-results were not as expected in terms of model comprehension. Unlike the case of
-simple BASE64 encoding, the LLM was no longer able to interpret the prompt
-correctly. Instead, its responses typically fell into one of two categories:
+While this method did succeed in reducing the number of characters by
+$\sim 65\%$, the results were not as expected in terms of model comprehension.
+Unlike the case of simple BASE64 encoding, the LLM was no longer able to interpret
+the prompt correctly. Instead, its responses typically fell into one of two categories:
 \begin{itemize}
   \item The model would explicitly state that it recognized the input as an encrypted
-    message and ask: ``I see you sent me an encrypted message. Do you want me to
-    decrypt it?";
+    message and generate something similar to ``It seems you've provided a compressed
+    string or encoded data. Could you clarify how you'd like to use or process
+    this? If it's encoded text, I can try decoding it for you.";
 
-  \item Alternatively, the model would generate a Python function to decode the
-    input before attempting to process it. This behavior likely stemmed from the
-    fact that our encoding method—using zlib compression followed by BASE64 encoding—is
-    a well-known and widely used technique on the internet. As a result, the model
-    had encountered similar patterns in its training data and inferred that the input
-    should first be decoded before use.
+  \item Alternatively, if instructed with the encryption method used on the text,
+    the model would generate a Python function to decode the input before attempting
+    to process it. Such a function would have been executed ``under the hood" to
+    decrypt the message before processing.
 \end{itemize}
 
-Furthermore, although our approach successfully reduced the total number of characters
-in the prompt, it did not achieve our ultimate objective. Counterintuitively,
-the number of tokens actually increased rather than decreased. This is because tokenization
-in LLMs is based on common character sequences rather than individual characters.
-Encoding the map disrupted these common patterns, leading to a tokenization process
-that resulted in a higher overall token count. Consequently, the intended effect
-of reducing attention sparsity was not achieved, as illustrated in Figure
-\ref{fig:lesscharmoretokens}.
+Furthermore, although our approach successfully reduced the total number of
+characters in the prompt, it did not achieve our ultimate objective.
 
-In summary, while encoding techniques like BASE64 alone might be useful for preserving
-meaning in certain contexts, our specific approach of compressing and encoding
-the map did not lead to the desired efficiency gains. Instead, it introduced
-additional computational overhead and interpretation challenges for the model, ultimately
-making this approach ineffective for our purposes.
+We then tried only using the BASE64 encoding, but the number of character
+actually increased rather than decreased as well as the number of tokens that
+increased even more in percentage. This is because tokenization in LLMs is based
+on common character sequences rather than individual characters. Encoding the
+map disrupted these common patterns, leading to a tokenization process that resulted
+in a higher overall token count. Consequently, the intended effect of reducing attention
+sparsity was not achieved, as illustrated in Figure \ref{fig:lesscharmoretokens}.
 
-\begin{figure}[h!]
+\vspace{5mm}
+\begin{figure}[ht!]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/texttob64.png}
-  \caption{Caption}
-  {Source: https://base64.guru/converter/encode/text} \label{fig:texttob64}
+  \includegraphics[width=0.66\textwidth]{images/lesscharmoretokens.png}
+  \caption{Tokenization of a BASE64-encoded text}
+  {\emph{Source: GPT-4o tokenizer via OpenAI web interface}} \label{fig:lesscharmoretokens}
 \end{figure}
+\vspace{5mm}
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.8\textwidth]{images/b64gpt.png}
-  \caption{Caption}
-  {Source: GPT-4o via OpenAI website} \label{fig:b64gpt}
-\end{figure}
+In summary, while encoding techniques like BASE64 alone might be useful for
+preserving meaning in certain contexts, our specific approach of compressing and
+encoding the map did not lead to the desired efficiency gains. Instead, it introduced
+additional computational overhead for the model, ultimately making this approach
+ineffective for our purposes.
 
 \subsection{Emerging behavior: math capabilities}
 
 We also investigated the impact of including action-related information, such as
 explicitly stating ``Going up increases your X position by 1" for every movement
 action. It initially seemed like a promising way to guide the model's reasoning.
-However, this conflicted with our overarching goal of keeping the system adaptable
-rather than grounding it in a fixed environmental structure. Despite this, we proceeded
-with the experiment to assess its impact.
+However, this conflicted with our overarching goal of keeping the system
+adaptable rather than grounding it in a fixed environmental structure. Despite this,
+we proceeded with the experiment to assess its impact.
 
-Interestingly, we observed that the model's performance in navigation tasks was
-unexpectedly strong, even to the point of raising concerns about potential shortcuts.
-To further investigate, we conducted a follow-up test in which we entirely removed
-the map from the prompt. As result, the model still produced correct answers by seemingly
-ignoring any extraneous details and reducing the problem to simple arithmetic.
-It recognized that if the starting position was \texttt{(4,3)} and the goal was at
-\texttt{(0,0)}, the necessary movement was simply decreasing \texttt{X} by 4 and
-\texttt{Y} by 3. This behavior demonstrated that the model could abstract away the
-spatial representation and ``cheating'' by operating purely on mathematical reasoning.
+Interestingly, we observed that the model's performance in navigation tasks was unexpectedly
+strong, even to the point of raising concerns about potential shortcuts. To further
+investigate, we conducted a follow-up test in which we entirely removed the map
+from the prompt. As result, the model still produced correct answers by
+seemingly ignoring any extraneous details and reducing the problem to simple
+arithmetic. It recognized that if the starting position was \texttt{(4,2)} and
+the goal was at \texttt{(0,0)}, the necessary movement was simply decreasing
+\texttt{X} by 4 and \texttt{Y} by 2. This behavior demonstrated that the model
+could abstract away the spatial representation and ``cheating'' by operating
+purely on mathematical reasoning.
 
-This finding aligns with existing research on the emergent mathematical reasoning
-capabilities of large language models. For example, Wei et al. highlight how
-LLMs exhibit "emergent abilities", capabilities that do not appear in smaller models
-but spontaneously manifest as model scale increases \cite{wei2022emergentabilitieslargelanguage}.
-Among these abilities, arithmetic and mathematical reasoning are particularly notable,
-suggesting that LLMs can generalize numerical patterns without explicit training
-for such tasks. Our experiment provides anecdotal evidence supporting this:
-rather than relying on the environmental constraints provided in the prompt, the
-model instinctively leveraged its inherent mathematical capabilities to deduce the
-necessary movements.
+This finding aligns with existing research on the emergent mathematical
+reasoning capabilities of large language models. For example, Wei et al. highlight
+how LLMs exhibit "emergent abilities", capabilities that do not appear in
+smaller models but spontaneously manifest as model scale increases
+\cite{wei2022emergentabilitieslargelanguage}. Among these abilities, arithmetic
+and mathematical reasoning are particularly notable, suggesting that LLMs can generalize
+numerical patterns without explicit training for such tasks. Our experiment
+provides anecdotal evidence supporting this: rather than relying on the environmental
+constraints provided in the prompt, the model instinctively leveraged its
+inherent mathematical capabilities to deduce the necessary movements.
 
-Ultimately, given this behavior, we abandoned the idea of including the results of
-the actions in the prompt.
+Ultimately, given this behavior, we abandoned the idea of including the results
+of the actions in the prompt.
 
 \subsection{Question structure}
 
-In know no, they say ENV + LIST OF ACTIONS +``Which option is correct? Answer with
-a single letter.''
+In know no, they say ENV + LIST OF ACTIONS +``Which option is correct? Answer
+with a single letter.'' Since we applied the same uncertainty analysis to the model's
+responses, we decided to keep the same structure for the questions in the
+prompts. This allowed us to maintain consistency across the experiments and ensure
+that we had some proof of the wording of the questions.
 
 This approach is also used by some benchmarks to evaluate the performance of language
 models on specific tasks \footnote{https://en.wikipedia.org/wiki/MMLU}.
 
 \subsection{Goal positioning}
 
-The goal was at the end due to [golden needle], that says that LLMs tend to focus
-on the last part of the prompt.
+The goal was at the end due to [golden needle shows which part get more attention
+by...], that says that LLMs tend to focus on the last part of the prompt.
 
 \section{Leveraging Prompt Caching}
-As can be seen in Listing \ref{lst:deliver_prompt} and Listing \ref{lst:pickup_prompt},
-the ``changing part" of the prompt, such as the position of the agent, was placed
-at the end, while the main static components, including the role and map, were
-positioned at the top. This structure was intentionally designed to take advantage
-of OpenAI's prompt caching API\footnote{\url{https://platform.openai.com/docs/guides/prompt-caching}}.
+As can be seen in Listing \ref{lst:deliver_prompt} and Listing
+\ref{lst:pickup_prompt}, the ``changing part" of the prompt, such as the position
+of the agent, was placed at the end, while the main static components, including
+the role and map, were positioned at the top. This structure was the result of a
+literature analysis and it also takes advantage of OpenAI's prompt caching API\footnote{\url{https://platform.openai.com/docs/guides/prompt-caching}}.
 
-According to OpenAI's documentation, for any prompt exceeding 1000 tokens, only
-the modified portion is recomputed, while the cached static portion remains unchanged.
-This significantly improves efficiency by reducing computational overhead, resulting
-in faster response times and lower operational costs. The benefits of this
-approach are especially pronounced in the stateful version of the agent, where the
-LLM receives the entire conversation history with each request. In this case, caching
-allows the model to handle long, continuous interactions without constantly
-reprocessing the entire history from scratch, making the system much more scalable
-and responsive.
+According to OpenAI's documentation, for any prompt exceeding 1000 tokens, only the
+modified portion is recomputed, while the cached static portion remains
+unchanged. This significantly improves efficiency by reducing computational overhead,
+resulting in faster response times and lower operational costs.
+
+The benefits of this approach are especially pronounced in the stateful version
+of the agent, where the LLM receives the entire conversation history with each request.
+In this case, caching allows the model to handle long, continuous interactions
+without constantly reprocessing the entire history from scratch, making the system
+much more scalable and responsive.
 
 By structuring prompts in this manner, we ensure that also queries for the
 stateful agent benefit from caching, leading to optimized performance in our scenario
