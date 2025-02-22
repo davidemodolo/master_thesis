@@ -411,57 +411,197 @@ and mathematical reasoning are particularly notable, suggesting that LLMs can ge
 numerical patterns without explicit training for such tasks. Our experiment
 provides anecdotal evidence supporting this: rather than relying on the environmental
 constraints provided in the prompt, the model instinctively leveraged its
-inherent mathematical capabilities to deduce the necessary movements.
+inherent mathematical capabilities to deduce the necessary movements. Ultimately,
+given this behavior, we abandoned the idea of including the results of the actions
+in the prompt.
 
-Ultimately, given this behavior, we abandoned the idea of including the results
-of the actions in the prompt.
+\subsection{Question Structure}
 
-\subsection{Question structure}
+A summarized example of a prompt used in the paper \emph{Robots That Ask For
+Help: Uncertainty Alignment for Large Language Model Planners} \cite{ren2023robotsaskhelpuncertainty}
+can be seen in Listing \ref{lst:knowno_prompt}. This prompt has been taken
+directly from the example available in their interactive demo\footnote{\url{https://tmp.com}},
+which is accessible online. The prompt follows a structured approach that allows
+the language model to process information about the environment, understand the
+task, and select the best action from a predefined set of choices.
 
-In know no, they say ENV + LIST OF ACTIONS +``Which option is correct? Answer
-with a single letter.'' Since we applied the same uncertainty analysis to the model's
-responses, we decided to keep the same structure for the questions in the
-prompts. This allowed us to maintain consistency across the experiments and ensure
-that we had some proof of the wording of the questions.
+Since we applied the same uncertainty analysis to the model's responses, we
+opted to maintain a similar structure for our prompts.
 
-This approach is also used by some benchmarks to evaluate the performance of language
-models on specific tasks \footnote{https://en.wikipedia.org/wiki/MMLU}.
+\vspace{5mm}
+\begin{codewindow}
+  [Text] \lstset{style=promptstyle, language=Prompt, caption={Caption}, label={lst:knowno_prompt}}
+  \begin{lstlisting}
+You are a robot operating in an office kitchen. You are in front of a counter with two closed drawers, a top one and a bottom one. There is also a landfill bin, a recycling bin, and a compost bin.
+
+On the counter, there is an energy bar, a banana, and a microwave.
+Put the snack next to the microwave.
+
+A) pick up the energy bar and put it next to the microwave
+B) pick up the banana and put it next to the energy bar
+C) pick up the banana and put it next to the microwave
+D) pick up the energy bar and put it next to the banana
+
+Which option is correct? Answer with a single letter.
+\end{lstlisting}
+\end{codewindow}
+\vspace{5mm}
+
+\subsubsection{Structure of the Paper's Prompt}
+
+The structure of this prompt follows a well-defined pattern that guides the LLM's
+reasoning process. It consists of the following key elements:
+
+\begin{itemize}
+  \item \textbf{Role and Environment Description}: The prompt starts by establishing
+    the role of the model (a robot) and providing an overview of its working environment
+    (an office kitchen);
+
+  \item \textbf{Task Specification}: The next section provides a direct and unambiguous
+    description of the task to be performed—in this case, placing a snack next
+    to the microwave;
+
+  \item \textbf{Action Choices}: A predefined list of actions (A, B, C, D, E) is
+    presented, each corresponding to a possible decision. This format constrains
+    the response space to just five choices;
+
+  \item \textbf{Question and Response Constraint}: The prompt ends with a clear question
+    that explicitly instructs the model to select an answer in a specific format
+    (a single letter). This restriction allows for more structured uncertainty
+    analysis as explained in Section \ref{ssub:tokens_log_probability}.
+\end{itemize}
+
+\subsubsection{Comparison with Our Approach}
+
+Similarly, our prompt design follows the same structured approach: given our task,
+our prompt structure aligns closely with the example above but incorporates
+additional environmental details specific to our use case.
+
+Our prompt structure consists of the following elements:
+
+\begin{itemize}
+  \item \textbf{Role and General Environment Description}: The prompt begins by defining
+    the model's role (a delivery agent) and its operating context (a web-based
+    delivery game);
+
+  \item \textbf{Detailed Environment Specification}: Unlike the office kitchen scenario,
+    our logistics task involves a structured map-based environment. Therefore,
+    we explicitly include details such as:
+    \begin{itemize}
+      \item Map dimensions;
+
+      \item Tile types and obstacles;
+
+      \item Parcel location;
+
+      \item Agent's current position.
+    \end{itemize}
+
+  \item \textbf{List of Possible Actions}: Instead of using letter-based choices
+    (A, B, C, D, E), our prompt presents a set of movement and interaction
+    commands:
+    \begin{itemize}
+      \item \textbf{U, D, L, R}: Move Up, Down, Left, Right;
+
+      \item \textbf{T/S}: Pick up or deliver a parcel.
+    \end{itemize}
+
+  \item \textbf{Goal Definition and Question}: The prompt explicitly states the agent's
+    goal, such as reaching a specific destination or delivering a parcel to an
+    inferred goal tile. Additionally, the question is phrased to ensure a
+    concise and structured response:
+    \begin{quote}
+      ``Your final goal is to [...] take the parcel. Just provide the action's
+      letter. What is your next action?''
+    \end{quote}
+    This ensures that the model's response remains within the expected format,
+    to evaluate the uncertainty in the same way as in the original paper.
+\end{itemize}
+
+\subsubsection{Multichoice Benchmarking}
+
+Constraining the model's response to a predefined set of choices simplifies the
+evaluation process. Moreover, multi-choice question answering is a widely
+adopted method for benchmarking language models, as demonstrated in datasets such
+as the Massive Multitask Language Understanding (MMLU) benchmark\footnote{\url{https://en.wikipedia.org/wiki/MMLU}}.
+By enforcing a structured question format, we can systematically assess the
+model's performance across different experimental conditions.
 
 \subsection{Goal positioning}
 
-The goal was at the end due to [golden needle shows which part get more attention
-by...], that says that LLMs tend to focus on the last part of the prompt.
+As highlighted in the article `The Needle In a Haystack Test: Evaluating the Performance
+of LLM RAG Systems'\cite{needleRAG}, LLMs exhibit a tendency to prioritize
+information positioned at the beginning or end of a prompt, often overlooking details
+embedded in the middle. To analyze this phenomenon, the researchers conducted an
+experiment by inserting a unique "needle" token at different positions within a prompt
+and measuring whether the model could successfully retrieve it in its response.
+Their goal was to determine the optimal placement of information retrieved from
+a retrieval-augmented generation (RAG) system to maximize recall. Their findings
+revealed that LLMs are most likely to recall information from the beginning and,
+to a lesser extent, from the end, while details placed in the middle are more
+frequently neglected.
 
-\section{Leveraging Prompt Caching}
+This positional bias has significant implications for prompt engineering, especially
+in structured queries. In our thesis, we follow a similar principle by positioning
+the specific request at the end of the prompt. Understanding the model's
+attention distribution allows us to optimize prompt design, ensuring that key details
+receive the necessary emphasis to improve response accuracy and relevance.
+
+Moreover, by placing the primary question at the end of the prompt, as well as all
+the information that changes from a request to another, we can leverage OpenAI's
+prompt caching capability of the API.
+
+\subsubsection{Leveraging Prompt Caching}
 As can be seen in Listing \ref{lst:deliver_prompt} and Listing
-\ref{lst:pickup_prompt}, the ``changing part" of the prompt, such as the position
-of the agent, was placed at the end, while the main static components, including
+\ref{lst:pickup_prompt}, the ``changing part" of the prompt (mainly the position
+of the agent, but in case of a filtering of the actions, also any updated list of
+possible actions), was placed at the end, while the main static components, including
 the role and map, were positioned at the top. This structure was the result of a
-literature analysis and it also takes advantage of OpenAI's prompt caching API\footnote{\url{https://platform.openai.com/docs/guides/prompt-caching}}.
+literature analysis while it also takes advantage of OpenAI's prompt caching API\footnote{\url{https://platform.openai.com/docs/guides/prompt-caching}}.
 
-According to OpenAI's documentation, for any prompt exceeding 1000 tokens, only the
-modified portion is recomputed, while the cached static portion remains
-unchanged. This significantly improves efficiency by reducing computational overhead,
-resulting in faster response times and lower operational costs.
+According to OpenAI's documentation, for any prompt exceeding 1000 tokens, only
+the modified portion is recomputed, while the cached static portion remains unchanged.
+This significantly improves efficiency by reducing computational overhead, resulting
+in faster response times and lower operational costs.
 
-The benefits of this approach are especially pronounced in the stateful version
-of the agent, where the LLM receives the entire conversation history with each request.
-In this case, caching allows the model to handle long, continuous interactions
-without constantly reprocessing the entire history from scratch, making the system
-much more scalable and responsive.
+The benefits of this approach are especially pronounced in the stateful version of
+the agent, where the LLM receives the entire conversation history with each
+request. In this case, caching allows the model to handle long, continuous interactions
+without constantly reprocessing the entire history from scratch, making the
+system much more scalable and responsive.
 
-By structuring prompts in this manner, we ensure that also queries for the
-stateful agent benefit from caching, leading to optimized performance in our scenario
+By structuring prompts in this manner, we ensure that also queries for the stateful
+agent benefit from caching, leading to optimized performance in our scenario
 that required frequent API calls.
 
-\section{Heatmap Generation}
+\section{Uncertainty Visualization}
 \label{sec:heatmap_generation}
 
-What are, how they are generated, how to read them, why they are useful. How
-they are organized in the repo.
+What are heatmaps in general, when they are used and what they represent (with a
+figure example).
 
-Last, we considered the orientation of the map included in the prompts. While
-the specific details of this analysis will be discussed in the Results and
-Discussion chapter, it is worth noting that the way the map is presented to the model
-shows a bias towards a specific orientation (a programming matrix and not a
-cartesian plane).
+Ours are not the typical heatmaps, but the name is used to describe the visualization
+of the uncertainty of the LLM in each cell of the map.
+
+This is the core of the data collection process. The final analysis will use
+these heatmaps as the main tool to understand the agent behavior.
+
+Once we get the heatmaps, we than compute a `correctness heatmap' that shows the
+summed percentages of the uncertainty referred to the correct actions for each cell.
+
+\subsection{Heatmaps}
+
+What are, how they are generated (a special stateful agent that scans the map
+cell by cell and saves the result of the prompt in a json), how to read them, why
+they are useful. How they are organized in the repo.
+
+\subsubsection{Map Orientation}
+
+Last, we considered the orientation of the map included in the prompts. While the
+specific details of this analysis will be discussed in the Results and Discussion
+chapter, it is worth noting that the way the map is presented to the model shows
+a bias towards a specific orientation (a programming matrix and not a cartesian plane).
+
+\subsection{Correctness Heatmaps}
+
+How they are computed and what they represent

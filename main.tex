@@ -153,6 +153,7 @@ morecomment=[s]{\#|}{|\#} , morestring=[b]', morestring=[b]", }
 % Define a custom tcolorbox for a "code window" effect
 \newtcolorbox{codewindow}[1][]{ colback=bggray, colframe=code-border, arc=0mm, boxrule=0.5mm, width=\linewidth, left=5mm, top=2mm, bottom=0mm, right=3mm, title=#1 }
 % Document
+\pgfplotsset{compat=1.18}
 \begin{document}
   % Cover
   \pagenumbering{gobble}
