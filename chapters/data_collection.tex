@@ -254,7 +254,7 @@ for completeness, we note that the total sum of the difference matrix is about $
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/difference.png}
+  \includegraphics[width=0.8\textwidth]{images/data_collection/difference.png}
   \caption{Attention Difference between Old and New Prompts 264 common tokens. Full
   resolution available in the repository \cite{projectrepo}.}
   \label{fig:difference}
@@ -283,7 +283,7 @@ were encoded.
 \vspace{5mm}
 \begin{figure}[ht!]
   \centering
-  \includegraphics[width=0.98\textwidth]{images/texttob64.png}
+  \includegraphics[width=0.98\textwidth]{images/data_collection/texttob64.png}
   \caption{Base64 encoding of a sample text}
   {\emph{Source: base64.guru}\footnotemark} \label{fig:texttob64}
 \end{figure}
@@ -302,7 +302,7 @@ text.
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics[width=0.66\textwidth]{images/b64gpt.png}
+  \includegraphics[width=0.66\textwidth]{images/data_collection/b64gpt.png}
   \caption{GPT-4o-mini response to a BASE64-encoded question}
   {\emph{Source: GPT-4o-mini via OpenAI web interface}} \label{fig:b64gpt}
 \end{figure}
@@ -370,7 +370,9 @@ sparsity was not achieved, as illustrated in Figure \ref{fig:lesscharmoretokens}
 \vspace{5mm}
 \begin{figure}[ht!]
   \centering
-  \includegraphics[width=0.66\textwidth]{images/lesscharmoretokens.png}
+  \includegraphics[width=0.66\textwidth]{
+    images/data_collection/lesscharmoretokens.png
+  }
   \caption{Tokenization of a BASE64-encoded text}
   {\emph{Source: GPT-4o tokenizer via OpenAI web interface}} \label{fig:lesscharmoretokens}
 \end{figure}
@@ -575,33 +577,210 @@ agent benefit from caching, leading to optimized performance in our scenario
 that required frequent API calls.
 
 \section{Uncertainty Visualization}
-\label{sec:heatmap_generation}
+\label{sec:uncertainty_visualization}
 
-What are heatmaps in general, when they are used and what they represent (with a
-figure example).
+\begin{blockquote}
+  A \textbf{heat map} (or heatmap) is a 2-dimensional data visualization
+  technique that represents the magnitude of individual values within a dataset
+  as a color. The variation in color may be by hue or intensity.
 
-Ours are not the typical heatmaps, but the name is used to describe the visualization
-of the uncertainty of the LLM in each cell of the map.
+  [...]\\There are two main type of heat maps: spatial, and grid.
+  \begin{itemize}
+    \item A spatial heat map displays the magnitude of a spatial phenomena as color,
+      usually cast over a map. In the image labeled "Spatial Heat Map Example,"
+      temperature is displayed by color range across a map of the world. Color ranges
+      from blue (cold) to red (hot).
 
-This is the core of the data collection process. The final analysis will use
-these heatmaps as the main tool to understand the agent behavior.
+    \item A grid heat map displays magnitude as color in a two-dimensional matrix,
+      with each dimension representing a category of trait and the color
+      representing the magnitude of some measurement on the combined traits from
+      each of the two categories. For example, one dimension might represent
+      year, and the other dimension might represent month, and the value
+      measured might be temperature.
+  \end{itemize}
+  \emph{Source: Wikipedia\footnotemark}
+\end{blockquote}
+\footnotetext{\url{https://en.wikipedia.org/wiki/Heat_map}}
 
-Once we get the heatmaps, we than compute a `correctness heatmap' that shows the
-summed percentages of the uncertainty referred to the correct actions for each cell.
+As stated in the definition above, heatmaps are a powerful tool for visualizing data,
+allowing for a compact and intuitive representation of large datasets. In our case,
+we employ heatmaps to capture and convey the uncertainty in the agent's decision-making
+process at each position within the matrix. Specifically, the heatmaps encode
+the probabilities assigned by the LLM to various possible actions.
+
+The primary goal of these heatmaps is to provide a clear and structured means of
+analyzing how the agent distributes probabilities over its available actions. By
+mapping these probabilities onto a visual representation, we gain insights into
+which areas of the matrix exhibit high certainty (where one action dominates)
+and which regions display greater uncertainty (where multiple actions hold comparable
+probabilities). These heatmaps serve as a diagnostic tool for evaluating the agent's
+behavior, identifying patterns, and pinpointing potential areas for improvement in
+future iterations.
+
+More specifically, we utilize heatmaps for two key aspects of our analysis:
+
+\begin{itemize}
+  \item To represent the probability distribution over the filtered list of actions.
+    This means that after discarding actions with probabilities below the
+    predefined threshold (as detailed in Section \ref{ssub:tokens_log_probability}),
+    the heatmap displays the remaining probability assigned to the remaining actions
+    (with a percentage now scaled to 100\%);
+
+  \item To represent the overall probability assigned to the correct actions in each
+    cell of the matrix. This allows us to measure how well the model aligns with
+    the expected optimal behavior, providing a way to assess the agent's effectiveness
+    in selecting appropriate actions.
+\end{itemize}
+
+These heatmaps are central to our data collection and analysis pipeline. By
+systematically constructing and analyzing them, we can track how the agent's decision-making
+evolves over time and across different configurations of the problem space. We
+can also identify systematic behaviors, biases, or areas where the model
+struggles, that we will analyze in Chapter \ref{cha:results_discussion}.
+
+The final analysis will rely heavily on these heatmaps to provide a comprehensive
+understanding of the agent's performance and behavior.
 
 \subsection{Heatmaps}
 
-What are, how they are generated (a special stateful agent that scans the map
-cell by cell and saves the result of the prompt in a json), how to read them, why
-they are useful. How they are organized in the repo.
+Our heatmaps are a visual representation of the probability distribution of
+actions taken within each cell of the map. They provide insights into the model's
+decision-making process by displaying the likelihood of selecting specific actions
+in different locations.
 
-\subsubsection{Map Orientation}
+To generate these heatmaps, a specialized stateless agent systematically scans
+the map, cell by cell, from the top-left to the bottom-right. At each position,
+it records the probabilities assigned to each possible action. The collected data
+is then stored in a JSON format, as shown below:
 
-Last, we considered the orientation of the map included in the prompts. While the
-specific details of this analysis will be discussed in the Results and Discussion
-chapter, it is worth noting that the way the map is presented to the model shows
-a bias towards a specific orientation (a programming matrix and not a cartesian plane).
+\begin{verbatim}
+[
+  {
+    "x":0,"y":0,
+    "values":[
+      ["R",true,0.9869068698680659],
+      ["D",false,0.004691684231979342],
+      ["U",false,0.002214120084731493],
+      ["S",false,0.0021401869314925225],
+      ["L",false,0.002023569441865407],
+      ["T",false,0.002023569441865407]
+      ]
+  },
+  ...
+]
+\end{verbatim}
+
+In this format, each entry represents a specific cell identified by its
+coordinates $(x,y)$. The \texttt{values} field contains a list of possible
+actions, each represented by:
+\begin{itemize}
+  \item The action itself (e.g., "R" for Right, "D" for Down, etc.);
+
+  \item A boolean value indicating whether the action was retained after filtering;
+
+  \item The probability assigned to that action by the framework.
+\end{itemize}
+Once this data is collected, a Python script processes it to generate the final heatmap,
+which visually encodes the probability distribution for each action. An example of
+such a heatmap is shown in Figure \ref{fig:heatmap_example}. Only the
+probability of the retained actions is displayed, with the color intensity indicating
+the likelihood of each action scaled back to 100\% (so, if an action is
+discarded, the remaining probabilities are scaled to 100\%).
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{
+    images/data_collection/heatmap_example.png
+  }
+  \caption{Example of a heatmap generated for a 5x5 map}
+  \label{fig:heatmap_example}
+\end{figure}
+
+To enhance interpretability, each action is represented using a distinct color:
+\begin{itemize}
+  \item Green: Left (L)
+
+  \item Yellow: Right (R)
+
+  \item Red: Down (D)
+
+  \item Blue: Up (U)
+
+  \item Purple: Take (T) (picking up a parcel)
+
+  \item Orange: Ship (S) (delivering a parcel)
+\end{itemize}
+Additionally, the transparency (alpha value) of each color is adjusted based on the
+probability of that action, allowing more probable actions to appear more
+prominently.
+
+A total of 36 test cases have been conducted, and the resulting heatmaps are stored
+in the repository under the following directory structure:
+\begin{verbatim}
+../data_and_results/heatmap/heatmaps/MODEL/MAP/GOAL/GOAL_POSITION/
+\end{verbatim}
+where the last folder contains four files:
+\begin{itemize}
+  \item \texttt{actions\_heatmap.png}: the rendered heatmap referring to that specific
+    test;
+
+  \item \texttt{correctness\_heatmap.png}: the heatmap representing the probability
+    of the correct actions that will be discussed in Section \ref{sub:correctness_heatmaps};
+
+  \item \texttt{heatmap.json}: the raw data collected for the heatmap;
+
+  \item \texttt{topX\_values.json}: statistics regarding the \texttt{correctness\_heatmap.png}
+    that will be used in the final analysis in Chapter
+    \ref{cha:results_discussion}.
+\end{itemize}
+
+This structure ensures that, for each map size, both pickup and delivery goals
+are tested, and in some cases also other specific goals that will help us analyze
+the results. The location of the parcel and the delivery tile are varied across
+different test cases. The rationale behind the selection of goal positions will be
+discussed in Chapter \ref{cha:results_discussion}.
+
+\subsubsection{Example}
+
+To better understand how to interpret these heatmaps, let us analyze a specific case.
+In Figure \ref{fig:heatmap_example}, we observe a heatmap generated for a 5×5 grid
+where the goal is to deliver a parcel at the center of the map.
+
+Consider the cell at coordinates $(2,1)$, which is located directly to the left
+of the goal. The KnowNo framework produced the following output for this cell:
+\begin{verbatim}
+  ...
+  {
+    "x": 2,
+    "y": 1,
+    "values": [
+      ["R", true, 0.34148147866149986],
+      ["U", true, 0.3185527747471083],
+      ["D", true, 0.2173149034701972],
+      ["T", false, 0.04243503226711094],
+      ["L", false, 0.040951236117811166],
+      ["S", false, 0.03926457473627248]
+    ]
+  },
+  ...
+  \end{verbatim}
+
+From this data, we observe that the model assigned similar probabilities to
+three actions: moving Right (34.14\%), Up (31.85\%), and Down (21.73\%). The Right
+action was ultimately chosen as the most likely. Meanwhile, actions such as Left
+(4.10\%), Take (T) (4.24\%), and Ship (S) (3.93\%) were discarded by the KnowNo
+framework. The remaining probabilities were then normalized to sum to 100\%.
+
+This example already highlights some potential limitations of the system, particularly
+in terms of decision ambiguity when the agent is very near to the goal, which
+will be further examined in Chapter \ref{cha:results_discussion}.
 
 \subsection{Correctness Heatmaps}
+\label{sub:correctness_heatmaps}
 
-How they are computed and what they represent
+Once collected the data for a heatmap, we computed for each cell the correct
+actions. Then we summed for each cell the probability given to the correct actions.
+As we can see the heatmap in Figure \ref{fig:correctness_heatmap} that is
+related to the heatmap in Figure \ref{fig:heatmap_example}.
+
+For example, let's take the top right cell and let's analyze it.

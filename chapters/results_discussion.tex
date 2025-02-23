@@ -1,11 +1,26 @@
 \chapter{Results Discussion}
 \label{cha:results_discussion}
 
+Explain rationale behind the choice of goal positioning.
+
+\section{Map Orientation}
+
+We also considered the orientation of the map included in the prompts. It is
+worth noting that the way the map is presented to the model shows a bias towards
+a specific orientation (a programming matrix and not a cartesian plane).
+
+This because the prompt does not include any information about the orientation
+and we also tried by moving the (0,0) to the bottom left corner and scaling
+everything but the result is just the same but rotated 90 deg, as can be seen in
+Figure \ref{fig:orientation}.
+
 \section{Stateless}
 \label{sec:stateless}
 
 \section{Stateful}
 \label{sec:stateful}
+
+Show that if overlapping the same portion, different values of the heatmap.
 
 \section{Stateless and Stateful Combined results}
 \label{sec:stateless_and_stateful_combined_results}
