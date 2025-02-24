@@ -520,6 +520,13 @@ Our prompt structure consists of the following elements:
     to evaluate the uncertainty in the same way as in the original paper.
 \end{itemize}
 
+A brief note: The letter ``T" for ``Take" was chosen instead of ``P" for ``Pickup"
+because, in the initial version of the prompt (as discussed in Section
+\ref{sec:first_approach}), $P$ was used to represent the parcel on the map. Similarly,
+``S" for "Ship" was selected, even though the server and other components refer
+to it as ``Deliver," as the letter ``D" was already assigned to the Down movement
+action.
+
 \subsubsection{Multichoice Benchmarking}
 
 Constraining the model's response to a predefined set of choices simplifies the
@@ -643,15 +650,17 @@ understanding of the agent's performance and behavior.
 
 \subsection{Heatmaps}
 
-Our heatmaps are a visual representation of the probability distribution of
-actions taken within each cell of the map. They provide insights into the model's
-decision-making process by displaying the likelihood of selecting specific actions
-in different locations.
+Heatmaps provide a visual representation of the probability distribution of
+actions taken within each cell of the environment. By encoding probability values
+as color intensities, these heatmaps offer an intuitive way to interpret the
+model's decision-making process across the entire grid. Each cell in the heatmap
+corresponds to a specific position in the environment, with colors indicating
+the likelihood of selecting particular actions at that location.
 
-To generate these heatmaps, a specialized stateless agent systematically scans
-the map, cell by cell, from the top-left to the bottom-right. At each position,
-it records the probabilities assigned to each possible action. The collected data
-is then stored in a JSON format, as shown below:
+To generate these heatmaps, a specialized stateless agent systematically scans the
+map, cell by cell, from the top-left to the bottom-right. At each position, it records
+the probabilities assigned to each possible action. The collected data is then
+stored in a JSON format, as shown below:
 
 \begin{verbatim}
 [
@@ -670,9 +679,9 @@ is then stored in a JSON format, as shown below:
 ]
 \end{verbatim}
 
-In this format, each entry represents a specific cell identified by its
-coordinates $(x,y)$. The \texttt{values} field contains a list of possible
-actions, each represented by:
+In this format, each entry represents a specific cell identified by its coordinates
+$(x,y)$. The \texttt{values} field contains a list of possible actions, each
+represented by:
 \begin{itemize}
   \item The action itself (e.g., "R" for Right, "D" for Down, etc.);
 
@@ -680,10 +689,11 @@ actions, each represented by:
 
   \item The probability assigned to that action by the framework.
 \end{itemize}
-Once this data is collected, a Python script processes it to generate the final heatmap,
-which visually encodes the probability distribution for each action. An example of
-such a heatmap is shown in Figure \ref{fig:heatmap_example}. Only the
-probability of the retained actions is displayed, with the color intensity indicating
+Once this data is collected, a Python script processes it to generate the final
+heatmap, which visually encodes the probability distribution for each action.
+
+An example of such a heatmap is shown in Figure \ref{fig:heatmap_example}. Only
+the probability of the retained actions is displayed, with the color intensity indicating
 the likelihood of each action scaled back to 100\% (so, if an action is
 discarded, the remaining probabilities are scaled to 100\%).
 
@@ -734,20 +744,28 @@ where the last folder contains four files:
     \ref{cha:results_discussion}.
 \end{itemize}
 
-This structure ensures that, for each map size, both pickup and delivery goals
-are tested, and in some cases also other specific goals that will help us analyze
-the results. The location of the parcel and the delivery tile are varied across
-different test cases. The rationale behind the selection of goal positions will be
-discussed in Chapter \ref{cha:results_discussion}.
+This organizational structure guarantees that, for each map size, both pickup
+and delivery goals are thoroughly tested to cover a wide range of scenarios. Additionally,
+in certain cases, we have included other specific goals or prompts to examine particular
+behaviors or edge cases of the agent. By incorporating these varied test
+configurations, we ensure a comprehensive evaluation of the agent's performance,
+which will provide valuable insights for analyzing the results in more depth.
+
+The location of the goals are varied across different test cases; the rationale behind
+choosing ``which tile should be the goal'' will be discussed in Chapter \ref{cha:results_discussion}.
 
 \subsubsection{Example}
 
 To better understand how to interpret these heatmaps, let us analyze a specific case.
-In Figure \ref{fig:heatmap_example}, we observe a heatmap generated for a 5×5 grid
-where the goal is to deliver a parcel at the center of the map.
+Figure \ref{fig:heatmap_example} presents a heatmap generated for a 5x5 grid, where
+the agent's objective is to deliver a parcel at the center of the map.
 
-Consider the cell at coordinates $(2,1)$, which is located directly to the left
-of the goal. The KnowNo framework produced the following output for this cell:
+Consider the cell at coordinates $(2,1)$, which is positioned directly to the
+left of the goal. This location is particularly interesting because, being
+adjacent to the delivery point, the agent should ideally display a strong preference
+for moving Right (R) to complete the task efficiently. The KnowNo framework
+produced the following probability distribution for this cell:
+
 \begin{verbatim}
   ...
   {
@@ -763,24 +781,156 @@ of the goal. The KnowNo framework produced the following output for this cell:
     ]
   },
   ...
-  \end{verbatim}
+\end{verbatim}
 
-From this data, we observe that the model assigned similar probabilities to
-three actions: moving Right (34.14\%), Up (31.85\%), and Down (21.73\%). The Right
-action was ultimately chosen as the most likely. Meanwhile, actions such as Left
-(4.10\%), Take (T) (4.24\%), and Ship (S) (3.93\%) were discarded by the KnowNo
-framework. The remaining probabilities were then normalized to sum to 100\%.
+From this data, we can extract several key observations:
+\begin{itemize}
+  \item Dominant Actions: The three highest-probability actions at this cell are
+    Right (R) with 34.14\%, Up (U) with 31.85\%, and Down (D) with 21.73\%. This
+    indicates that while the model slightly favors moving Right, it still considers
+    moving Up or Down as viable options;
 
-This example already highlights some potential limitations of the system, particularly
-in terms of decision ambiguity when the agent is very near to the goal, which
-will be further examined in Chapter \ref{cha:results_discussion}.
+  \item Discarded Actions: Actions such as Left (L) (4.10\%), Take (T) (4.24\%),
+    and Ship (S) (3.93\%) were assigned very low probabilities and subsequently filtered
+    out by the KnowNo framework, meaning they were not considered in the final
+    action selection process. This suggests that the model appropriately recognizes
+    that moving left or attempting to interact with the parcel at this position is
+    not optimal;
+
+  \item Probability Normalization: After discarding the low-probability actions,
+    the remaining three probabilities were rescaled to sum to 100\%. This renormalization
+    ensures that the final action selection is based solely on the most relevant
+    choices.
+\end{itemize}
+
+This example illustrates how the heatmap helps us diagnose the model’s decision-making
+tendencies. Ideally, in this scenario, the probability of moving Right (R) should
+be significantly higher, given that it is the only direct path to the goal. However,
+the model also considers alternative movements, highlighting potential limitations
+in its capabilities.
+
+This example already highlights some potential limitations of the system,
+particularly in terms of decision ambiguity when the agent is very near to the
+goal, which will be further examined in Chapter \ref{cha:results_discussion}.
 
 \subsection{Correctness Heatmaps}
 \label{sub:correctness_heatmaps}
 
-Once collected the data for a heatmap, we computed for each cell the correct
-actions. Then we summed for each cell the probability given to the correct actions.
-As we can see the heatmap in Figure \ref{fig:correctness_heatmap} that is
-related to the heatmap in Figure \ref{fig:heatmap_example}.
+After constructing the action-probability heatmaps, we generate an additional set
+of heatmaps that focus on correctness. These correctness heatmaps aim to
+evaluate how well the model aligns with the expected optimal behavior by
+quantifying the probability assigned to the correct actions at each position in
+the environment.
 
-For example, let's take the top right cell and let's analyze it.
+To construct these correctness heatmaps, we start determining the set of correct
+actions for each cell using a Python script similar to the one in Listing \ref{lst:correctness_script}.
+This script systematically analyzes the spatial relationship between each tile
+and the designated goal position, identifying which movements (e.g., U, D, L, R)
+would bring the agent closer to the goal. The resulting list of correct actions serves
+as the reference against which we measure the model's decision-making accuracy.
+
+\vspace{5mm}
+\begin{codewindow}
+  [Python Code] \lstset{style=pythonstyle, language=Python, caption={If statements to compute the correct actions for every cell},
+  label={lst:correctness_script}} \begin{lstlisting}
+for tile in tiles:
+    delta_y = goal_y - tile['y']
+    delta_x = goal_x - tile['x']
+    correct_moves = []
+    if delta_x > 0:
+        correct_moves.append('D')
+    if delta_x < 0:
+        correct_moves.append('U')
+    if delta_y > 0:
+        correct_moves.append('R')
+    if delta_y < 0:
+        correct_moves.append('L')
+
+    percentage = 0
+    for value in tile['values']:
+        if value[0] in correct_moves:   # value[0] is the letter
+            percentage += value[2]      # value[2] is the probability
+
+    total_percentage = sum([value[2] for value in tile['values']])
+    percentage = percentage / total_percentage
+\end{lstlisting}
+\end{codewindow}
+\vspace{5mm}
+
+Once the correct action probabilities have been computed, a second heatmap is generated.
+This correctness heatmap visually represents the proportion of probability
+assigned to correct actions in each cell. The values are normalized such that they
+reflect how much focus the model places on the correct actions relative to the total
+probability mass allocated to all retained actions. This allows us to assess the
+model's effectiveness in adhering to expected behavior and helps highlight areas
+where the agent struggles to make optimal choices.
+
+Figure \ref{fig:correctness_example} illustrates an example correctness heatmap
+corresponding to the action probability heatmap shown earlier in Figure
+\ref{fig:heatmap_example}.
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=0.8\textwidth]{
+    images/data_collection/correctness_example.png
+  }
+  \caption{Example of a correctness heatmap generated for a 5x5 map}
+  \label{fig:correctness_example}
+\end{figure}
+
+\subsubsection{Example}
+
+To better understand the significance of the correctness heatmap, let's revisit the
+previously analyzed cell at coordinates $(2,1)$, which is located directly to
+the left of the goal position in a 5x5 grid.
+
+To compute the correctness probability for this cell, we sum the probability of the
+correct action (Right) and normalize it against the total probability mass assigned
+to retained actions.
+
+\vspace{5mm}
+\begin{codewindow}
+  [Text] \lstset{style=promptstyle, language=Prompt, caption={Caption}, label={lst:percentage_compute}}
+  \begin{lstlisting}
+total_percentage = 0.34148 + 0.31855 + 0.21731 (= 0.87734)
+percentage = 0.34148 / total_percentage (= 0.38922)
+\end{lstlisting}
+\end{codewindow}
+\vspace{5mm}
+
+Thus, if the agent selects an action randomly while weighting choices according to
+their assigned probabilities (as described in Section
+\ref{sub:uncertainty_handling}), in this case it would have a 38.92\% chance of choosing
+the correct action, as shown in Listing \ref{lst:percentage_compute}.
+
+This metric provides valuable insight into the model's decision-making
+tendencies: while the model recognizes the correct action, it also considers
+alternative actions with relatively high probability, indicating uncertainty in its
+decision-making process.
+
+By examining correctness heatmaps across different test cases, we can identify
+patterns and inconsistencies in the model's behavior. These heatmaps help us pinpoint
+areas where the model exhibits high confidence in correct actions and areas where
+it is more uncertain or prone to errors.
+
+Some key insights that can be derived from correctness heatmaps include:
+\begin{itemize}
+  \item High-confidence regions: Cells where the model assigns a near-total
+    probability to correct actions indicate strong alignment with expected
+    behavior;
+
+  \item Uncertain regions: Areas with distributed probability mass among
+    multiple actions suggest indecision, which could stem from ambiguous training
+    data or suboptimal model reasoning;
+
+  \item Error-prone zones: Cells where incorrect actions receive a significant
+    portion of the probability mass highlight potential weaknesses in the model's
+    decision-making.
+\end{itemize}
+These correctness heatmaps provide a structured way to assess the agent's
+decision-making process, offering insights into how well it aligns with expected
+behavior. By analyzing these visualizations, we can identify areas where the model
+exhibits high confidence in correct actions and regions where it shows uncertainty
+or inconsistencies. This analysis will be further explored in Chapter
+\ref{cha:results_discussion}, where we examine the broader implications of these
+findings.
