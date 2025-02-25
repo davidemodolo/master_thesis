@@ -38,7 +38,9 @@ performance, with both outperforming GPT-3.5. Due to budget constraints, the
 majority of our analysis was conducted using GPT-4o-mini, as it provides a cost-effective
 yet high-quality alternative. However, our qualitative findings can be reasonably
 extended to GPT-4o as well, given their comparable performance, and to all models
-with similar performance and/or architecture.
+with similar performance and/or architecture. Each LLM call had an average input
+size of approximately 250 tokens, with only a single token as output. The cost
+per call was approximately \$0.000038 USD.
 
 \section{Map Orientation}
 
@@ -96,6 +98,7 @@ in computer science often follow a top-left origin convention, it is likely that
 the LLM was implicitly influenced by its prior knowledge from programming-related
 contexts.
 
+\vspace{5mm}
 \begin{figure}[h]
   \centering
   \begin{minipage}[b]{0.45\textwidth}
@@ -118,6 +121,7 @@ contexts.
   \caption{Heatmaps showing correctness with different map orientations}
   \label{fig:orientation_correctness}
 \end{figure}
+\vspace{5mm}
 
 \subsection{Comparison of Orientations}
 
@@ -129,14 +133,14 @@ reveals a clear preference for the top-left origin. The model performed
 significantly better when using this orientation, as shown by the following accuracy
 metrics:
 \begin{itemize}
-  \item Top-left origin: 92\% of the tiles had the correct action as the most probable
-    one.
+  \item \textbf{Top-left origin}: 92\% of the tiles had the correct action as
+    the most probable one;
 
-  \item Bottom-left origin: 62\% of the tiles had the correct action as the most
-    probable one.
+  \item \textbf{Bottom-left origin}: 62\% of the tiles had the correct action as
+    the most probable one;
 
-  \item Top 3 actions comparison: 99\% vs. 93\% of the tiles contained the correct
-    action within the top three choices.
+  \item \textbf{Top 3 actions comparison}: 99\% vs. 93\% of the tiles contained
+    the correct action within the top three choices.
 \end{itemize}
 
 These results strongly suggest that the model is inherently biased toward the top-left
@@ -148,53 +152,609 @@ their performance in spatial reasoning tasks.
 \section{Stateless}
 \label{sec:stateless}
 
-What stateless means with reference to Section \ref{sec:stateful_and_stateless_agents_chapAD}.
+As previously discussed in Section \ref{sec:stateful_and_stateless_agents_chapAD},
+a stateless agent operates without any memory of past actions or previous states
+of the environment. In this context, every decision is made independently, relying
+solely on the information provided within a single prompt.
 
-Cost of each call in terms of tokens and USDs.
+Technically, each call to the Large Language Model (LLM) contains only the
+current state of the environment, without any reference to past states or prior actions.
+For every decision, a new conversation instance is initiated, making the agent
+unable to build an internal representation of the map or track past movements.
 
-\subsection{Heatmaps}
+One of the major challenges faced by a stateless agent is the need to infer its
+position and the map layout solely based on the current prompt. This limitation leads
+to several difficulties, such as:
+\begin{itemize}
+  \item \textbf{Inability to Track Progress:} Since the agent does not retain
+    memory, it cannot recognize previously visited locations, often resulting in
+    repetitive movements or getting stuck in loops.
 
-lines of the goal bad, probably because only one action correct
+  \item \textbf{Increased Uncertainty:} The LLM must deduce the correct course
+    of action based only on the available snapshot of the environment, leading to
+    occasional misinterpretations.
 
-if overlapping the same portion, different values of the heatmap
+  \item \textbf{Higher Error Rates:} Compared to a stateful approach, where an agent
+    can accumulate knowledge over time, the stateless method is more prone to
+    making incorrect decisions, especially in larger maps.
+\end{itemize}
 
-goal action (T/S) in the cells near the goal
+Despite these challenges, implementing a stateless agent serves as an important step
+toward understanding the inherent uncertainty in LLM-based decision-making. The
+results obtained from this approach provide a useful baseline for evaluating the
+potential benefits of incorporating statefulness.
 
-FIG 5x5 from 5.3
+The stateless agent follows predefined prompt templates, as described in Sections
+\ref{sub:pickup_prompt} and \ref{sub:deliver_prompt}. These prompts encapsulate
+all the necessary information about the current state and available actions
+within a single request.
 
-FIG 13x13 from 6.1
+To evaluate the performance of the stateless agent, we analyze heatmaps generated
+from experiments on different map sizes. The following sections present the
+results for various scenarios.
 
-[FIG 21x21]
+\subsection{Pickup Goal at the Center}
+\label{sub:pickup_goal_at_the_center}
 
-same portions of the map (eg top right portion) systematically lower score.
+Figures \ref{fig:stateless_pickup_heatmaps} and \ref{fig:stateless_pickup_correctness}
+illustrate the heatmaps for maps of sizes 5x5, 7x7, and 13x13, with the pickup
+goal placed at the center.
+
+\vspace{5mm}
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/hm_5x5_pickup.png
+    }
+    \caption{5x5}
+    \label{fig:hm_5x5_pickup}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/hm_7x7_pickup.png
+    }
+    \caption{7x7}
+    \label{fig:hm_7x7_pickup}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/hm_13x13_pickup.png
+    }
+    \caption{13x13}
+    \label{fig:hm_13x13_pickup}
+  \end{minipage}
+  \caption{Heatmaps for stateless agent with pickup goal in the center of
+  different map sizes}
+  \label{fig:stateless_pickup_heatmaps}
+\end{figure}
+\vspace{5mm}
+
+From the heatmaps, we can observe a consistent pattern across different map
+sizes:
+\begin{itemize}
+  \item The top-left quadrant tends to have high activation (red/yellow regions).
+
+  \item The bottom-left quadrant is predominantly blue, indicating a lower
+    probability of correct action selection.
+
+  \item The top-right quadrant exhibits significant uncertainty.
+
+  \item The bottom-right quadrant generally falls within a green/blue range.
+\end{itemize}
+
+To further examine the correctness of the agent's decisions, we analyze the correctness
+heatmaps shown in Figure \ref{fig:stateless_pickup_correctness}.
+
+\vspace{5mm}
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/chm_5x5_pickup.png
+    }
+    \caption{5x5}
+    \label{fig:chm_5x5_pickup}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/chm_7x7_pickup.png
+    }
+    \caption{7x7}
+    \label{fig:chm_7x7_pickup}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/chm_13x13_pickup.png
+    }
+    \caption{13x13}
+    \label{fig:chm_13x13_pickup}
+  \end{minipage}
+  \caption{Correctness heatmaps for stateless agent with pickup goal at the
+  center of different map sizes.}
+  \label{fig:stateless_pickup_correctness}
+\end{figure}
+\vspace{5mm}
+
+The correctness analysis reveals the following trends:
+\begin{itemize}
+  \item The top-left and bottom-right quadrants exhibit the highest accuracy.
+
+  \item The top-right and bottom-left quadrants are more uncertain, with the top-right
+    being the least reliable.
+
+  \item Along the row and column containing the goal, the correctness tends to
+    be lower, with several cells having 0\% correctness, meaning that the only correct
+    action was discarded by KnowNo
+\end{itemize}
+
+Table \ref{tab:performance} presents numerical performance metrics across
+different map sizes.
+
+\vspace{5mm}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{c|ccc|ccc}
+          & top1 & top2 & top3 & top1\% & top2\% & top3\% \\
+    \hline
+    5x5   & 19   & 22   & 22   & 0.792  & 0.917  & 0.917  \\
+    7x7   & 37   & 40   & 41   & 0.771  & 0.833  & 0.854  \\
+    13x13 & 125  & 161  & 162  & 0.744  & 0.958  & 0.964  \\
+  \end{tabular}
+  \caption{Performance metrics for different grid sizes}
+  \label{tab:performance}
+\end{table}
+\vspace{5mm}
+
+The results indicate that:
+\begin{itemize}
+  \item Smaller maps tend to yield a higher probability of selecting the correct
+    action as the top-ranked choice.
+
+  \item While absolute correctness decreases with increasing map size, the
+    relative performance remains fairly stable.
+\end{itemize}
+
+Even if not visible in the heatmaps, the goal tile almost always had the correct
+action as the only one kept after KnowNo framework, and rarely it kept other actions
+but the correct one had a better probability by far. Only in one case, the ``goal
+action" was the most probable also in the left cell wrt the goal.
+
+\subsection{Deliver Goal at the Center}
+
+A similar analysis can be conducted for the case where the delivery goal is placed
+at the center of the map. Figures \ref{fig:stateless_deliver_heatmaps} and
+\ref{fig:stateless_deliver_correctness} show the heatmaps for different map
+sizes in this configuration.
+
+Compared to the pickup task, the delivery task introduces slightly more uncertainty.
+This uncertainty arises because, in our setup, the goal tile is not explicitly
+marked as a destination in the prompt but must instead be inferred from the map
+description. Again, the LLM needs to recognize that it has arrived at the
+correct location based solely on relative positioning within the map, without any
+persistent memory of past decisions.
+
+From the heatmaps, we observe similar trends as seen in the pickup case:
+\begin{itemize}
+  \item The top-left and bottom-right quadrants show a higher concentration of correct
+    decision-making;
+
+  \item The top-right quadrant, similar to the pickup scenario, exhibits more variability
+    and uncertainty;
+
+  \item The row and column containing the goal continue to demonstrate reduced correctness.
+\end{itemize}
+
+\vspace{5mm}
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/hm_5x5_deliver.png
+    }
+    \caption{5x5}
+    \label{fig:hm_5x5_deliver}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/hm_7x7_deliver.png
+    }
+    \caption{7x7}
+    \label{fig:hm_7x7_deliver}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/hm_13x13_deliver.png
+    }
+    \caption{13x13}
+    \label{fig:hm_13x13_deliver}
+  \end{minipage}
+  \caption{Heatmaps for stateless agent with deliver goal in the center of
+  different map sizes}
+  \label{fig:stateless_deliver_heatmaps}
+\end{figure}
+\vspace{5mm}
+
+\vspace{5mm}
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/chm_5x5_deliver.png
+    }
+    \caption{5x5}
+    \label{fig:chm_5x5_deliver}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/chm_7x7_deliver.png
+    }
+    \caption{7x7}
+    \label{fig:chm_7x7_deliver}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/chm_13x13_deliver.png
+    }
+    \caption{13x13}
+    \label{fig:chm_13x13_deliver}
+  \end{minipage}
+  \caption{Heatmaps for stateless agent with deliver goal in the center of
+  different map sizes}
+  \label{fig:stateless_deliver_correctness}
+\end{figure}
+\vspace{5mm}
+
+Moreover, the values in Table \ref{tab:performance} reveals that as the map size
+increases, the probability of selecting the correct action as the top-ranked
+choice decreases. However, the overall trend remains consistent, suggesting that
+while uncertainty increases with map size, the general patterns of decision-making
+remain largely stable across different scales.
+
+\vspace{5mm}
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{c|ccc|ccc}
+          & top1 & top2 & top3 & top1\% & top2\% & top3\% \\
+    \hline
+    5x5   & 20   & 24   & 24   & 0.833  & 1.000  & 1.000  \\
+    7x7   & 43   & 47   & 48   & 0.896  & 0.979  & 1.000  \\
+    13x13 & 125  & 161  & 162  & 0.744  & 0.958  & 0.964  \\
+  \end{tabular}
+  \caption{Performance metrics for different grid sizes}
+  \label{tab:performance}
+\end{table}
+\vspace{5mm}
+
+\subsection{Pickup and Deliver Goals in Different Map Sections}
+
+Beyond testing the performance of the stateless agent scenarios with the goal at
+the center, we also examined its ability to handle pickup and delivery goals positioned
+in different sections of the map. Figures \ref{fig:stateless_top_right} and
+\ref{fig:stateless_bottom_right} illustrate the heatmaps for cases where the
+pickup and delivery locations are in the top-right and bottom-right corners, respectively.
+
+By analyzing the performance in these different regions, we aim to understand
+whether the placement of the goal influences the decision-making accuracy of the
+LLM. Since the map is embedded within a structured text prompt, the location of
+the goal may impact how the LLM processes the spatial relationships between
+different tiles as explained in Section \ref{sub:goal_positioning}.
+
+\vspace{5mm}
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/not_central/stateless_pickup_top_right.png
+    }
+    \caption{Pickup Top Right}
+    \label{fig:stateless_pickup_top_right}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/not_central/stateless_deliver_top_right.png
+    }
+    \caption{Deliver Top Right}
+    \label{fig:stateless_deliver_top_right}
+  \end{minipage}
+  \caption{Heatmaps for stateless agent with pickup and deliver goals in the top
+  right corner of the map}
+  \label{fig:stateless_top_right}
+\end{figure}
+\vspace{5mm}
+
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/not_central/stateless_pickup_bottom_right.png
+    }
+    \caption{Pickup Bottom Right}
+    \label{fig:stateless_pickup_bottom_right}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/not_central/stateless_deliver_bottom_right.png
+    }
+    \caption{Deliver Bottom Right}
+    \label{fig:stateless_deliver_bottom_right}
+  \end{minipage}
+  \caption{Heatmaps for stateless agent with pickup and deliver goals in the
+  bottom right corner of the map}
+  \label{fig:stateless_bottom_right}
+\end{figure}
+\vspace{5mm}
+
+Looking at the correctness heatmaps in Figures
+\ref{fig:stateless_top_right_correctness} and
+\ref{fig:stateless_bottom_right_correctness}, we observe similar patterns, where
+the characteristic drop in correctness along the goal row and column persists.
+
+\vspace{5mm}
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/not_central/chm_pickup_top_right.png
+    }
+    \caption{Correctness Pickup Top Right}
+    \label{fig:chm_pickup_top_right}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/not_central/chm_deliver_top_right.png
+    }
+    \caption{Correctness Deliver Top Right}
+    \label{fig:chm_deliver_top_right}
+  \end{minipage}
+  \caption{Correctness heatmaps for stateless agent with pickup and deliver
+  goals in the top right corner of the map}
+  \label{fig:stateless_top_right_correctness}
+\end{figure}
+\vspace{5mm}
+
+\vspace{5mm}
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/not_central/chm_pickup_bottom_right.png
+    }
+    \caption{Correctness Pickup Bottom Right}
+    \label{fig:chm_pickup_bottom_right}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/stateless/not_central/chm_deliver_bottom_right.png
+    }
+    \caption{Correctness Deliver Bottom Right}
+    \label{fig:chm_deliver_bottom_right}
+  \end{minipage}
+  \caption{Correctness heatmaps for stateless agent with pickup and deliver
+  goals in the bottom right corner of the map}
+  \label{fig:stateless_bottom_right_correctness}
+\end{figure}
+\vspace{5mm}
+
+These alternative goal placements provide valuable insights into the agent's
+decision-making and can be seen as subsets of the larger map. For example, the
+top-left portion of a 13x13 map with the goal in the center can be viewed as a
+7x7 map with the goal in the bottom-right cell. At the same time, the bottom-left
+portion of the 13x13 map with the center goal corresponds to a 7x7 map with the
+top-right goal. This perspective brings us to the following topic, where a slice
+with the same size from different maps is compared.
+
+It is already visible in figure \ref{fig:stateless_deliver_heatmaps} but can be
+seen better in figure \ref{fig:around_comparison}. Even if the values in the cells
+around the goal are very similar, they are not the same. This may be due to the fact
+that the LLM spreads the attention across all the prompt, and with a smaller map,
+the map occupies less space in it.
+
+\subsection{Goal position comparison}
+
+A final analysis was conducted to determine whether the placement of the
+delivery goal in different sections of the map affects the overall accuracy of
+the stateless agent. Table \ref{tab:performance_21x21} presents performance metrics
+for the 21x21 grid in three configurations:
+\begin{itemize}
+  \item \textbf{Top Right (TR):} The delivery goal is positioned in the top-right
+    corner;
+
+  \item \textbf{Center (CN):} The delivery goal is placed in the center of the
+    map;
+
+  \item \textbf{Bottom Right (BR):} The delivery goal is located in the bottom-right
+    corner.
+\end{itemize}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{c|ccc|ccc}
+              & top1 & top2 & top3 & top1\% & top2\% & top3\% \\
+    \hline
+    21x21\_TR & 378  & 429  & 433  & 0.859  & 0.975  & 0.984  \\
+    21x21\_CN & 294  & 394  & 428  & 0.668  & 0.895  & 0.973  \\
+    21x21\_BR & 371  & 416  & 417  & 0.843  & 0.945  & 0.948  \\
+  \end{tabular}
+  \caption{Performance metrics for different 21x21 configurations}
+  \label{tab:performance_21x21}
+\end{table}
+
+From the data, we can draw several conclusions:
+\begin{itemize}
+  \item The top-right and bottom-right configurations exhibit similar performance,
+    with top1 accuracy at 85.9\% and 84.3\%, respectively, as stated in Section
+    \ref{sub:goal_positioning};
+
+  \item The center goal configuration shows a notable drop in top1 accuracy to 66.8\%,
+    confirming our earlier observation that finding a specific information hidden
+    in the middle of a long text is more challenging;
+
+  \item The difference between the top2 and top3 accuracy rates across the three
+    configurations indicates that, even when the correct action is not the most
+    probable choice, it is still frequently within the top-ranked options,
+    meaning the model maintains a reasonable degree of decision-making
+    reliability.
+\end{itemize}
+
+These results reinforce the hypothesis that stateless agents struggle most when they
+must infer goal locations based on spatial relationships rather than relying on explicit
+goal markers. Additionally, it confirms that the layout of the prompt itself (how
+the map is structured in textual form) plays a role in how effectively the LLM can
+interpret spatial cues.
 
 \section{Stateful}
 \label{sec:stateful}
 
-Works, but bigger the map, the worse the performance.
+Stateful means that we kept track of the chat history, so at every step, all the
+past states and actions are available to the LLM. This allows the agent to build
+an internal representation of the map and track its movements over time,
+enabling more informed decision-making. The stateful approach integrates historical
+context, which is especially beneficial for tasks where understanding the
+progression of events is crucial; in this case it allows the agent to better understand
+the map orientation.
 
-Also difficult to test in very big maps since token limit is reached after few calls.
-See figure
+One key advantage of a stateful agent is its ability to recover from errors.
+With access to previous interactions, the LLM can identify patterns such as repetitive
+loops or suboptimal paths. Recognizing these patterns, the agent is able to adjust
+its strategy, replan its path, and ultimately increase the chance of reaching the
+goal even after encountering execution errors or obstacles.
 
-Also tried by sending the map in the first call, then wait and send every 5 or
-10 messages, but either no working or still so frequent that the limit was reached
-fast.
+This translates to the fact that the agent is able to reach the goal even when the
+stateless output does not find any correct action.
+
+Moreover, accumulating past interactions enables the LLM to develop a more
+comprehensive internal map of the environment. This cumulative knowledge is beneficial
+not only for precise navigation but also when the environment may change or when
+additional information is provided later in the interaction. The agent can
+correlate new data with the stored context, providing a more robust response compared
+to a stateless design, where each decision is made in isolation.
+
+However, a stateful design does carry potential challenges. One significant
+issue is the token limit imposed by the LLM. As the conversation history grows,
+managing and condensing the context without losing essential details becomes
+critical. Strategies such as summarizing less relevant parts of the dialogue or periodically
+resetting portions of the context are often necessary to remain within token constraints
+while still maintaining effective decision-making. They have been tested in the
+form of sending the map in the first call, then wait and send it again every 5 or
+10 messages, but it either made the agent not performing as desired or the
+sending of the map was still so frequent that the token limit was reached fast.
+
+\subsection{Path Visualization}
+\begin{wrapfigure}
+  {r}{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.5\textwidth]{
+    images/results_discussion/stateful/pickupBR_7x7.png
+  }
+  \caption{Caption}
+  \label{fig:stateful_path}
+\end{wrapfigure}
+
+A dedicated visualization script has been developed to illustrate the agent's path
+on the map. This script identifies all optimal paths connecting the start and
+the goal, selects the one sharing the highest number of common cells with the agent's
+path, and then calculates both the percentage of overlapping cells and the
+relative difference in path length. Figure \ref{fig:stateful_path} displays an example
+output, highlighting that although the agent eventually reaches the goal, it encounters
+difficulties navigating in the vicinity of the goal, as discussed in Section
+\ref{sub:pickup_goal_at_the_center}.
+\clearpage
 
 \section{``Path Finding''}
 
-tested to reduce the size of the problem, similarly to what was cited in Section
-\ref{sec:closest_cell_to_the_goal}
+Up to this point, we have observed that, in almost every instance, the KnowNo
+framework consistently discarded actions related to the agent's goals, such as picking
+up and delivering parcels. To determine whether these goal-related actions still
+contributed significantly to the agent's uncertainty, we designed an experiment where
+the objective was reduced to simply reaching a specific tile.
 
-same but without take and deliver as actions in the prompt, but similar result.
+To implement this, we removed the pickup and delivery actions from the prompt
+while keeping all other conditions unchanged. The goal was set up as just reaching
+a specific tile, similarly to what the ``Pickup goal'' requires. By doing so, we
+aimed to isolate and examine the role of these actions in influencing the agent's
+uncertainty. The results of this experiment are presented in Figure \ref{fig:path_finding}.
+This approach aligns with our systematic methodology, as previously discussed in
+Section \ref{sec:closest_cell_to_the_goal}, where we progressively simplified
+the agent's goals to identify potential limitations in decision-making.
 
-[fig with path finding and pickup]
+A meaningful comparison can be drawn between these results and those obtained
+from a scenario in which the agent operated on a 5x5 grid with a pickup goal
+located at the center. Since both setups shared the same prompt structure, this
+comparison allows us to assess whether the presence of goal-related actions had
+a significant impact on the agent's uncertainty. The results from the 5x5 pickup
+scenario, previously discussed, can be found in Figure \ref{fig:hm_5x5_pickup} and
+Figure \ref{fig:chm_5x5_pickup}.
 
-[fig correctness with path finding and pickup]
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/path_finding/actions_heatmap.png
+    }
+    \caption{Correctness pathfinding }
+    \label{fig:path_finding_hm}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/path_finding/correct_actions_percentage_PERC.png
+    }
+    \caption{Correctness Deliver Top Right}
+    \label{fig:path_finding_corr}
+  \end{minipage}
+  \caption{Correctness heatmaps for stateless agent with pickup and deliver
+  goals in the top right corner of the map}
+  \label{fig:path_finding}
+\end{figure}
+
+The outcomes of both experiments are remarkably similar, revealing identical areas
+of high and low uncertainty. This suggests that goal-related actions are not the
+primary source of uncertainty in the agent's decision-making process. Furthermore,
+it reinforces the idea that the structure of the prompt, carefully designed based
+on the literature reviewed as explained in Section \ref{sec:prompt_creation_choices},
+is not a key factor contributing to uncertainty. Instead, the observed
+uncertainty may be more closely linked to the inherent limitations of the LLM
+itself.
 
 \section{Stateless and Stateful Combined results}
 \label{sec:stateless_and_stateful_combined_results}
 
-stateful works best for “LLMs are few-shot learners” and the chat history with
+stateful works best for ``LLMs are few-shot learners" and the chat history with
 action-effect\_in\_the\_map helps the LLM understand the map and the target; also,
 as we see in the stateless, if the agent ends up in particular portions of the map,
 it goes into a loop and never comes out from there. The areas problem areas,
@@ -205,14 +765,19 @@ terms they are the same number, but if in the first case the agent ends up in
 the problem cell very easily gets out of it and gets to the goal, in the second case
 the agent does not come out anymore)
 
+Performance from the slides shown to the professor
+
 \section{Closest Cell to the Goal Problems}
-\label{sec:closest_cell_to_the_goal_problems} more than one cell could bring the
-agent closer to the final goal. [add image similar \ref{fig:extra} but with goal
-one tile to the right]
+\label{sec:closest_cell_to_the_goal_problems}
+
+more than one cell could bring the agent closer to the final goal. [add image similar
+\ref{fig:extra} but with goal one tile to the right]
 
 show prompt
 
 \section{Models Comparison}
 \label{sec:models_comparison}
 
-Pickup 5x5 pickup (4,4) 3.5 vs 4o vs 4o-mini
+Pickup 7x7 pickup (4,4) 3.5 vs 4o vs 4o-mini
+
+3.5 in 5x5 was good, but in 7x7 it was almost random
