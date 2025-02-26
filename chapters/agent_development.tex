@@ -518,7 +518,7 @@ the optimal action leading toward the goal. Was the model inherently incapable o
 making the correct choice, or was the issue rooted in the way the prompt was
 structured? To better understand this, we designed an experiment that introduced
 a two-step decision-making process (visible in Figure \ref{fig:extra}):
-\begin{itemize}
+\begin{enumerate}
   \item \textbf{Identifying the best neighboring tile}: Before making a move,
     the agent was first asked to determine the most optimal adjacent tile to
     step toward, effectively transforming the problem into a local optimization task;
@@ -526,7 +526,7 @@ a two-step decision-making process (visible in Figure \ref{fig:extra}):
   \item \textbf{Selecting the best action to reach that tile}: Once the target tile
     was identified, the agent was then tasked with choosing the appropriate
     action to move in that direction.
-\end{itemize}
+\end{enumerate}
 
 \vspace{7mm}
 \begin{figure}[h!]

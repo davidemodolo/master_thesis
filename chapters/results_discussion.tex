@@ -236,17 +236,11 @@ goal placed at the center.
 \vspace{5mm}
 
 From the heatmaps, we can observe a consistent pattern across different map
-sizes:
-\begin{itemize}
-  \item The top-left quadrant tends to have high activation (red/yellow regions).
-
-  \item The bottom-left quadrant is predominantly blue, indicating a lower
-    probability of correct action selection.
-
-  \item The top-right quadrant exhibits significant uncertainty.
-
-  \item The bottom-right quadrant generally falls within a green/blue range.
-\end{itemize}
+sizes. The top-left quadrant tends to show red and yellow as prominent colors and
+the bottom-left quadrant is predominantly blue. The top-right quadrant exhibits
+significant uncertainty with many actions in most of the cells, while the bottom-right
+quadrant generally is green and blue (colors representing every actions, as explained
+in Section \ref{sub:heatmaps}).
 
 To further examine the correctness of the agent's decisions, we analyze the correctness
 heatmaps shown in Figure \ref{fig:stateless_pickup_correctness}.
@@ -288,10 +282,11 @@ heatmaps shown in Figure \ref{fig:stateless_pickup_correctness}.
 
 The correctness analysis reveals the following trends:
 \begin{itemize}
-  \item The top-left and bottom-right quadrants exhibit the highest accuracy.
+  \item The top-left and bottom-right quadrants exhibit the highest certainty,
+    with the former being almost perfect in every cell;
 
   \item The top-right and bottom-left quadrants are more uncertain, with the top-right
-    being the least reliable.
+    being the least reliable;
 
   \item Along the row and column containing the goal, the correctness tends to
     be lower, with several cells having 0\% correctness, meaning that the only correct
@@ -347,7 +342,7 @@ persistent memory of past decisions.
 From the heatmaps, we observe similar trends as seen in the pickup case:
 \begin{itemize}
   \item The top-left and bottom-right quadrants show a higher concentration of correct
-    decision-making;
+    probability;
 
   \item The top-right quadrant, similar to the pickup scenario, exhibits more variability
     and uncertainty;
@@ -576,18 +571,70 @@ portion of the 13x13 map with the center goal corresponds to a 7x7 map with the
 top-right goal. This perspective brings us to the following topic, where a slice
 with the same size from different maps is compared.
 
-It is already visible in figure \ref{fig:stateless_deliver_heatmaps} but can be
-seen better in figure \ref{fig:around_comparison}. Even if the values in the cells
-around the goal are very similar, they are not the same. This may be due to the fact
-that the LLM spreads the attention across all the prompt, and with a smaller map,
-the map occupies less space in it.
+\vspace{5mm}
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.19\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/comparison/hm_3x3.png
+    }
+    \caption{3x3}
+    \label{fig:hm_3x3}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.19\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/comparison/hm_5x5.png
+    }
+    \caption{5x5}
+    \label{fig:hm_5x5}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.19\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/comparison/hm_7x7.png
+    }
+    \caption{7x7}
+    \label{fig:hm_7x7}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.19\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/comparison/hm_13x13.png
+    }
+    \caption{13x13}
+    \label{fig:hm_13x13}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.19\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/comparison/hm_21x21.png
+    }
+    \caption{21x21}
+    \label{fig:hm_21x21}
+  \end{minipage}
+  \caption{Heatmaps for different map sizes}
+  \label{fig:around_comparison}
+\end{figure}
+\vspace{5mm}
+
+It is already visible in figure \ref{fig:stateless_deliver_heatmaps} but can be seen
+better in figure \ref{fig:around_comparison}. Even if the values in the cells
+around the goal are very similar, they are not the same. This may be due to the
+fact that the LLM spreads the attention across all the prompt, and with a smaller
+map, the map occupies less space in it.
 
 \subsection{Goal position comparison}
 
-A final analysis was conducted to determine whether the placement of the
-delivery goal in different sections of the map affects the overall accuracy of
-the stateless agent. Table \ref{tab:performance_21x21} presents performance metrics
-for the 21x21 grid in three configurations:
+A final analysis was conducted to determine whether the placement of the delivery
+goal in different sections of the map affects the overall accuracy of the stateless
+agent. Table \ref{tab:performance_21x21} presents performance metrics for the
+21x21 grid in three configurations:
 \begin{itemize}
   \item \textbf{Top Right (TR):} The delivery goal is positioned in the top-right
     corner;
@@ -629,94 +676,93 @@ From the data, we can draw several conclusions:
     reliability.
 \end{itemize}
 
-These results reinforce the hypothesis that stateless agents struggle most when they
-must infer goal locations based on spatial relationships rather than relying on explicit
-goal markers. Additionally, it confirms that the layout of the prompt itself (how
-the map is structured in textual form) plays a role in how effectively the LLM can
-interpret spatial cues.
+These results reinforce the hypothesis that stateless agents struggle most when
+they must infer goal locations based on spatial relationships rather than
+relying on explicit goal markers. Additionally, it confirms that the layout of
+the prompt itself (how the map is structured in textual form) plays a role in
+how effectively the LLM can interpret spatial cues.
 
 \section{Stateful}
 \label{sec:stateful}
 
 Stateful means that we kept track of the chat history, so at every step, all the
 past states and actions are available to the LLM. This allows the agent to build
-an internal representation of the map and track its movements over time,
-enabling more informed decision-making. The stateful approach integrates historical
-context, which is especially beneficial for tasks where understanding the
-progression of events is crucial; in this case it allows the agent to better understand
-the map orientation.
+an internal representation of the map and track its movements over time, enabling
+more informed decision-making. The stateful approach integrates historical
+context, which is especially beneficial for tasks where understanding the progression
+of events is crucial; in this case it allows the agent to better understand the
+map orientation.
 
-One key advantage of a stateful agent is its ability to recover from errors.
-With access to previous interactions, the LLM can identify patterns such as repetitive
-loops or suboptimal paths. Recognizing these patterns, the agent is able to adjust
-its strategy, replan its path, and ultimately increase the chance of reaching the
-goal even after encountering execution errors or obstacles.
+One key advantage of a stateful agent is its ability to recover from errors. With
+access to previous interactions, the LLM can identify patterns such as
+repetitive loops or suboptimal paths. Recognizing these patterns, the agent is
+able to adjust its strategy, replan its path, and ultimately increase the chance
+of reaching the goal even after encountering execution errors or obstacles.
 
-This translates to the fact that the agent is able to reach the goal even when the
-stateless output does not find any correct action.
+This translates to the fact that the agent is able to reach the goal even when
+the stateless output does not find any correct action.
 
-Moreover, accumulating past interactions enables the LLM to develop a more
-comprehensive internal map of the environment. This cumulative knowledge is beneficial
-not only for precise navigation but also when the environment may change or when
-additional information is provided later in the interaction. The agent can
-correlate new data with the stored context, providing a more robust response compared
-to a stateless design, where each decision is made in isolation.
+Moreover, accumulating past interactions enables the LLM to develop a more comprehensive
+internal map of the environment. This cumulative knowledge is beneficial not
+only for precise navigation but also when the environment may change or when
+additional information is provided later in the interaction. The agent can correlate
+new data with the stored context, providing a more robust response compared to a
+stateless design, where each decision is made in isolation.
 
-However, a stateful design does carry potential challenges. One significant
-issue is the token limit imposed by the LLM. As the conversation history grows,
-managing and condensing the context without losing essential details becomes
-critical. Strategies such as summarizing less relevant parts of the dialogue or periodically
-resetting portions of the context are often necessary to remain within token constraints
-while still maintaining effective decision-making. They have been tested in the
-form of sending the map in the first call, then wait and send it again every 5 or
-10 messages, but it either made the agent not performing as desired or the
-sending of the map was still so frequent that the token limit was reached fast.
+However, a stateful design does carry potential challenges. One significant issue
+is the token limit imposed by the LLM. As the conversation history grows, managing
+and condensing the context without losing essential details becomes critical.
+Strategies such as summarizing less relevant parts of the dialogue or
+periodically resetting portions of the context are often necessary to remain
+within token constraints while still maintaining effective decision-making. They
+have been tested in the form of sending the map in the first call, then wait and
+send it again every 5 or 10 messages, but it either made the agent not performing
+as desired or the sending of the map was still so frequent that the token limit was
+reached fast.
 
 \subsection{Path Visualization}
-\begin{wrapfigure}
-  {r}{0.5\textwidth}
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.5\textwidth]{
     images/results_discussion/stateful/pickupBR_7x7.png
   }
   \caption{Caption}
   \label{fig:stateful_path}
-\end{wrapfigure}
+\end{figure}
 
-A dedicated visualization script has been developed to illustrate the agent's path
-on the map. This script identifies all optimal paths connecting the start and
-the goal, selects the one sharing the highest number of common cells with the agent's
-path, and then calculates both the percentage of overlapping cells and the
-relative difference in path length. Figure \ref{fig:stateful_path} displays an example
-output, highlighting that although the agent eventually reaches the goal, it encounters
-difficulties navigating in the vicinity of the goal, as discussed in Section
-\ref{sub:pickup_goal_at_the_center}.
-\clearpage
+A dedicated visualization script has been developed to illustrate the agent's
+path on the map. This script identifies all optimal paths connecting the start and
+the goal, selects the one sharing the highest number of common cells with the
+agent's path, and then calculates both the percentage of overlapping cells and the
+relative difference in path length. Figure \ref{fig:stateful_path} displays an
+example output, highlighting that although the agent eventually reaches the goal,
+it encounters difficulties navigating in the vicinity of the goal, as discussed in
+Section \ref{sub:pickup_goal_at_the_center}.
 
 \section{``Path Finding''}
 
-Up to this point, we have observed that, in almost every instance, the KnowNo
-framework consistently discarded actions related to the agent's goals, such as picking
-up and delivering parcels. To determine whether these goal-related actions still
-contributed significantly to the agent's uncertainty, we designed an experiment where
-the objective was reduced to simply reaching a specific tile.
+Up to this point, we have observed that, in almost every instance, the KnowNo framework
+consistently discarded actions related to the agent's goals, such as picking up
+and delivering parcels. To determine whether these goal-related actions still contributed
+significantly to the agent's uncertainty, we designed an experiment where the
+objective was reduced to simply reaching a specific tile.
 
-To implement this, we removed the pickup and delivery actions from the prompt
-while keeping all other conditions unchanged. The goal was set up as just reaching
-a specific tile, similarly to what the ``Pickup goal'' requires. By doing so, we
-aimed to isolate and examine the role of these actions in influencing the agent's
-uncertainty. The results of this experiment are presented in Figure \ref{fig:path_finding}.
-This approach aligns with our systematic methodology, as previously discussed in
-Section \ref{sec:closest_cell_to_the_goal}, where we progressively simplified
-the agent's goals to identify potential limitations in decision-making.
+To implement this, we removed the pickup and delivery actions from the prompt while
+keeping all other conditions unchanged. The goal was set up as just reaching a
+specific tile, similarly to what the ``Pickup goal'' requires. By doing so, we aimed
+to isolate and examine the role of these actions in influencing the agent's uncertainty.
+The results of this experiment are presented in Figure \ref{fig:path_finding}. This
+approach aligns with our systematic methodology, as previously discussed in
+Section \ref{sec:closest_cell_to_the_goal}, where we progressively simplified the
+agent's goals to identify potential limitations in decision-making.
 
-A meaningful comparison can be drawn between these results and those obtained
-from a scenario in which the agent operated on a 5x5 grid with a pickup goal
-located at the center. Since both setups shared the same prompt structure, this
-comparison allows us to assess whether the presence of goal-related actions had
-a significant impact on the agent's uncertainty. The results from the 5x5 pickup
-scenario, previously discussed, can be found in Figure \ref{fig:hm_5x5_pickup} and
-Figure \ref{fig:chm_5x5_pickup}.
+A meaningful comparison can be drawn between these results and those obtained from
+a scenario in which the agent operated on a 5x5 grid with a pickup goal located at
+the center. Since both setups shared the same prompt structure, this comparison allows
+us to assess whether the presence of goal-related actions had a significant impact
+on the agent's uncertainty. The results from the 5x5 pickup scenario, previously
+discussed, can be found in Figure \ref{fig:hm_5x5_pickup} and Figure
+\ref{fig:chm_5x5_pickup}.
 
 \begin{figure}[h!]
   \centering
@@ -742,42 +788,126 @@ Figure \ref{fig:chm_5x5_pickup}.
   \label{fig:path_finding}
 \end{figure}
 
-The outcomes of both experiments are remarkably similar, revealing identical areas
-of high and low uncertainty. This suggests that goal-related actions are not the
-primary source of uncertainty in the agent's decision-making process. Furthermore,
-it reinforces the idea that the structure of the prompt, carefully designed based
-on the literature reviewed as explained in Section \ref{sec:prompt_creation_choices},
-is not a key factor contributing to uncertainty. Instead, the observed
-uncertainty may be more closely linked to the inherent limitations of the LLM
-itself.
+The outcomes of both experiments are remarkably similar, revealing identical
+areas of high and low uncertainty. This suggests that goal-related actions are not
+the primary source of uncertainty in the agent's decision-making process.
+Furthermore, it reinforces the idea that the structure of the prompt, carefully
+designed based on the literature reviewed as explained in Section
+\ref{sec:prompt_creation_choices}, is not a key factor contributing to uncertainty.
+Instead, the observed uncertainty may be more closely linked to the inherent limitations
+of the LLM itself.
 
-\section{Stateless and Stateful Combined results}
+\section{Stateless \& Stateful - Performance Summary}
 \label{sec:stateless_and_stateful_combined_results}
 
-stateful works best for ``LLMs are few-shot learners" and the chat history with
-action-effect\_in\_the\_map helps the LLM understand the map and the target; also,
-as we see in the stateless, if the agent ends up in particular portions of the map,
-it goes into a loop and never comes out from there. The areas problem areas,
-although in percentage terms they do not change much with respect to map size, in
-real numbers they are also substantial portions of the map (so if, for example,
-in a 3x3 map we have one problem cell and in a 21x21 map we have 49, in percentage
-terms they are the same number, but if in the first case the agent ends up in
-the problem cell very easily gets out of it and gets to the goal, in the second case
-the agent does not come out anymore)
+Experimental results in this study indicate that the stateful configuration
+outperforms the stateless one in terms of accuracy and goal attainment, particularly
+in larger maps. The ability to trace its previous actions and incorporate
+historical context leads to a more adaptive and flexible approach, which is evident
+in tasks requiring dynamic path corrections and strategic foresight. During the
+first stages of the experiments, where we tried the limits of the token input size,
+the stateless agent was not able at all to achieve any goal in maps bigger than
+21x21, while the stateful agent was on the correct path but blocked by the token
+limit. This is a clear demonstration of the stateful agent's superior
+performance in handling complex spatial navigation tasks.
 
-Performance from the slides shown to the professor
+Additionally, the stateful method aligns well with the inherent strengths of large
+language models as few-shot learners \cite{brown2020languagemodelsfewshotlearners}.
+The continuous integration of historical data and real-time inputs allows the
+agent to refine its internal representation of the map, which significantly improves
+its overall navigational performance. This dynamic adjustment provides
+resilience against uncertainties common in spatial navigation tasks.
 
-\section{Closest Cell to the Goal Problems}
-\label{sec:closest_cell_to_the_goal_problems}
+Practically speaking, the stateful agent demonstrates a clear advantage in navigating
+the "problematic" areas of the maps, particularly in the top-right quadrant, where
+the stateless version exhibits significant uncertainty. This improvement arises
+from the stateful agent's ability to retain memory of its past actions, enabling
+it to recognize and correct mistakes. If it takes a step in the wrong direction,
+it can backtrack to a previous cell and attempt an alternative route, ultimately
+increasing its chances of reaching the goal efficiently.
 
-more than one cell could bring the agent closer to the final goal. [add image similar
-\ref{fig:extra} but with goal one tile to the right]
+However, as the map size increases, both versions encounter growing difficulties,
+with the top-right quadrant consistently presenting the most challenges. This
+issue stems from the nature of decision-making in that region: many cells offer multiple
+actions with nearly equal probabilities, making it harder for the agent to
+determine the optimal path. While the relative frequency of these problematic cells
+remains constant as the map scales up, the absolute number of such cells
+increases substantially. For example, in a small 3x3 map, a single problematic cell
+is manageable, as the agent can quickly backtrack and reach the goal. In contrast,
+in a much larger 21x21 map, there could be as many as 49 problematic cells. Even
+though this proportion is the same in percentage terms, the larger map exacerbates
+the challenge. With more problematic cells spread across a wider area, the agent
+is more likely to make a series of unfortunate steps, potentially getting
+trapped in a suboptimal loop and failing to recover efficiently. This issue is particularly
+severe for the stateless agent, but even the stateful agent, despite its ability
+to backtrack, can struggle to escape if the problematic region is too large.
 
-show prompt
+A summary of their performance are presented in the table \ref{tab:svss}, where the
+agent was tasked to pickup a parcel in the bottom left cell and started in the top
+right cell (since it is the most problematic area). The recorded action count
+includes the pickup action.
 
-\section{Models Comparison}
-\label{sec:models_comparison}
+\vspace{5mm}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{c|cc|c}
+    \textbf{Map Size} & \textbf{Stateless} & \textbf{Stateful} & \textbf{Mathematical Best} \\
+    \hline
+    13x13             & 41                 & 39 actions        & 25 actions                 \\
+    7x7               & 27                 & 21 actions        & 13 actions                 \\
+    5x5               & 14 actions         & 11 actions        & 9 actions                  \\
+    3x3               & 11 actions         & 9 actions         & 5 actions                  \\
+  \end{tabular}
+  \caption{Number of actions in different map sizes using GPT-4o-mini}
+  \label{tab:svss}
+\end{table}
+\vspace{5mm}
 
-Pickup 7x7 pickup (4,4) 3.5 vs 4o vs 4o-mini
+In summary, although the stateful approach can introduce computational overhead
+due to increased context size, its advantages in enhancing navigational accuracy,
+recovery from errors, and adaptive decision-making render it a vital component in
+modern agent design. Still, the limitation of the token limit is a significant drawback
+that may be overcome by more powerful models, that may introduce better results
+out of the box as well as a longer context window.
 
-3.5 in 5x5 was good, but in 7x7 it was almost random
+\section{Insights from the Closest Cell to the Goal Approach}
+\label{sec:closest_cell_to_the_goal_results}
+
+As detailed in Section \ref{sec:closest_cell_to_the_goal}, this approach aimed
+to simplify the agent's decision-making process by breaking it down into two
+sequential steps: (1) identifying the best adjacent cell to move toward and (2) selecting
+the correct action to reach that cell. The motivation behind this decomposition
+was to reduce the complexity of the global path-finding task and test whether
+the agent could make more reliable local decisions.
+
+Although this method was not central to our primary experiments, we include it here
+for completeness, as analyzing its shortcomings provided useful insights into
+the agent's limitations.
+
+However, despite its structured nature, this method introduced new challenges
+rather than resolving the agent's decision-making issues. In particular, two key
+limitations emerged:
+\begin{itemize}
+  \item Ambiguity in selecting the ``best" cell: In many cases, more than one
+    neighboring cell reduced the distance to the goal, making it unclear which one
+    the agent should prioritize and more difficult to us to record structured data
+    to analyze. As illustrated in Figure \ref{fig:extra2}, the decision was not always
+    straightforward, and slight variations in prompt phrasing could lead the LLM
+    to prefer different paths, even when multiple valid choices existed;
+
+  \item Compounding errors in high-uncertainty areas: This two-step approach
+    inadvertently introduced an additional layer of failure. If the agent misidentified
+    the best neighboring cell, it would inherently lead to a suboptimal move, even
+    if the second step—choosing the action—was executed perfectly. This doubled
+    the impact of errors, particularly in ambiguous or low-information regions of
+    the map, where uncertainty was already high.
+\end{itemize}
+
+\vspace{7mm}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.66\textwidth]{images/results_discussion/extra2.pdf}
+  \caption{Two-steps decision making example}
+  \label{fig:extra2}
+\end{figure}
+\vspace{7mm}
