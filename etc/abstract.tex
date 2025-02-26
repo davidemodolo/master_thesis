@@ -2,27 +2,35 @@
 \label{cha:abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-With the recent advancements in large language models (LLMs), there has been a growing
+With the recent advancements in Large Language Models (LLMs), there has been a growing
 interest in developing agents capable of understanding and executing complex tasks.
 In this work, we explore the use of LLMs for building an agent that can navigate
-and complete logistics tasks (mainly pickup and deliver parcels) in a web-based environment.
+and complete logistics tasks, primarily focused on picking up and delivering
+parcels, within a web-based environment.
 
-Our approach studies the raw performance of an LLM without any additional framework
-on top, to assess its inherent capabilities. We evaluate the agent's performance
-across different maps and goal configurations, focusing on how the agent
-navigates the map and completes its tasks. The evaluation heavily relies on LLM uncertainty
-measures (tokens' log-probability based), which provide insights into the model's
-confidence in its decision-making process.
+Our approach aims to evaluate the raw performance of an LLM without integrating additional
+frameworks or specialized optimization techniques, allowing us to assess its
+inherent capabilities in problem-solving. We analyze how effectively the agent can
+navigate different map layouts and complete assigned objectives, testing its
+adaptability across various goal configurations. A key aspect of our evaluation is
+the use of LLM uncertainty measures, derived from tokens' log probabilities, to
+gain deeper insights into the model's confidence in its decision-making process.
+These measures help us understand when the agent is uncertain and how that uncertainty
+correlates with performance in different parts of the scenario.
 
-\paragraph{Key takeaways:}
-\begin{itemize}
-  \item[$(+)$] pro1
+We demonstrate that the agent's performance improves when using newer LLM versions,
+reflecting the continuous advancements in these models. However, we also observe
+a decline in performance as the map size increases, suggesting that larger environments
+pose challenges that the model struggles to overcome. To structure our approach
+effectively, we design the prompt based on established literature, ensuring
+alignment with best practices in prompt engineering.
 
-  \item[$(+)$] pro2
-
-  \item[$(\sim)$] rng
-
-  \item[$(-)$] con1
-
-  \item[$(-)$] con2
-\end{itemize}
+Furthermore, we experiment with two distinct agent configurations: a stateless
+agent, which makes decisions solely based on the current state of the environment,
+and a stateful agent, which retains memory of past interactions. By comparing
+these approaches, we highlight the strengths and limitations of each. The
+stateless agent benefits from simplicity and avoids memory-related constraints, but
+it may struggle in scenarios where the environment description requires too much
+attention. Conversely, the stateful agent provides improved continuity in decision-making
+but faces challenges related to context length limitations and potential inconsistencies
+in stored information.

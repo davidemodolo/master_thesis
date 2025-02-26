@@ -884,9 +884,9 @@ Although this method was not central to our primary experiments, we include it h
 for completeness, as analyzing its shortcomings provided useful insights into
 the agent's limitations.
 
-However, despite its structured nature, this method introduced new challenges
-rather than resolving the agent's decision-making issues. In particular, two key
-limitations emerged:
+Despite its structured nature, this method introduced new challenges rather than
+resolving the agent's decision-making issues. In particular, two key limitations
+emerged:
 \begin{itemize}
   \item Ambiguity in selecting the ``best" cell: In many cases, more than one
     neighboring cell reduced the distance to the goal, making it unclear which one
@@ -911,3 +911,103 @@ limitations emerged:
   \label{fig:extra2}
 \end{figure}
 \vspace{7mm}
+
+\section{Model Comparison}
+\label{sec:model_comparison}
+
+As mentioned in previous sections, our experiments primarily utilized GPT-4o-mini,
+a smaller variant of the GPT-4o model. This choice was mainly influenced by cost
+considerations and its performance relative to the full GPT-4o model. We also evaluated
+GPT-3.5-turbo, an older model, and found that while its overall capabilities were
+not necessarily worse, it was less likely to select the correct action as the
+one with the highest probability compared to GPT-4o-mini.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/models/GPT3.5-turbo/actions_heatmap.png
+    }
+    \caption{GPT-3.5-turbo}
+    \label{fig:models_gpt35}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/models/GPT4o/actions_heatmap.png
+    }
+    \caption{GPT-4o}
+    \label{fig:models_gpt4o}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/models/GPT4o-mini/actions_heatmap.png
+    }
+    \caption{GPT-4o-mini}
+    \label{fig:models_gpt4o_mini}
+  \end{minipage}
+  \caption{Heatmaps for different GPT models}
+  \label{fig:models_hm}
+\end{figure}
+
+Results obtained with GPT-4o-mini closely align with those of GPT-4o, ensuring
+that all discussions in this document remain applicable to both models. From Table
+\ref{tab:model_comparison}, we can see that GPT-3.5-turbo selects the correct
+action as the highest probability option less frequently than the other models, though
+its top-2 and top-3 probabilities remain comparable.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{c|ccc|ccc}
+    \hline
+                  & top1 & top2 & top3 & top1\% & top2\% & top3\% \\
+    \hline
+    GPT-3.5-turbo & 34   & 46   & 48   & 0.708  & 0.958  & 1.000  \\
+    GPT-4o        & 37   & 44   & 44   & 0.771  & 0.917  & 0.917  \\
+    GPT-4o-mini   & 37   & 40   & 41   & 0.771  & 0.833  & 0.854  \\
+    \hline
+  \end{tabular}
+  \caption{Comparison between different GPT models in a 7x7 map}
+  \label{tab:model_comparison}
+\end{table}
+
+However, Figures \ref{fig:models_hm} and \ref{fig:models_chm} clearly show that GPT-3.5-turbo
+exhibits greater overall uncertainty. Still, this demonstrates that our experimental
+setup is adaptable to different models and effectively structured to assess the capabilities
+of LLMs in this task.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/models/GPT3.5-turbo/correct_actions_percentage_PERC.png
+    }
+    \caption{GPT-3.5-turbo}
+    \label{fig:models_gpt35}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/models/GPT4o/correct_actions_percentage_PERC.png
+    }
+    \caption{GPT-4o}
+    \label{fig:models_gpt4o}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{
+      images/results_discussion/models/GPT4o-mini/correct_actions_percentage_PERC.png
+    }
+    \caption{GPT-4o-mini}
+    \label{fig:models_gpt4o_mini}
+  \end{minipage}
+  \caption{Heatmaps for different GPT models}
+  \label{fig:models_chm}
+\end{figure}

@@ -1,103 +1,106 @@
 \chapter{Introduction}
 \label{cha:introduction}
 
-Artificial intelligence (AI) has undergone remarkable advancements in recent
-years, particularly in the field of natural language processing (NLP). Among
-these advancements, Large Language Models (LLMs) have emerged as powerful generative
-systems capable of producing coherent, contextually relevant, and human-like text
-based on input prompts. These models have demonstrated impressive capabilities
-across a variety of tasks, including text generation, summarization, question-answering,
-and even code generation. However, their ability to autonomously plan, make decisions,
-and execute complex tasks in dynamic environments without the aid of predefined
-external frameworks remains an open area of research.
+The field of Artificial Intelligence (AI) has seen significant progress with the
+advent of Large Language Models (LLMs), which leverage deep learning techniques to
+process and generate human-like text. These models, built on architectures such as
+Transformers, have revolutionized natural language understanding, reasoning, and
+decision-making. In this context, the ability of LLMs to act as autonomous
+agents capable of planning and executing complex tasks has become a key research
+direction. Traditional planning approaches, such as those based on the Planning
+Domain Definition Language (PDDL), reinforcement learning (RL), and heuristic-based
+search algorithms, have long been used to tackle structured decision-making problems.
+However, with the rise of LLMs, new possibilities have emerged for solving
+planning problems in a more flexible and adaptable manner.
 
-This thesis explores the potential of LLMs as autonomous agents in the context
-of a logistics problem. The primary objective is to investigate whether an LLM,
-without the support of external knowledge bases, predefined planning frameworks,
-or reinforcement learning (RL) structures, can effectively generate action plans
-and navigate dynamic settings. While traditional AI approaches rely on
-structured planning paradigms, such as the Planning Domain Definition Language (PDDL)
-and reinforcement learning, LLMs introduce a novel, unstructured paradigm for decision-making
-and action selection. The key research question addressed in this thesis is
-whether such unstructured generative models can function effectively as
-autonomous agents and, if so, to what extent they can exhibit planning
-capabilities.
+The general problem addressed in this work revolves around planning with LLMs, particularly
+in the domain of logistics tasks. Logistics problems often involve dynamic
+environments where an agent must plan and execute a sequence of actions to
+achieve a goal, such as picking up and delivering parcels. Classical AI planning
+techniques require predefined rules, domain knowledge, and structured
+representations of the world, while reinforcement learning-based approaches demand
+extensive training on simulated environments. LLMs, on the other hand, introduce
+a novel paradigm where reasoning and decision-making emerge from large-scale
+pretraining on diverse textual data. The challenge is to determine whether LLMs can
+effectively function as planners without explicit search algorithms or fine-tuned
+optimization techniques.
 
-\section{Background and Motivation}
+Current research on AI planning has extensively explored methods like PDDL,
+which formalizes decision-making problems in a structured manner, allowing traditional
+planners to compute optimal action sequences. Reinforcement learning, another key
+approach, enables agents to learn optimal strategies through trial and error, often
+requiring significant computational resources for training. More recently, researchers
+have investigated the potential of LLMs in planning, leveraging techniques such
+as Chain-of-Thought reasoning and zero-shot or few-shot prompting to guide
+models toward generating coherent plans. However, these methods still face
+challenges, particularly in maintaining consistency, handling uncertainty, and ensuring
+goal-directed behavior in complex environments.
 
-The field of automated planning has traditionally relied on well-defined frameworks
-such as PDDL and reinforcement learning. PDDL provides a structured and
-explainable approach to planning, making it effective in constrained environments
-where the problem space can be explicitly defined. However, its rigidity and lack
-of adaptability to real-time changes make it less suitable for dynamic environments
-where new constraints or unforeseen events can arise. On the other hand, reinforcement
-learning has proven to be highly effective in environments that require adaptability
-and continuous learning. Despite its strengths, RL suffers from challenges such as
-convergence issues, sample inefficiency, and a lack of interpretability, which
-make its decision-making process difficult to explain.
+This work focuses on a specific logistics task in which an agent, powered solely
+by an LLM, must pick up and deliver parcels in a simulated environment while considering
+uncertainty in its decision-making process. Unlike traditional planning
+approaches, no additional external frameworks are integrated; instead, the LLM itself
+serves as the core reasoning engine. A key aspect of the research is the
+evaluation of uncertainty, using measures derived from token log probabilities to
+assess the model's confidence in its choices. By analyzing how uncertainty
+impacts decision-making, we aim to identify the strengths and weaknesses of this
+approach.
 
-In contrast, recent research has suggested that LLMs may possess an emergent capability
-for reasoning and decision-making without explicit training on structured planning
-problems. Several studies have explored how LLMs can generate step-by-step
-reasoning processes when prompted correctly, leading to promising applications in
-planning and problem-solving. However, the extent to which LLMs can independently
-generate effective action sequences, particularly in real-world logistics
-scenarios, remains underexplored. This thesis aims to fill this gap by analyzing
-the ability of ``raw" LLMs, those not supplemented with external tools, to perform
-decision-making in logistics tasks.
-
-\section{Research Approach}
-
-To investigate this, we begin by conducting a comprehensive analysis of existing
-methodologies and comparing them with an LLM-based approach. We design a series
-of experiments that assess the ability of an LLM to generate meaningful and
-coherent actions in response to logistics challenges.
-
-A key aspect of this study is evaluating the model's uncertainty in decision-making.
-Specifically, we define various techniques for measuring uncertainty and adopt a
-log-probability-based approach, which involves generating tokens corresponding to
-possible actions, applying biases to the logits, and computing the probability of
-selecting the correct action. By analyzing these probabilities, we gain insights
-into the confidence levels of the LLM when making decisions.
-
-We systematically examined the strengths and limitations of LLM-based planning.
-Through this investigation, we aim to identify the specific conditions under which
-LLMs can serve as effective autonomous agents and highlight their inherent challenges.
-
-\section{Thesis Structure}
+The objective of this study is to understand the capabilities and limitations of
+LLMs when applied to planning problems, particularly in dynamic and uncertain
+environments. Through systematic experiments, we aim to evaluate how well an LLM
+can navigate and complete logistics tasks, whether it can adapt to varying scenarios,
+and how uncertainty influences its performance. The expected results include insights
+into the effectiveness of LLM-based planning, potential failure modes, and the feasibility
+of using such models in real-world decision-making tasks.
 
 This thesis is structured as follows:
-
 \begin{itemize}
-  \item \textbf{Chapter \ref{cha:background}} provides an overview of the
-    theoretical foundations relevant to this research, with a deep focus on prior
-    work on LLM-based planning methods.
+  \item \textbf{Chapter \ref{cha:background}} establishes the theoretical
+    foundations necessary to understand the problem space and the methodologies
+    explored in the research. It covers core AI concepts, the evolution of LLMs,
+    and their architecture, with a particular focus on the Attention mechanism
+    and token-based uncertainty estimation. Additionally, it contrasts
+    traditional planning approaches such as rule-based systems, search-based techniques,
+    and reinforcement learning with newer LLM-driven methods, providing a comprehensive
+    view of the current state of the art;
 
-  \item \textbf{Chapter \ref{cha:experiment_setting}} describes the experimental
-    setup used to evaluate the capabilities of LLMs in planning tasks. This includes
-    a formal problem definition, a description of the web-based environment used
-    for simulations, and a discussion of the models selected for evaluation;
+  \item \textbf{Chapter \ref{cha:experiment_setting}} formalizes the objective
+    of this thesis, describing the environment used to evaluate our LLM-driven agent,
+    detailing the rules of the task, the constraints imposed by the system, and
+    how agent interactions are structured. It explains the decisions behind the model
+    selection, highlighting the difference between uncertainty computation in
+    both open source and closed source models, and the functioning of the web-based
+    platform used for testing;
 
-  \item \textbf{Chapter \ref{cha:agent_development}} details the iterative
-    development of the LLM-based agent. It outlines the initial approach, the
-    challenges encountered, and the modifications made to refine the agent's performance
-    over successive iterations.
+  \item \textbf{Chapter \ref{cha:agent_development}} illustrates the iterative
+    development process of the LLM-based agent, outlining key design decisions and
+    the challenges encountered. It covers the evolution of the different
+    implementation strategies, including the contrast between the final stateful
+    and stateless agents;
 
-  \item \textbf{Chapter \ref{cha:data_collection}} explains the process of data
-    collection, including the design of prompts, structuring of experiments, and
-    generation of special heatmaps to visualize the uncertainty of the agent in the
-    different scenarios;
+  \item \textbf{Chapter \ref{cha:data_collection}} focuses on the impact of
+    prompt design on the agent's performance and decision-making capabilities. It
+    explores various prompt engineering strategies based on the literature,
+    examining how different wording structures and contextual information
+    influence the LLM's ability to understand and execute actions within the
+    environment. Furthermore, it details how uncertainty can be visualized and
+    analyzed to provide insights into the model's behavior;
 
-  \item \textbf{Chapter \ref{cha:results_discussion}} presents the experimental
-    results and provides an in-depth discussion of the findings. It evaluates the
-    performance of the LLM-based agent under various conditions and highlights the
-    key insights gained from the experiments.
+  \item \textbf{Chapter \ref{cha:results_discussion}} shows and analyze the
+    findings from the experimental phase, highlighting key trends, limitations, and
+    surprising behaviors observed in the LLM's performance. The discussion
+    addresses the impact of different variables, such as map size, task
+    complexity, and uncertainty estimation, on the overall success rate of the
+    agent. Comparative insights between stateless and stateful agents are provided,
+    with their respective advantages and drawbacks;
 
-  \item \textbf{Chapter \ref{cha:future_works}} outlines potential directions
-    for future research, including improvements to the current approach [TODO
-    add more]
-
-  \item \textbf{Chapter \ref{cha:conclusions}} summarizes the key insights
-    gained from this study, limitations, and potential areas for further
-    exploration.
+  \item \textbf{Chapter \ref{cha:conclusions}} The final chapter summarizes the
+    contributions of the research, providing a synthesis of the key insights gained
+    from evaluating LLMs in planning scenarios. It discusses the broader
+    implications of using LLMs as autonomous decision-makers, addressing their potential
+    applications as well as their current limitations. Finally, it outlines potential
+    directions for future research, including improvements in uncertainty
+    modeling, hybrid approaches integrating traditional planning techniques, and
+    the exploration of more complex environments.
 \end{itemize}
