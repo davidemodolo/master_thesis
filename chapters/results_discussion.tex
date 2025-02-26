@@ -40,7 +40,7 @@ yet high-quality alternative. However, our qualitative findings can be reasonabl
 extended to GPT-4o as well, given their comparable performance, and to all models
 with similar performance and/or architecture. Each LLM call had an average input
 size of approximately 250 tokens, with only a single token as output. The cost
-per call was approximately \$0.000038 USD.
+per call was approximately \$0.000038.
 
 \section{Map Orientation}
 
@@ -69,7 +69,7 @@ structured in the prompt, which may have influenced the model's text generation.
     \includegraphics[width=\textwidth]{
       images/results_discussion/actions_heatmapBL.png
     }
-    \caption{Bottom Left Orientation}
+    \caption{Bottom Left Origin Orientation}
     \label{fig:heatmapBL}
   \end{minipage}
   \hfill
@@ -78,10 +78,10 @@ structured in the prompt, which may have influenced the model's text generation.
     \includegraphics[width=\textwidth]{
       images/results_discussion/actions_heatmapTL.png
     }
-    \caption{Top Left Orientation}
+    \caption{Top Left Origin Orientation}
     \label{fig:heatmapTL}
   \end{minipage}
-  \caption{Heatmaps showing actions with different map orientations}
+  \caption{Heatmaps showing actions' probability with different map orientations}
   \label{fig:orientation}
 \end{figure}
 
@@ -106,7 +106,7 @@ contexts.
     \includegraphics[width=\textwidth]{
       images/results_discussion/correctness_hm_BL.png
     }
-    \caption{Bottom Left Orientation}
+    \caption{Bottom Left Origin Orientation}
     \label{fig:heatmapBL}
   \end{minipage}
   \hfill
@@ -115,10 +115,11 @@ contexts.
     \includegraphics[width=\textwidth]{
       images/results_discussion/correctness_hm_TL.png
     }
-    \caption{Top Left Orientation}
+    \caption{Top Left Origin Orientation}
     \label{fig:heatmapTL}
   \end{minipage}
-  \caption{Heatmaps showing correctness with different map orientations}
+  \caption{Correctness Heatmaps showing the percentage of correct actions in
+  each cell}
   \label{fig:orientation_correctness}
 \end{figure}
 \vspace{5mm}
@@ -294,7 +295,9 @@ The correctness analysis reveals the following trends:
 \end{itemize}
 
 Table \ref{tab:performance} presents numerical performance metrics across
-different map sizes.
+different map sizes. The number of times the correct action is present in the $X$
+actions with the highest probability is shown in the $topX$ columns, while their
+percentage is in the $topX\%$ columns.
 
 \vspace{5mm}
 \begin{table}[h]
@@ -306,7 +309,7 @@ different map sizes.
     7x7   & 37   & 40   & 41   & 0.771  & 0.833  & 0.854  \\
     13x13 & 125  & 161  & 162  & 0.744  & 0.958  & 0.964  \\
   \end{tabular}
-  \caption{Performance metrics for different grid sizes}
+  \caption{Performance metrics for different map sizes - pickup goal}
   \label{tab:performance}
 \end{table}
 \vspace{5mm}
@@ -436,7 +439,7 @@ remain largely stable across different scales.
     7x7   & 43   & 47   & 48   & 0.896  & 0.979  & 1.000  \\
     13x13 & 125  & 161  & 162  & 0.744  & 0.958  & 0.964  \\
   \end{tabular}
-  \caption{Performance metrics for different grid sizes}
+  \caption{Performance metrics for different map sizes - deliver goal}
   \label{tab:performance}
 \end{table}
 \vspace{5mm}
@@ -618,7 +621,7 @@ with the same size from different maps is compared.
     \caption{21x21}
     \label{fig:hm_21x21}
   \end{minipage}
-  \caption{Heatmaps for different map sizes}
+  \caption{Heatmaps of the 8 tiles around the goal for different map sizes}
   \label{fig:around_comparison}
 \end{figure}
 \vspace{5mm}
@@ -726,7 +729,8 @@ reached fast.
   \includegraphics[width=0.5\textwidth]{
     images/results_discussion/stateful/pickupBR_7x7.png
   }
-  \caption{Caption}
+  \caption{Path visualization for stateful agent with pickup goal in the bottom
+  right cell}
   \label{fig:stateful_path}
 \end{figure}
 
@@ -771,7 +775,7 @@ discussed, can be found in Figure \ref{fig:hm_5x5_pickup} and Figure
     \includegraphics[width=\textwidth]{
       images/results_discussion/path_finding/actions_heatmap.png
     }
-    \caption{Correctness pathfinding }
+    \caption{Heatmap for pathfinding }
     \label{fig:path_finding_hm}
   \end{minipage}
   \hfill
@@ -780,11 +784,10 @@ discussed, can be found in Figure \ref{fig:hm_5x5_pickup} and Figure
     \includegraphics[width=\textwidth]{
       images/results_discussion/path_finding/correct_actions_percentage_PERC.png
     }
-    \caption{Correctness Deliver Top Right}
+    \caption{Correctness for pathfinding}
     \label{fig:path_finding_corr}
   \end{minipage}
-  \caption{Correctness heatmaps for stateless agent with pickup and deliver
-  goals in the top right corner of the map}
+  \caption{Heatmaps for stateless agent with pathfinding goal}
   \label{fig:path_finding}
 \end{figure}
 
@@ -853,8 +856,8 @@ includes the pickup action.
   \begin{tabular}{c|cc|c}
     \textbf{Map Size} & \textbf{Stateless} & \textbf{Stateful} & \textbf{Mathematical Best} \\
     \hline
-    13x13             & 41                 & 39 actions        & 25 actions                 \\
-    7x7               & 27                 & 21 actions        & 13 actions                 \\
+    13x13             & 41 actions         & 39 actions        & 25 actions                 \\
+    7x7               & 27 actions         & 21 actions        & 13 actions                 \\
     5x5               & 14 actions         & 11 actions        & 9 actions                  \\
     3x3               & 11 actions         & 9 actions         & 5 actions                  \\
   \end{tabular}
@@ -907,7 +910,7 @@ emerged:
 \begin{figure}[h!]
   \centering
   \includegraphics[width=.66\textwidth]{images/results_discussion/extra2.pdf}
-  \caption{Two-steps decision making example}
+  \caption{Two-steps decision making problem}
   \label{fig:extra2}
 \end{figure}
 \vspace{7mm}
@@ -960,6 +963,7 @@ that all discussions in this document remain applicable to both models. From Tab
 action as the highest probability option less frequently than the other models, though
 its top-2 and top-3 probabilities remain comparable.
 
+\vspace{5mm}
 \begin{table}[h]
   \centering
   \begin{tabular}{c|ccc|ccc}
@@ -974,6 +978,7 @@ its top-2 and top-3 probabilities remain comparable.
   \caption{Comparison between different GPT models in a 7x7 map}
   \label{tab:model_comparison}
 \end{table}
+\vspace{5mm}
 
 However, Figures \ref{fig:models_hm} and \ref{fig:models_chm} clearly show that GPT-3.5-turbo
 exhibits greater overall uncertainty. Still, this demonstrates that our experimental
@@ -1008,6 +1013,6 @@ of LLMs in this task.
     \caption{GPT-4o-mini}
     \label{fig:models_gpt4o_mini}
   \end{minipage}
-  \caption{Heatmaps for different GPT models}
+  \caption{Correctness Heatmaps for different GPT models}
   \label{fig:models_chm}
 \end{figure}
