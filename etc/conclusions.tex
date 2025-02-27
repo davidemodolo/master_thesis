@@ -2,7 +2,7 @@
 \label{cha:conclusions}
 
 In this work, we have explored the challenges and opportunities associated with navigating
-grid-based environments using Large Language Models (LLMs) to solve logistics tasks.
+grid-based environments using Large Language Models to solve logistics tasks.
 Through a series of experiments, we examined both stateless and stateful agent configurations,
 highlighting the strengths and limitations of each approach, the former relying only
 on a snapshot of the current environment state, while the latter maintains a
@@ -22,28 +22,29 @@ and execution errors, particularly in dense or larger grid scenarios.
 Our findings underscore the importance of leveraging historical context when
 dealing with dynamic and complex environments. While stateless approaches offer simplicity,
 they may fall short in scenarios where resolving subtle spatial cues is critical.
-The stateful framework, despite imposing additional computational constraints
-due to token limitations, demonstrates significant advantages in accuracy and adaptability.
+The stateful framework, despite imposing additional constraints due to token
+limitations, demonstrates significant advantages in accuracy and adaptability.
 Future research should focus on optimizing the balance between context size and
 performance, possibly through advanced summarization techniques or selective memory
 retention.
 
-Overall, we were able to demonstrate the potential of LLMs in grid-based
-navigation tasks, highlighting the importance of context and memory in achieving
-optimal performance, while also identifying common weaknesses among existing
-models.
+\vspace{1mm}
+Some limitations to this thesis include the possibility that the prompt,
+although designed in accordance with the literature, may not be optimal.
+Additionally, the behavior of OpenAI's API \texttt{logit bias} parameter is
+subject to changes, which could impact consistency. Most of the tests were
+conducted with a single model, and the results were then generalized to all models,
+which may not fully capture variations. Furthermore, the environment was not
+truly dynamic; while it was treated as such by not relying on a specific parser,
+the agent was not actually tested in a fast-changing environment. Context size limitations
+also proved to be crucial in the agent's performance, and some biases were
+observed in the agent's understanding of the environment.
+\vspace{1mm}
 
-\vspace{1mm}
-Some limitations include the possibility that the prompt, although designed in accordance
-with the literature, may not be optimal. Additionally, the behavior of OpenAI's
-API logit bias is subject to changes, which could impact consistency. Most of
-the tests were conducted with a single model, and the results were then generalized
-to all models, which may not fully capture variations. Furthermore, the
-environment was not truly dynamic; while it was treated as such, the agent was
-not actually tested in a fast-changing environment. Context size limitations also
-proved to be crucial in the agent's performance, and some biases were observed
-in the agent's understanding of the environment.
-\vspace{1mm}
+Overall, we were able to demonstrate the potential of LLMs' generative
+capabilities in grid-based navigation tasks, highlighting the importance of context
+and memory in achieving optimal performance, while also identifying common
+weaknesses among existing models.
 
 There are also several promising directions for future research, such as:
 
@@ -59,8 +60,8 @@ There are also several promising directions for future research, such as:
     significantly reduce performance;
 
   \item Testing reasoning-based models, which, while requiring more time per step,
-    during which the environment may change, could benefit from future ultra-fast
-    models capable of reasoning more efficiently;
+    during which the environment may change, could benefit from future faster models
+    capable of reasoning more efficiently;
 
   \item Integrate Retrieval-Augmented Generation techniques to enhance the agent's
     decision-making process by adding precomputed favorable paths that can be used

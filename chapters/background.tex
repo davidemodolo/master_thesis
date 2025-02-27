@@ -1,17 +1,17 @@
 \chapter{Background}
 \label{cha:background}
 
-In this thesis, we will analyze in detail the behavior of a Large Language Model
-(LLM) as an agent within a controlled environment performing a logistics task.
+In this thesis, we analyze in detail the behavior of a Large Language Model as an
+agent performing a logistics task within a controlled environment.
 
 Before presenting all the work carried out in detail, this chapter aims to
 provide a comprehensive explanation of all the theoretical foundations necessary
 to understand the steps presented in the following chapters. Starting from a brief
-introduction of Artificial Intelligence (AI) just to define the boundaries in which
-we are working, we will move to the core concepts. In particular, we want to
+introduction of Artificial Intelligence just to define the boundaries in which we
+are working, we will move to the core concepts. In particular, we want to
 highlight what an LLM is and how it works, with a special focus on the Attention
 mechanism and how the uncertainty of an LLM can be calculated. This will serve
-as a basis for correctly interpreting the results analyzed in Chapter
+as a basis for correctly interpreting the analysis in Chapter
 \ref{cha:results_discussion}.
 
 There will also be a broader discussion on agents in a strict sense and \emph{LLM
@@ -27,27 +27,27 @@ the state of the art.
 
 Artificial Intelligence is a very broad field, that can be resumed as the
 category of systems designed to perform tasks that traditionally require
-intelligence, such as \emph{Natural Language Understanding}, visual perception,
-decision-making, and problem-solving.
+intelligence, such as \emph{Natural Language Understanding} and visual
+perception.
 
 In recent years, AI has rapidly evolved, driven by advances in Deep Learning\footnote{\url{https://en.wikipedia.org/wiki/Deep_learning}},
 increased computational power and the easy availability of massive datasets (language
-models are even trained on the entirety of the internet). Early AI systems, including
-expert systems and early Machine Learning models, relied on manually crafted
-rules or statistical techniques. However, with the rise of Neural Networks, particularly
-Deep Learning models, AI has shifted toward self-learning systems capable of
-extracting complex patterns from raw data.
+models are even trained on the entirety of the internet). Early AI systems,
+including expert systems and early Machine Learning models, relied on manually crafted
+rules or statistical techniques. However, with the rise of Neural Networks,
+particularly Deep Learning models, AI has shifted toward self-learning systems capable
+of extracting complex patterns from raw data.
 
-One of the key breakthroughs in this evolution was the development of deep
-neural networks (DNNs), particularly Convolutional Neural Networks (CNNs) for image
-processing, introduced by Krizhevsky et al. \cite{articleCNN} and Recurrent Neural
-Networks (RNNs) for sequential data, including language modeling, introduced by Hochreiter
-et al. \cite{articleRNN}.
+One of the key breakthroughs in this evolution was the development of deep neural
+networks (DNNs), particularly Convolutional Neural Networks (CNNs) for image
+processing, introduced by Krizhevsky et al. \cite{articleCNN} and Recurrent
+Neural Networks (RNNs) for sequential data, including language modeling,
+introduced by Hochreiter et al. \cite{articleRNN}.
 
-Despite their success, RNNs struggled with long-term dependencies due to vanishing
-gradients\footnote{\url{https://en.wikipedia.org/wiki/Vanishing_gradient_problem}},
-leading to the development of the \emph{Transformer architecture} (from Vaswani et
-al., Attention Is All You Need \cite{vaswani2023attentionneed}), which eliminated
+Despite their success, RNNs struggled with long-term dependencies due to
+vanishing gradients\footnote{\url{https://en.wikipedia.org/wiki/Vanishing_gradient_problem}},
+leading to the development of the \emph{Transformer} architecture (from Vaswani
+et al., `Attention Is All You Need'\cite{vaswani2023attentionneed}), which eliminated
 recurrence in favor of self-attention mechanisms, significantly improving
 efficiency and scalability in natural language processing.
 
@@ -79,33 +79,30 @@ using two competing neural networks, a generator and a discriminator, to iterati
 improve synthetic data generation. More recently, diffusion models (Ho et al. \cite{ho2020denoisingdiffusionprobabilisticmodels})
 have surpassed GANs in generating high-quality images by modeling data
 transformations through iterative denoising processes. In the domain of text generation,
-autoregressive models like GPT (Radford et al. \cite{radford2018improving}) demonstrated
-the power of large-scale, unsupervised pretraining. These Large Language Models predict
-the next token (that can be seen as a building block of a word, approximately a syllable)
-in a sequence based on vast amounts of textual data, learning contextual nuances
-and producing human-like responses.
+models like GPT (Radford et al. \cite{radford2018improving}) demonstrated the power
+of large-scale, unsupervised pretraining. These Large Language Models predict the
+next token (that can be seen as a building block of a word) in a sequence based on
+vast amounts of textual data, learning contextual nuances and producing human-like
+responses.
 
 \section{Large Language Models}
 \label{sec:large_language_models_llms}
 
-Large Language Models are a class of deep learning models that leverage the
-transformer architecture to generate coherent and contextually relevant text. These
-models have revolutionized natural language processing by achieving state-of-the-art
-performance on a wide range of tasks, including language modeling, translation,
-summarization, and question-answering.
+Large Language Models are a class of deep learning models that leverage the transformer
+architecture to generate coherent and contextually relevant text. These models
+have revolutionized natural language processing by achieving state-of-the-art
+performance on a wide range of tasks, including language modeling, translation, summarization,
+and question-answering.
 
-The transformer architecture, introduced by Vaswani et al. in the paper `Attention
-Is All You Need' \cite{vaswani2023attentionneed}, is the foundation of LLMs. It consists
-of an encoder-decoder structure, where the encoder processes the input sequence
-and generates a sequence of hidden states, while the decoder generates the output
-sequence based on the encoder's hidden states. The key innovation in
-transformers is the self-attention mechanism, which allows the model to weight the
-importance of different input tokens when generating the output. This mechanism
-enables transformers to capture long-range dependencies and contextual
-information more effectively than RNNs.
-
-In this thesis, we will focus on the models built by OpenAI, we will analyze
-them more in depth in Section \ref{sec:llm_models}.
+The Transformer architecture, introduced by Vaswani et al. in the paper `Attention
+Is All You Need' \cite{vaswani2023attentionneed}, is the foundation of LLMs. It
+consists of an encoder-decoder structure, where the encoder processes the input sequence
+and generates a sequence of hidden states, while the decoder generates the
+output sequence based on the encoder's hidden states. The key innovation in transformers
+is the self-attention mechanism, which allows the model to weight the importance
+of different input tokens when generating the output. This mechanism enables transformers
+to capture long-range dependencies and contextual information more effectively than
+RNNs.
 
 \begin{figure}[ht!]
   \centering
@@ -117,19 +114,19 @@ them more in depth in Section \ref{sec:llm_models}.
   \label{fig:transformer_architecture}
 \end{figure}
 
-\subsection{Attention Mechanism}
+\subsection{Self-Attention Mechanism}
 \label{sub:attention_mechanism}
 
-The attention mechanism is a fundamental component of the transformer
-architecture (Figure \ref{fig:transformer_architecture}), enabling the model to focus
-on specific parts of the input sequence when generating the output. The
-attention mechanism computes a weighted sum of the input tokens, where the weights
-are learned during training based on the relevance of each token to the current context.
+The self-attention mechanism is a fundamental component of the transformer architecture
+(Figure \ref{fig:transformer_architecture}), enabling the model to focus on
+specific parts of the input sequence when generating the output. It computes a weighted
+sum of the input tokens, where the weights are learned during training based on
+the relevance of each token to the current context.
 
 The self-attention mechanism works in this way:
 \begin{enumerate}
   \item create 3 vectors from embeddings ($Q$uery, $K$ey, $V$alue) multiplying
-    by 3 matrices learned during the training process;
+    by 3 weight matrices learned during the training process;
 
   \item calculate a score that determines how much focus goes to different parts
     of the input sentence as it encodes a word;
@@ -143,21 +140,21 @@ The self-attention mechanism works in this way:
     layer at this position.
 \end{enumerate}
 
-The self-attention operation computes the relevance of each token in the input with
-respect to the query token using the scaled dot-product attention:
+The self-attention operation computes the relevance of each token in the input
+with respect to the query token using the scaled dot-product attention:
 
 \begin{displaymath}
   \mbox{Attention}(Q, K, V) = \mbox{softmax}\left(\frac{QK^{T}}{\sqrt{d_{k}}}\right
   ) V
 \end{displaymath}
 
-where $d_{k}$ is the dimensionality of the key vectors, ensuring that the dot products
-do not grow too large as input size increases. The softmax function normalizes
+where $d_{k}$ is the dimensionality of the key vectors, ensuring that the dot
+products do not grow too large as input size increases. The softmax function normalizes
 the scores into attention weights, which determine how much influence each token
 should have on the final representation.
 
-Multi-head attention extends this mechanism by computing multiple sets of $Q,K,V$
-matrices in parallel, allowing the model to capture different aspects of
+Multi-head attention extends this mechanism by computing multiple sets of
+$Q,K,V$ matrices in parallel, allowing the model to capture different aspects of
 contextual relationships:
 
 \begin{displaymath}
@@ -165,36 +162,34 @@ contextual relationships:
   ) W^{O}
 \end{displaymath}
 
-where each attention head independently applies scaled dot-product attention,
-and the outputs are concatenated and linearly projected using $W^{O}$ ($W$eight
-matrix). This improves the model's ability to encode complex dependencies and
-contextual meaning.
+where each attention head independently applies scaled dot-product attention, and
+the outputs are concatenated and linearly projected using $W^{O}$ ($W$eight matrix).
+This improves the model's ability to encode complex dependencies and contextual meaning.
 
-The attention mechanism allows the model to focus on different parts of the
-input sequence based on the current context, enabling it to capture long-range dependencies
-and improve performance on tasks like text generation.
+The attention mechanism allows the model to focus on different parts of the input
+sequence based on the current context, enabling it to capture long-range
+dependencies.
 
 \subsection{LLMs' Uncertainty}
 \label{sub:llms_uncertainty}
 
 Despite their impressive capabilities, LLMs are inherently probabilistic and can
-generate responses that are syntactically correct yet factually inaccurate.
-Understanding and quantifying this uncertainty is crucial for evaluating the
-reliability of generated text, especially in high-stakes applications such as medical
-diagnosis, legal advice, or automated decision-making.
+generate responses that are syntactically correct yet factually inaccurate. Understanding
+and quantifying this uncertainty is crucial for evaluating the reliability of generated
+text, especially in high-stakes applications such as medical diagnosis, legal advice,
+or automated decision-making.
 
-For example, if an LLM generates an answer to a yes/no question with
-probabilities:
+For example, if an LLM generates an answer to a yes/no question with probabilities:
 \begin{displaymath}
   P(\mbox{Yes})=0.51,P(\mbox{No})=0.49
 \end{displaymath}
 
-then the model is nearly uncertain, and this information should be communicated rather
-than presenting ``Yes" as a definitive response.
+then the model is nearly uncertain, and this information should be communicated
+rather than presenting ``Yes" as a definitive response.
 
-A key consequence of uncertainty is the phenomenon of \emph{hallucination},
-where the model generates confident but factually incorrect or fabricated
-information \cite{Ji_2023}. Hallucinations arise when:
+A key consequence of uncertainty is the phenomenon of \emph{hallucination}, where
+the model generates confident but factually incorrect or fabricated information \cite{Ji_2023}.
+Hallucinations arise when:
 \begin{itemize}
   \item the model lacks knowledge about a specific query but still generates an answer;
 
@@ -203,21 +198,20 @@ information \cite{Ji_2023}. Hallucinations arise when:
   \item the model overgeneralizes from limited training examples.
 \end{itemize}
 
-Mitigating hallucinations involves uncertainty-aware generation techniques, the
-most common one is \emph{Retrieval-Augmented Generation} (RAG) \cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp},
-which enhances the prompt with additional context from a knowledge base to
-improve the model's factual accuracy.
+Mitigating hallucinations involves uncertainty-aware generation techniques, the most
+common one is \emph{Retrieval-Augmented Generation}
+\cite{lewis2021retrievalaugmentedgenerationknowledgeintensivenlp}, which enhances
+the prompt with additional context from a knowledge base to improve the model's factual
+accuracy.
 
-The literature studied different approaches to quantify uncertainty in LLMs, and
-this thesis will use one of the most common methods to quantify the probability of
-correctness in the generated choice by the agent.
+The literature is studying different approaches to quantify uncertainty in LLMs,
+noting that this is a still active field of research.
 
 \subsubsection{Expressing Uncertainty}
-A study titled `Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence
-Elicitation in LLMs' \cite{xiong2024llmsexpressuncertaintyempirical}
-investigates methods for eliciting confidence from LLMs without accessing their
-internal parameters or fine-tuning. The researchers propose a framework comprising
-three components:
+A study titled `Can LLMs Express Their Uncertainty? An Empirical Evaluation of
+Confidence Elicitation in LLMs' \cite{xiong2024llmsexpressuncertaintyempirical} investigates
+methods for eliciting confidence from LLMs without accessing their internal parameters
+or fine-tuning. The researchers propose a framework comprising three components:
 \begin{itemize}
   \item Prompting Strategies: Techniques to elicit verbalized confidence from
     the model;
@@ -228,48 +222,47 @@ three components:
     determine confidence levels.
 \end{itemize}
 
-The study evaluates these methods on tasks such as confidence calibration and failure
-prediction across various datasets and LLMs, including GPT-4 and LLaMA 2 Chat.
+The study evaluates these methods on tasks such as confidence calibration and
+failure prediction across various datasets and LLMs.
 
 Key findings indicate that LLMs often exhibit overconfidence when verbalizing
 their certainty, possibly mirroring human confidence expression patterns.
 Additionally, as model capabilities increase, both calibration and failure
 prediction performance improve, though they remain suboptimal. They show that
 implementing strategies like human-inspired prompts and assessing consistency
-among multiple responses can mitigate overconfidence. Notably, while methods
-requiring internal model access perform better, the performance gap is narrow.
+among multiple responses can mitigate overconfidence.
 
 \subsubsection{Stable Explanations as Confidence Measures}
-In the pursuit of reliable uncertainty quantification in Large Language Models,
-the paper `Cycles of Thought: Measuring LLM Confidence through Stable
-Explanations ' \cite{becker2024cyclesthoughtmeasuringllm} introduced a novel
-framework that assesses model confidence through the stability of generated
-explanations.
+In the pursuit of reliable uncertainty quantification in Large Language Models, the
+paper `Cycles of Thought: Measuring LLM Confidence through Stable Explanations '
+\cite{becker2024cyclesthoughtmeasuringllm} introduced a novel framework that assesses
+model confidence through the stability of generated explanations.
 
-Their approach posits that the consistency of explanations accompanying an
-answer can serve as a proxy for the model's certainty. Instead of assigning a single
-probability to an answer, the method generates multiple explanations for the
-same question and treats each explanation-answer pair as a distinct classifier. A
-posterior distribution is then computed over these classifiers, allowing for a
-principled estimation of confidence based on explanation stability. If the model's
-explanations remain stable across different reasoning paths, it suggests high
-confidence in the answer. Conversely, significant variation in explanations
-signals uncertainty. Empirical evaluations across multiple datasets demonstrated
-that this framework enhances confidence calibration and failure prediction,
-outperforming traditional baselines.
+Their approach posits that the consistency of explanations accompanying an answer
+can serve as a proxy for the model's certainty. Instead of assigning a single
+probability to an answer, the method generates multiple explanations for the same
+question and treats each explanation-answer pair as a distinct classifier. A
+posterior distribution is then computed over these classifiers, allowing for a principled
+estimation of confidence based on explanation stability. If the model's
+explanations remain stable across different reasoning paths, it suggests high confidence
+in the answer. Conversely, significant variation in explanations signals uncertainty.
+Empirical evaluations across multiple datasets demonstrated that this framework
+enhances confidence calibration and failure prediction, outperforming traditional
+baselines.
 
-However, there are some potential drawbacks. The method requires generating
-multiple explanations, which increases computational cost and latency.
-Additionally, it can be sensitive to prompt variations, and may misinterpret
-repetitive patterns as high confidence.
+However, there are some potential drawbacks. The method requires generating multiple
+explanations, which increases computational cost and latency. Additionally, it
+can be sensitive to prompt variations, and may misinterpret repetitive patterns as
+high confidence.
 
 \subsubsection{Tokens' log-probability}
-\label{ssub:tokens_log_probability} The paper `Robots That Ask For Help:
-Uncertainty Alignment for Large Language Model Planners' \cite{ren2023robotsaskhelpuncertainty}
-introduces the KnowNo framework, which is the one we took inspiration from, to quantify
-the uncertainty of the agent in this thesis.
+\label{ssub:tokens_log_probability} The paper `Robots That Ask For Help: Uncertainty
+Alignment for Large Language Model Planners'
+\cite{ren2023robotsaskhelpuncertainty} introduces the KnowNo framework, which is
+the one we took inspiration from to quantify the uncertainty of the agent in this
+thesis.
 
-The KnowNo framework leverages Conformal Prediction (CP)\footnote{\url{https://en.wikipedia.org/wiki/Conformal_prediction}},
+The KnowNo framework leverages Conformal Prediction\footnote{\url{https://en.wikipedia.org/wiki/Conformal_prediction}},
 a statistical method that provides formal guarantees on the reliability of predictions
 to assess uncertainty.
 
@@ -281,19 +274,18 @@ thesis, since the actions will always be the same, but we will use the same math
 behind the uncertainty calculation.
 
 Then, they ask the model for the action to select, adding the bias to the tokens
-representing each action. Here they use the log-probabilities of the tokens (referring
-to the actions) to compute the uncertainty.
+representing each action. Then, they use the log-probabilities of the tokens (referring
+to the actions) to compute the uncertainty of the model.
 
-KnowNo computes uncertainty evaluating the ``validity" of each option: CP
-calculates a confidence interval based on previous data, and from this, a set of
-valid actions is generated (based on their scaled log-probability). This set can
-include one or more actions, and the size of this set is indicative of the level
-of uncertainty:
+KnowNo computes uncertainty evaluating the ``validity" of each option: CP calculates
+a confidence interval based on previous data, and from this, a set of valid actions
+is generated (based on their scaled log-probability). This set can include one
+or more actions, and the size of this set is indicative of the level of uncertainty:
 \begin{itemize}
   \item \textbf{Singleton}: If CP narrows down the options to just one action,
     this indicates low uncertainty, and the robot can proceed confidently with the
     task. The model is highly certain that this action is the most appropriate
-    next step.
+    next step;
 
   \item \textbf{Multiple Options}: When CP leaves multiple possible actions in the
     valid set, this may indicate high uncertainty. In such cases, KnowNo
@@ -372,8 +364,9 @@ of uncertainty:
   \label{fig:knowno_flow}
 \end{figure}
 
-A simplified version of the KnowNo flow can be seen in Figure \ref{fig:knowno_flow}.
-Technically speaking, the computation of the uncertainty can be summarize in 5 steps:
+A simplified version of the KnowNo flow can be seen in Figure
+\ref{fig:knowno_flow}. Technically speaking, the computation of the uncertainty
+can be summarize in 5 steps:
 \begin{enumerate}
   \item give each action a single-token label (eg. \texttt{A)}, \texttt{B)}, \texttt{C)},
     \texttt{D)}, \texttt{E)});
@@ -386,13 +379,14 @@ Technically speaking, the computation of the uncertainty can be summarize in 5 s
 
   \item filter the resulting set of option with a threshold computed with CP;
 
-  \item either the result will be a singleton (no uncertainty) or a set of options.
+  \item either the result will be a singleton (denoting no uncertainty) or a set
+    of options.
 \end{enumerate}
 
-They also say that the framework has the advantage of being model-agnostic, as
-it can be applied to LLMs out-of-the-box without requiring any fine-tuning, thanks
-to the ``caution" that is given if the resulting filtered set of options is not
-a singleton.
+On a final note, in the paper they state that this framework has the advantage of
+being model-agnostic, as it can be applied to LLMs out-of-the-box without
+requiring any fine-tuning, thanks to the ``caution" that is given if the
+resulting filtered set of options is not a singleton.
 
 \section{Agents}
 \label{sec:agents}
@@ -413,19 +407,20 @@ order to achieve specific goals.
 
 This definition highlights several key aspects of agents:
 \begin{itemize}
-  \item Autonomy: Agents operate without direct human intervention, controlling their
-    own actions.
+  \item \textbf{Autonomy}: Agents operate without direct human intervention,
+    controlling their own actions;
 
-  \item Perception and Action: They interact with the environment via sensors (perception)
-    and actuators (action execution).
+  \item \textbf{Perception and Action}: They interact with the environment via sensors
+    (perception) and actuators (action execution);
 
-  \item Decision-making: Agents select actions based on their internal model, goals,
-    and the state of the environment.
+  \item \textbf{Decision-making}: Agents select actions based on their internal model,
+    goals, and the state of the environment;
 
-  \item Non-determinism and Adaptability: Since environments are generally non-deterministic,
-    agents must be prepared for uncertainty and potential failures in action execution.
+  \item \textbf{Non-determinism and Adaptability}: Since environments are generally
+    non-deterministic, agents must be prepared for uncertainty and potential
+    failures in action execution;
 
-  \item Preconditions and Constraints: Actions are subject to certain conditions
+  \item \textbf{Preconditions and Constraints}: Actions are subject to certain conditions
     that must be met for successful execution.
 \end{itemize}
 
@@ -482,37 +477,35 @@ thermostat to a complex system like a self-driving car. The idea is that the
 agent is able to react to a change in the environment and take actions to
 achieve its goals.
 
-We will analyze in detail the prompts and the choices in Section
-\ref{sec:prompts}, but to give an some anticipation to align our agent with the definition
-above, we can map some of its concept to what this thesis will analyze:
+To align our agent with the definition above, we can map some of its concept to what
+this thesis will analyze:
 \begin{itemize}
-  \item Autonomy: the agent will choose its action based on the prompt built
+  \item \textbf{Autonomy}: the agent will choose its action based on the prompt built
     using the environment information only;
 
-  \item Perception and Action: what the server sends about the current state of
-    the environment can be seen as the perception of the agent, while the action
-    it can take will be given in the prompt in a specific way.
+  \item \textbf{Perception and Action}: what the server sends about the current state
+    of the environment can be seen as the perception of the agent, while the
+    action it can take will be given in the prompt in a specific way;
 
-  \item Decision-making: the decision-making process will be the generation of
-    the text by the LLM, weighted by the uncertainty.
+  \item \textbf{Decision-making}: the decision-making process will be the generation
+    of the text by the LLM, weighted by the uncertainty.
 
-  \item Non-determinism and Adaptability: to emulate the non-determinism of the
-    environment, the state received by the server will be used ``raw" in the
-    prompt, without any hard processing or parsing.
+  \item \textbf{Non-determinism and Adaptability}: to emulate the non-determinism
+    of the environment, the state received by the server will be used ``raw" in the
+    prompt, without any hard processing or parsing;
 
-  \item Preconditions and Constraints: being in a ``limited" map with a fixed number
-    of walkable cells, is itself a constraint the agent must consider.
+  \item \textbf{Preconditions and Constraints}: being in a ``limited" map with a
+    fixed number of walkable cells, is itself a constraint the agent must consider.
 \end{itemize}
 
 \subsection{BDI Architecture}
 \label{sub:bdi_architecture}
 
-The Belief-Desire-Intention (BDI) architecture is a widely adopted framework in artificial
-intelligence for modeling rational agents. It was formally developed by Rao and
-Georgeff in 1995 \cite{bdi-icmas95} and has been implemented in several
-architectures, including PRS (1987), dMARS (1998), JAM (1999), Jack (2001), and JADEX
-(2005). BDI provides a structured approach to practical reasoning, allowing agents
-to function effectively in dynamic and unpredictable environments.
+The Belief-Desire-Intention (BDI) architecture is a widely adopted framework in
+artificial intelligence for modeling rational agents. It was formally developed by
+Rao and Georgeff in 1995 \cite{bdi-icmas95} and has been implemented in several architectures.
+BDI provides a structured approach to practical reasoning, allowing agents to function
+effectively in dynamic and unpredictable environments.
 
 \subsubsection{Core Components of BDI}
 BDI agents operate based on three key components:
@@ -525,38 +518,38 @@ BDI agents operate based on three key components:
   \item Intention: Represents the commitments of an agent toward achieving
     specific goals through selected plans.
 \end{itemize}
-
-BDI has been extensively used in fields like robotics, automated planning, and multi-agent
-systems.
+BDI has been extensively used in fields like robotics, automated planning, and
+multi-agent systems.
 
 \section{State of the Art}
 \label{sec:state_of_the_art}
 
-A logistic problem is a fundamental challenge in the field of Artificial
-Intelligence (AI), since depending on the complexity of the specific problem, it
-can contain tasks such as route optimization, supply chain management, and
-delivery scheduling. These problems arise in various domains, including
-transportation, e-commerce, and manufacturing, where efficient resource allocation
-and decision-making are critical. Given the complexity of modern logistics, AI has
-emerged as a powerful tool for finding optimal or near-optimal solutions.
+A logistic problem is a fundamental challenge in the field of Artificial Intelligence,
+since depending on the complexity of the specific problem, it can contain tasks such
+as route optimization, supply chain management, and delivery scheduling. These
+problems arise in various domains, including transportation, e-commerce, and manufacturing,
+where efficient resource allocation and decision-making are critical. Given the complexity
+of modern logistics, AI has emerged as a powerful tool for finding optimal or
+near-optimal solutions.
 
 Traditional research techniques, such as linear programming and heuristics, have
-been widely employed. However, with the increasing availability of data and computational
-power, Machine Learning (ML) and deep learning methods have become more
-prevalent. These methods can predict demand, optimize routes dynamically, and enhance
-decision-making under uncertainty based on the data. Additionally, Reinforcement
-Learning (RL) has gained attention for its ability to learn optimal strategies through
-trial and error, particularly in dynamic and unpredictable environments.
+been widely employed. However, with the increasing availability of data and
+computational power, Machine Learning and Deep Learning methods have become more
+prevalent. These methods can predict demand, optimize routes dynamically, and
+enhance decision-making under uncertainty based on the data. Additionally,
+Reinforcement Learning has gained attention for its ability to learn optimal
+strategies.
 
-In the recent years with the explosion of Large Language Models (LLMs), many researchers
-started to apply them to different fields, including planning and logistics.
+In the recent years with the explosion of Large Language Models, many researchers
+started to include and test them to different fields, including planning and
+logistics.
 
 % \begin{quotation}
 %   This is a longer blockquote that may span multiple paragraphs. It is indented
 %   on both sides.
 % \end{quotation}
 
-\subsection{PDDL Based Solutions}
+\subsection{PDDL-Based Solutions}
 \label{sub:pddl_based_solutions}
 \begin{blockquote}
   \textbf{Planning Domain Definition Language} (PDDL) is a human-readable format
@@ -641,7 +634,7 @@ With the increasing number of variables (actions or predicates), the number of a
 and nodes grows exponentially. A little example that makes this problem easy to
 visualize is the Domain where we can have N possible bits, that can be turned to
 \texttt{true} or \texttt{false} (Domain file in Listing
-\ref{lst:domain_file_toggle_bits}) and the Problem where everything start at \texttt{false}
+\ref{lst:domain_file_toggle_bits}) and the Problem where everything starts at \texttt{false}
 and we want a specific final combination (Problem file in Listing \ref{lst:problem_file_toggle_bits}).
 
 \begin{figure}[ht!]
@@ -773,10 +766,10 @@ and we want a specific final combination (Problem file in Listing \ref{lst:probl
   \centering
   \subfloat[
   \centering
-  label 1]{{ \begin{tikzpicture}\begin{axis}[ title={Arcs over number of bits}, xlabel={Bits}, ylabel={Arcs}, width=7cm, height=7cm, xmin=2, xmax=16, ymin=4, ymax=550000, xtick={2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}, ytick={11264,53248,114688,245760, 524288}, legend pos=north west, ymajorgrids=true, grid style=dashed, ]\addplot[ color=primary, mark=square, ] coordinates { (2,4)(3,12)(4,32)(5,80)(6,192)(7,448)(8,1024)(9,2304)(10,5120)(11,11264)(12,24576)(13,53248)(14,114688)(15,245760)(16,524288) }; \legend{Number of arcs}\end{axis}\end{tikzpicture} }}
+  Arcs over number of bits]{{ \begin{tikzpicture}\begin{axis}[ title={}, xlabel={Bits}, ylabel={Arcs}, width=7cm, height=7cm, xmin=2, xmax=16, ymin=4, ymax=550000, xtick={2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}, ytick={11264,53248,114688,245760, 524288}, legend pos=north west, ymajorgrids=true, grid style=dashed, ]\addplot[ color=primary, mark=square, ] coordinates { (2,4)(3,12)(4,32)(5,80)(6,192)(7,448)(8,1024)(9,2304)(10,5120)(11,11264)(12,24576)(13,53248)(14,114688)(15,245760)(16,524288) }; \legend{Number of arcs}\end{axis}\end{tikzpicture} }}
   \qquad \subfloat[
   \centering
-  label 1]{{ \begin{tikzpicture}\begin{semilogyaxis}[ title={Arcs over number of bits (Log Scale)}, xlabel={Bits}, ylabel={Arcs}, width=7cm, height=7cm, xmin=2, xmax=16, ymin=4, ymax=550000, xtick={2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}, ytick={4,10,100,1000,10000,100000}, legend pos=north west, ymajorgrids=true, grid style=dashed, ] \addplot[ color=primary, mark=square, ] coordinates { (2,4)(3,12)(4,32)(5,80)(6,192)(7,448)(8,1024)(9,2304)(10,5120)(11,11264)(12,24576)(13,53248)(14,114688)(15,245760)(16,524288) }; \legend{Number of arcs}\end{semilogyaxis}\end{tikzpicture} }}
+  Arcs over number of bits(Log Scale)]{{ \begin{tikzpicture}\begin{semilogyaxis}[ title={}, xlabel={Bits}, ylabel={Arcs}, width=7cm, height=7cm, xmin=2, xmax=16, ymin=4, ymax=550000, xtick={2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}, ytick={4,10,100,1000,10000,100000}, legend pos=north west, ymajorgrids=true, grid style=dashed, ] \addplot[ color=primary, mark=square, ] coordinates { (2,4)(3,12)(4,32)(5,80)(6,192)(7,448)(8,1024)(9,2304)(10,5120)(11,11264)(12,24576)(13,53248)(14,114688)(15,245760)(16,524288) }; \legend{Number of arcs}\end{semilogyaxis}\end{tikzpicture} }}
   \caption{Arcs per Bit}
   \label{fig:arcs_per_bit}
 \end{figure}
@@ -841,36 +834,36 @@ environment.
 
 It works by defining:
 \begin{itemize}
-  \item \textbf{Environment}: the world in which the agent operates
+  \item \textbf{Environment}: the world in which the agent operates;
 
-  \item \textbf{Agent}: the decision-maker that interacts with the environment
+  \item \textbf{Agent}: the decision-maker that interacts with the environment;
 
-  \item \textbf{Actions}: the possible moves the agent can make
+  \item \textbf{Actions}: the possible moves the agent can make;
 
-  \item \textbf{Rewards}: the feedback the agent receives for its actions
+  \item \textbf{Rewards}: the feedback the agent receives for its actions;
 
-  \item \textbf{Policy}: the strategy the agent uses to select Actions
+  \item \textbf{Policy}: the strategy the agent uses to select Actions.
 \end{itemize}
 
 In performing action \texttt{a} in state \texttt{s}, the learner receive an immediate
 reward \texttt{r(s,a)}. In some states, some actions could be not possible or
 valid.
 
-The task is to learn a policy (a full specification of what action to take at each
-state) allowing the agent to choose for each state the action maximizing the
-overall reward, including future moves.
+The task is to learn a policy $\pi$ (a full specification of what action to take
+at each state) allowing the agent to choose for each state the action maximizing
+the overall reward, including future moves.
 
 To deal with this delayed reward problem, the agent has to trade-off
 exploitation and exploration:
 \begin{itemize}
   \item \textbf{Exploitation}: the agent chooses the action that it knows will give
-    some reward
+    some reward;
 
   \item \textbf{Exploration}: the agent tries alternative actions that could end
-    in bigger rewards
+    in bigger rewards.
 \end{itemize}
 
-When considering a logistics problem, reinforcement learning naturally comes to mind.
+When considering a logistics problem, Reinforcement Learning naturally comes to mind.
 This is because defining a reward function is relatively straightforward: it could
 be measured in terms of packages delivered per minute, per step, or a similar metric.
 Additionally, the entire process can be simulated in a virtual environment,
@@ -878,8 +871,8 @@ allowing multiple parallel simulations to accelerate the agent's learning
 process. As illustrated in Figure \ref{fig:rl_scheme}, the structure of the
 Reinforcement Learning framework closely resembles the agent-based model
 depicted in Figure \ref{fig:agent_scheme}. In both cases, the agent interacts
-with its environment, receives feedback in the form of rewards, and continuously
-refines its policy to optimize future performance.
+with its environment, receives feedback in the form of rewards, and, in RL,
+continuously refines its policy to optimize future performance.
 
 \begin{figure}[ht!]
   \centering
@@ -890,17 +883,17 @@ refines its policy to optimize future performance.
 \footnotetext{\url{https://it.mathworks.com/help/reinforcement-learning/ug/create-agents-for-reinforcement-learning.html}}
 
 However, RL has its own set of challenges. The most common one is the convergence
-to a local minimum in the reward function. This means that the agent might
-become stuck in suboptimal strategy that is not the best one. Moreover, RL is
-not explainable, meaning that we can't understand why the agent took a specific action
+to a local optima in the reward function. This means that the agent might become
+stuck in suboptimal strategy that is not the best one. Moreover, RL is not fully
+explainable, meaning that we can't understand why the agent took a specific action
 in a specific situation.
 
-Another issue with RL is the cost of training. Since the agent learns through
-trial and error, it needs to perform a large number of actions to explore the environment
-and learn the best strategy. This can be computationally expensive and time-consuming,
-especially for complex problems with many variables and states. Moreover, once the
-agent is trained, its adaptability to new environments or situations is limited,
-as it is optimized for a specific reward function and environment configuration.
+Another issue with RL is the cost of training. To learn, the RL agent needs to perform
+a large number of actions to explore the environment and learn the best strategy.
+This can be computationally expensive and time-consuming, especially for complex
+problems with many variables and states. Moreover, once the agent is trained,
+its adaptability to new environments or situations is limited, as it is optimized
+for a specific reward function and environment configuration.
 
 \paragraph{Literature}
 An example of a problem similar to the one presented in this thesis, solved using
@@ -924,9 +917,9 @@ performance.
 
 LLMs are trained on vast amounts of textual data and have demonstrated remarkable
 performance across a wide range of language tasks, from translation and
-summarization to reasoning and problem-solving. This success has naturally led researchers
-to explore whether these models can be repurposed for more complex, multi-step
-decision-making problems that require planning.
+summarization to reasoning and problem-solving (emerging abilities). This success
+has naturally led researchers to explore whether these models can be repurposed for
+more complex, multi-step decision-making problems that require planning.
 
 The key idea is that the same abilities that allow LLMs to understand and
 generate language can be harnessed to decompose a planning task into
@@ -941,7 +934,7 @@ statement to a final answer, CoT prompting encourages the model to ``think aloud
 by generating intermediate reasoning steps. This decomposition can help in planning
 problems where the solution involves multiple, logically connected steps.
 
-This was first discovered by Wei et al. \cite{wei2023chainofthoughtpromptingelicitsreasoning},
+This was introduced by Wei et al. \cite{wei2023chainofthoughtpromptingelicitsreasoning},
 who demonstrated that prompting the LLM to 'answer step by step' led to improved
 performance on mathematical problems compared to requesting only the final
 answer. They also showed that this step-by-step approach could be applied to other
@@ -951,17 +944,17 @@ fields, ultimately giving rise to Chain-of-Thought reasoning models.
 Reasoning-focused LLMs are trained to generate multiple Chain-of-Thought steps,
 exploring different solution paths before selecting the most optimal one, often using
 Reinforcement Learning \cite{deepseekai2025deepseekr1incentivizingreasoningcapability}
-techniques such as RLHF (Reinforcement Learning from Human Feedback) or self-consistency
+techniques such as Reinforcement Learning from Human Feedback or self-consistency
 methods during the training.
 
-This approach enhances both accuracy and explainability, as the model
-articulates its reasoning process while still operating as a generative AI
+This approach enhances both accuracy and explainability (to some extent), as the
+model articulates its reasoning process while still operating as a generative AI
 system. Expanding on this concept, reasoning models can integrate external tools,
-memory, and API calls, forming what is commonly referred to as an LLM Agent,
-capable of autonomous decision-making and real-world interaction.
+memory, and API calls, forming what is commonly referred to as an \textbf{LLM
+Agent}, capable of autonomous decision-making and real-world interaction.
 
-Most recent and famous reasoning models released to the public have been
-developed by many companies, both big and small, such as:
+Most recent and famous reasoning models released to the public have been developed
+by many companies, both big and small, such as:
 \begin{itemize}
   \item \textbf{OpenAI}: o1\footnote{\url{https://openai.com/o1/}}, o1-mini\footnote{\url{https://openai.com/index/openai-o1-mini-advancing-cost-efficient-reasoning/}}
     and o3-mini\footnote{\url{https://openai.com/index/openai-o3-mini/}} are reasoning
@@ -979,30 +972,30 @@ developed by many companies, both big and small, such as:
 \end{itemize}
 
 \subsubsection{Zero-Shot and Few-Shot Planning}
-In zero-shot planning, LLMs generate action sequences by utilizing their extensive
-pretraining on text and code, effectively inferring plausible step-by-step
-solutions to given tasks. Few-shot planning further enhances this by providing LLMs
-with a small set of demonstrations, enabling them to generalize patterns and
-improve their action sequencing capabilities.
+In zero-shot planning, LLMs generate action sequences by utilizing their
+extensive pretraining on text and code, effectively inferring plausible step-by-step
+solutions to given tasks. Few-shot planning further enhances their capabilities
+by providing LLMs with a small set of demonstrations, enabling them to generalize
+patterns and improve their action sequencing capabilities.
 
-However, while LLMs can produce reasonable plans, their direct applicability to
-embodied environments remains challenging. Huang et al.
-\cite{huang2022languagemodelszeroshotplanners} highlight the limitations of
-naive LLM planning, noting that LLMs struggle with real-world constraints,
-action feasibility, and long-horizon dependencies. Their work demonstrates that
-these shortcomings can be mitigated by leveraging the world knowledge embedded
-within LLMs and applying structured guidance, such as constraints on action generation
-and feedback-based refinements.
+However, while LLMs can produce reasonable plans, their direct applicability to embodied
+environments remains challenging. Huang et al. \cite{huang2022languagemodelszeroshotplanners}
+in `Language Models as Zero-Shot Planners: Extracting Actionable Knowledge for Embodied
+Agents' highlight the limitations of naive LLM planning, noting that LLMs struggle
+with real-world constraints, action feasibility, and long-horizon dependencies.
+Their work demonstrates that these shortcomings can be mitigated by leveraging
+the world knowledge embedded within LLMs and applying structured guidance, such as
+constraints on action generation and feedback-based refinements.
 
-Similarly, Silver et al. \cite{silver2022pddl} extend this inquiry to classical AI
-planning domains by evaluating few-shot prompting of LLMs on problems expressed in
-the Planning Domain Definition Language (PDDL). Their findings reveal mixed
-results: while LLMs can generate syntactically correct PDDL plans in certain domains,
-they often fail due to a lack of explicit access to transition models and
-logical constraints inherent to planning problems. Nonetheless, their study also
-introduces a hybrid approach where LLMs are used to initialize heuristic-based
-search planners, demonstrating that even imperfect LLM-generated plans can improve
-the efficiency of traditional AI planning methods.
+Similarly, Silver et al. \cite{silver2022pddl} in `PDDL Planning with Pretrained
+Large Language Models' extend this inquiry to classical AI planning domains by evaluating
+few-shot prompting of LLMs on problems expressed in the Planning Domain Definition
+Language (PDDL). Their findings reveal mixed results: while LLMs can generate syntactically
+correct PDDL plans in certain domains, they often fail due to a lack of explicit
+access to transition models and logical constraints inherent to planning
+problems. Nonetheless, their study also introduces a hybrid approach where LLMs
+are used to initialize heuristic-based search planners, demonstrating that even imperfect
+LLM-generated plans can improve the efficiency of traditional AI planning methods.
 
 These findings collectively suggest that while LLMs alone are not yet fully capable
 of robust autonomous planning, their ability to extract and apply commonsense

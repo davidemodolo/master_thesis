@@ -6,9 +6,9 @@ successive phases of its evolution, from the initial prototype to the final
 implementation. During this process, several challenges and unexpected issues
 emerged. For each phase, we detail the encountered problems and the approaches
 adopted to overcome them, explaining the reasoning behind the design choices.
-The majority of the choices taken in the crafting of the various prompt will be
-discussed in Chapter \ref{cha:data_collection}, while reporting here all the discarded
-ones.
+The majority of the choices taken in the structure of the final prompts will be
+discussed in Chapter \ref{cha:data_collection}, while here are reported the ones
+from the discarded approaches.
 
 \section{Development information}
 \label{sec:development_information}
@@ -17,29 +17,27 @@ The go-to programming language for AI development is Python. However, we chose
 to use JavaScript for this project for several reasons. First, both the server
 and the example agents were already implemented in JavaScript; so a JavaScript interface
 to communicate with the server was already available. This allowed us to focus
-only on the agent's logic, without having to worry about the server's implementation.
+only on the agent's logic, without having to worry about the server-side implementation.
 Second, thanks to the availability of the project of the Autonomous Software Agents
 course, our initial plan was to use an existing JavaScript-based benchmark from
-the course. Although we ultimately decided against using this benchmark, as
-explained later, JavaScript remained our language of choice.
+the course. Although we ultimately decided against using this benchmark, so
+JavaScript remained our language of choice.
 
-Additionally, since there is no more a dedicated JavaScript library for the
-Azure OpenAI API, instead of manually recreating the necessary API calls we opted
-for a more efficient approach by setting up a lightweight Python server to act as
-a middleman. This solution, discussed in Section \ref{par:azureapi}, allowed us
-to integrate Azure's services seamlessly while maintaining JavaScript for the
-core development.
+Additionally, since there isn't a dedicated JavaScript library for the Azure OpenAI
+API, instead of manually recreating the necessary API calls we opted for a more
+efficient approach by setting up a lightweight Python server to act as a
+middleman. This solution, discussed in Section \ref{par:azureapi}, allowed us to
+integrate Azure's services seamlessly while maintaining JavaScript for the core development.
 
 \section{First Approach}
 \label{sec:first_approach}
 
-In this initial phase of the development and testing process, a trial-and-error
-methodology was adopted to iteratively refine the system's behavior and try to
-optimize performance. Unfortunately, this led to moving away from the definition
-of the problem and, in combination with the poor performance of the agent, it
-was decided to start over with a new approach. Nonetheless, this first attempt
-was crucial in understanding the challenges and limitations of the problem, so it
-is important to describe it.
+In this initial phase of the development and testing process, a trial-and-error methodology
+was adopted to iteratively refine the system's behavior and try to optimize performance.
+Unfortunately, this led to moving away from the definition of the problem and,
+in combination with the poor performance of the agent, it was decided to start over
+with a new approach. Nonetheless, this first attempt was crucial in understanding
+the challenges and limitations of the problem, so it is important to describe it.
 
 \vspace{1mm}
 \begin{codewindow}
@@ -62,12 +60,13 @@ is important to describe it.
 \end{codewindow}
 \vspace{1mm}
 
-The approach began by parsing crucial information from the server, which served as
-the foundation for understanding how the LLM would interact with it. The main
-point of discuss in the parsing topic was the map, that was represented as a multi-line
-string like the one in Listing \ref{lst:parced_map}. The first prompt sent to
-the LLM was crafted by concatenating the map with all the other information
-needed to describe the state of the environment, as shown in Listing \ref{lst:first_agent_prompt}.
+The approach began by parsing crucial information from the server, which served
+as the foundation for understanding how the LLM would interact with it. The main
+point of discuss in the parsing topic was the map, that was represented as a
+multi-line string like the one in Listing \ref{lst:parced_map}, even if LLMs analyze
+the data as an ``horizontal'' sequence. The first prompt sent to the LLM was
+crafted by concatenating the map with all the other information needed to
+describe the state of the environment, as shown in Listing \ref{lst:first_agent_prompt}.
 
 \vspace{1mm}
 \begin{codewindow}
@@ -88,10 +87,10 @@ needed to describe the state of the environment, as shown in Listing \ref{lst:fi
 \end{codewindow}
 \vspace{1mm}
 
-This implementation started as a full raw approach, letting the LLM also decide the
-goal to pursue. As various challenges and inefficiencies were identified during
-extensive testing, we progressively implemented a total of seven ``helping"
-parameters.
+This implementation started by letting the LLM also decide the goal to pursue, by
+providing all the available information. As various challenges and
+inefficiencies were identified during extensive testing, we progressively implemented
+a total of seven ``helping" parameters.
 
 \subsection{Helping Parameters}
 These parameters were introduced with the objective of addressing specific
@@ -99,35 +98,34 @@ issues observed during experimentation, and each of them played a significant ro
 in shaping the overall functionality of the agent:
 \begin{itemize}
   \item \texttt{ANTI\_LOOP}: This parameter was introduced to eliminate a common
-    inefficiency in agent movement, wherein the agent would repeatedly traverse
+    inefficiency in agent movement, where the agent would repeatedly traverse
     the same path in a circular loop, failing to make meaningful progress toward
     its goal. By setting this parameter to \texttt{true}, if the last four
     action were \texttt{["U", "R", "D", "L"]} (either clockwise or
     counterclockwise) the agent was forced to take an action that prevented the loop
-    for happening. This optimization helped the agent make more intelligent
-    movement decisions, thereby removing the possibility of being stuck in repetitive
-    cycles;
+    for happening again. This optimization helped the agent make more
+    intelligent movement decisions, thereby removing the possibility of being stuck
+    in repetitive cycles;
 
   \item \texttt{HELP\_THE\_BOT}: The primary purpose of this parameter was to assist
     the agent in handling parcels more effectively. When activated by setting it
     to \texttt{true}, the agent was programmed to automatically take a parcel if
     the parcel was located directly below its current position. Additionally, if
     the agent was positioned at a delivery point, this parameter ensured that the
-    agent would immediately proceed with shipping the parcel without requiring additional
-    decision-making steps. This was implemented to reduce the number of calls to
-    the LLM, since, even in this version of the agent, it was able to always pick
-    up a parcel and deliver it (if in the correct tile);
+    agent would immediately proceed with delivering the parcel without requiring
+    additional decision-making steps. This was implemented to reduce the number
+    of calls to the LLM, since, even in this version of the agent, it was able to
+    always pick up a parcel and deliver it (if in the correct tile);
 
   \item \texttt{SELECT\_ONLY\_ACTION}: This parameter was designed to simplify the
     agent's decision-making process in cases where the list of available actions
     contained only a single option. When set to \texttt{true}, the agent would
-    automatically select and execute the sole available action without
-    hesitation or delay. This was made by a big filtering phase that returned the
-    legal actions:
+    automatically select and execute the sole available action without calling
+    the LLM. This was made by a big filtering phase that returned the legal actions:
     \begin{itemize}
       \item remove the opposite of the last action;
 
-      \item remove all the action that was not possible (like going left while
+      \item remove all the actions that were not possible (like going left while
         in the first column or going up while in the first row);
 
       \item remove the delivery action if the agent wasn't carrying a parcel and
@@ -146,8 +144,7 @@ in shaping the overall functionality of the agent:
     to \texttt{true}, the LLM would have access to the full conversation history,
     allowing it to make more informed decisions based on past interactions and
     events. This feature was particularly useful and powerful, but also with a
-    big downside related to the LLM context length, that will be discussed in Chapter
-    \ref{cha:conclusions};
+    big downside related to the LLM context length;
 
   \item \texttt{REDUCED\_MAP}: This parameter was introduced to optimize the space
     the map occupied in the prompt by limiting the environment described as a slice
@@ -158,22 +155,22 @@ in shaping the overall functionality of the agent:
     see Section \ref{sub:server_configuration_event_handling}), ensuring that
     the agent only received the most relevant spatial data necessary for making
     informed decisions. Essentially, this optimization allowed the attention of
-    the LLM to not be too sparse, but bringing some extra problems, for example
-    by removing any delivery zone from the map since it was too far away while
-    the current goal was to deliver a parcel;
+    the LLM to not be too sparse, but it brought some additional problems, for
+    example by hiding any delivery zone from the map when the agent was placed
+    too far away with the goal of delivering;
 
   \item \texttt{HELP\_FIND\_DELIVERY}: This parameter was specifically designed to
     assist the agent in locating delivery points more effectively. By setting it
     to \texttt{true}, the system ensured that the closest delivery point (using Manhattan
     Distance) was always included in the agent's prompt (not as coordinates but as
-    directions, eg. "right and up"), even if that particular delivery point was not
-    within the agent's immediate field of view. In fact, this parameter was implemented
-    to remedy the problem described in the \texttt{REDUCED\_MAP} point. This feature
-    provided the agent with valuable directional guidance, allowing it to make
-    better routing decisions and reducing the risk of wandering aimlessly in
-    search of a delivery location (or worse, by looping again and again), but
-    also reduced our ability to track the LLM ability in finding the delivery
-    point by itself (more on this in Section \ref{sec:prompts});
+    directions, eg. ``right and up"), even if that particular delivery point was
+    not within the agent's immediate field of view. In fact, this parameter was
+    implemented to remedy the problem described in the \texttt{REDUCED\_MAP} point.
+    This feature provided the agent with valuable directional guidance, allowing
+    it to make better routing decisions and reducing the risk of wandering aimlessly
+    in search of a delivery location (or worse, by looping again and again), but
+    also reduced our ability to track the LLM ability in finding the delivery point
+    by itself (more on this in Section \ref{sec:prompts});
 
   \item \texttt{HELP\_SIMULATE\_NEXT\_ACTIONS}: The goal of this parameter was to
     enhance the agent's decision-making process by simulating and displaying the
@@ -184,8 +181,7 @@ in shaping the overall functionality of the agent:
     In theory, this additional information could help the agent anticipate and select
     the most favorable course of action. However, experimental results indicated
     that enabling this feature led to suboptimal performance, resulting in poor
-    decision-making and inefficiencies, probably due to the size of the prompt that
-    was too big for the LLM to handle.
+    decision-making and inefficiencies, probably due to the size of the prompt;
 \end{itemize}
 
 This design resulted in an implementation that was bringing the project in the wrong
@@ -206,7 +202,7 @@ of designing an effective agent. The key lessons learned from this phase can be 
 as follows.
 
 \paragraph{Why this approach has been discarded?}
-Several key issues made this method not suitable for the project's objectives:
+
 \begin{itemize}
   \item Unclear prompt style: the way information was structured in the prompt
     was not optimal. This became particularly evident in the uncertainty computation,
@@ -224,32 +220,33 @@ Several key issues made this method not suitable for the project's objectives:
   \item Performance: when extensive guidance was provided, the results were still
     acceptable but inferior to those obtained using PDDL-based solutions.
     Initially, we considered implementing a PDDL version of the agent to serve as
-    a benchmark. However, as discussed in Section \ref{sub:pddl_based_solutions},
-    this comparison would have been unfair due to fundamental differences in
-    approach and assumptions;
+    a benchmark. However, this comparison would have been unfair due to fundamental
+    differences in approach and assumptions;
 
   \item Unintended biases in LLM behavior: Although not directly related to the
     core functionality of the agent, an interesting observation emerged regarding
-    how the LLM interpreted the presence of other agents. The server allowed the
-    spawning of ``enemy" agents capable of blocking paths. While this feature
-    was not used in the main experiments, we discovered that simply including information
-    about these agents in the prompt led the LLM to assume that agents near parcels
-    were actively trying to steal them. In reality, these agents were merely obstacles
-    with no intent to compete for parcels. This behavior highlights inherent
-    biases in the LLM's training data, where similar context might have been associated
-    with adversarial interactions.
+    how the LLM interpreted the presence of other agents. In some tests, the server
+    allowed the spawning of ``enemy" agents capable of blocking paths. While this
+    feature was not used in the main experiments, we discovered that simply
+    including information about these agents in the prompt led the LLM to assume
+    that agents near parcels were actively trying to steal them, making our agent
+    change its direction. In reality, these agents were merely obstacles with no
+    intent to compete for parcels. This behavior highlights inherent biases in
+    the LLM's training data, where similar context might have been associated with
+    adversarial interactions.
 \end{itemize}
 
 \section{Second Approach}
 \label{sec:second_approach}
 
 In our exploration of different strategies for designing an LLM-driven agent,
-this second approach was the weakest one. The fundamental idea was to adopt a "full
-raw" approach, where the model received all available unprocessed data from the
-server without any pre-processing or filtering. The hypothesis was that by exposing
-the LLM to as much raw information as possible, it might be able to infer
-meaningful patterns and determine the best course of action on its own, giving us
-the ability to evaluate the LLM's planning capabilities without any external structure.
+this second approach was the weakest one. The fundamental idea was to adopt a ``full
+raw" approach, where the model received all available unprocessed data from the server
+without any pre-processing or filtering. The hypothesis was that by exposing the
+LLM to as much raw information as possible, it might be able to infer meaningful
+patterns and determine the best course of action on its own, giving us the
+ability to evaluate the LLM's planning capabilities without any external
+structure.
 \vspace{1mm}
 \begin{codewindow}
   [Text] \lstset{style=pythonstyle, caption={Scheme of a prompt used in the second approach, full in Appendix \ref{lst:apx:second_agent_prompt}},
@@ -269,52 +266,52 @@ Raw `onParcelsSensing' response: [JSON]
 \end{codewindow}
 \vspace{1mm}
 
-To achieve this, the agent's prompt was constructed as a simple collection of "name
-of the call - JSON result" pairs. Unlike other approaches that structured data into
-a more human-readable or semantically meaningful format, this method provided
-the LLM with a direct dump of server responses. The only additional elements in the
-prompt were the list of available actions and a loosely defined query requesting
-the next step (necessary to compute the uncertainty).
+To achieve this, the agent's prompt was constructed as a simple collection of ``name
+of the server call: JSON result" for each function. Unlike other approaches that
+structured data into a more human-readable or semantically meaningful format, this
+method provided the LLM with a direct dump of server responses. The only
+additional elements in the prompt were the list of available actions and a query
+requesting the next step (necessary to compute the uncertainty).
 
-At first glance, this approach seemed promising in that it completely avoided
-manual interpretation of server responses, reducing the need for custom logic or
-intermediate representations. If successful, it could have allowed for a highly adaptable
-agent that functioned independently of predefined schemas or rigid data structures.
+At first glance, this approach seemed promising in that it completely avoided manual
+interpretation of server responses, reducing the need for custom logic or
+intermediate representations. If successful, it could have allowed for a highly
+adaptable agent that functioned independently of predefined schemas or rigid
+data structures.
 
-However, in practice, this approach performed poorly. While it occasionally
-worked in very small maps, it became unreliable and inefficient as soon as the environment
-grew even slightly more complex. The agent frequently took suboptimal paths, exhibited
-excessive backtracking, and often failed to reach its goal efficiently.
+However, in practice, this approach performed poorly. While it occasionally worked
+in very small maps, it became unreliable and inefficient as soon as the
+environment grew even slightly. The agent frequently took suboptimal paths,
+exhibited excessive backtracking, and often failed to reach its goal efficiently.
 
-Additionally, for the agent to work correctly in such small maps, the parameter
-\texttt{USE\_HISTORY} from the first implementation was set to \texttt{true}, allowing
-the LLM to leverage the `action-result' history.
+Additionally, for the agent to work correctly in such small maps, the parameter \texttt{USE\_HISTORY}
+from the first implementation was set to \texttt{true}, allowing the LLM to
+leverage the `action-feedback' history.
 
-The lack of structured guidance made it difficult for the model to consistently produce
-useful responses, ultimately leading us to discard this approach in favor of
-more refined strategies.
+The lack of structured guidance made it difficult for the model to consistently
+produce useful responses, ultimately leading us to discard this approach in favor
+of more refined strategies.
 
 \subsection{Takeaways}
 
-Even if this approach was the weakest one and has been discarded very soon, it
-provided us with valuable insights into the limitations of the LLM in processing
-raw data. The key lessons learned from this phase can be summarized as follows.
+Even if this approach was the weakest one and has been discarded very soon, it provided
+us with valuable insights into the limitations of the LLM in processing raw data.
+The key lessons learned from this phase can be summarized as follows.
 
 \paragraph{Why this approach has been discarded?}
 \begin{itemize}
   \item Arbitrary Naming of API Calls: The names of server calls were not
     standardized and could change depending on the server's development. For instance,
-    a call named "onMap" might return a list of map tiles, but there was no inherent
-    guarantee of this behavior. Moreover, without explicit context, even
-    we—humans—found it difficult to interpret certain responses;
+    a call named \texttt{onMap} might return a list of map tiles, but there was
+    no inherent guarantee of this behavior;
 
   \item Lack of Context and Poorly Structured Input: The raw JSON data lacked
     structured context, making it challenging for the LLM to infer the correct course
     of action. Additionally, the query format itself was suboptimal. For example,
-    if the prompt simply asked, "Go there, give me the next step to go there,"
-    the model might struggle to determine that the immediate goal was not just
-    reaching (x, y) but selecting the best intermediate step that moved the agent
-    closer to that final destination.
+    if the prompt simply asked, ``Final goal: go to $(x,y)$, give me the next
+    step to reach the goal", the model might struggle to determine that the
+    immediate goal was not reaching $(x, y)$ but selecting the best intermediate
+    step that moved the agent closer to that final destination.
 \end{itemize}
 
 \paragraph{Key Takeaways from this phase}
@@ -333,54 +330,56 @@ raw data. The key lessons learned from this phase can be summarized as follows.
 \section{Final Agent}
 \label{sec:final_agent}
 
-This represents the final iteration of our approach, incorporating substantial improvements
-in both prompt generation and the overall structure of the agent's implementation.
+This represents the final iteration of our approach, incorporating substantial
+improvements in both prompt generation and the overall structure of the agent's
+implementation.
 
-Initially, prompts were dynamically constructed at runtime using a series of if/else
+Initially, prompts were dynamically constructed at runtime using a series of \texttt{if/else}
 conditions, which made them difficult to manage, debug, and scale. That approach
 lacked flexibility, as any modification required changes to the core logic of the
-agent, increasing complexity and reducing maintainability.
+agent, increasing complexity and reducing maintainability, while also adding more
+potential sources of error.
 
 \subsection{Prompt Management System}
-In the revised approach, we transitioned to a structured prompt management system
-where predefined templates are stored in a dedicated folder (\texttt{prompts} folder
-in the GitHub repository \cite{projectrepo}). These templates use variable placeholders
-that are replaced dynamically via regex-based substitutions. This change
-provided multiple advantages: it improved readability, ensured consistency
-across different prompts, and made modifications significantly easier. Instead
-of altering the logic of the agent itself, changes could now be made directly at
-the prompt level, allowing for rapid experimentation and iteration. Additionally,
-this structured approach facilitated more systematic testing, as different versions
-of the prompts could be evaluated with minimal effort. Overall, this refinement not
-only enhanced the reliability of the agent but also contributed to a more efficient
-development workflow.
+In the revised approach, we transitioned to a structured prompt management
+system where predefined templates are stored in a dedicated folder (\texttt{prompts/}
+folder in the GitHub repository \cite{projectrepo}). These templates use
+variable placeholders that are replaced dynamically via regex-based
+substitutions. This change provided multiple advantages: it improved readability,
+ensured consistency across different prompts, and made modifications
+significantly easier. Instead of altering the logic of the agent itself, changes
+could now be made directly at the prompt level, allowing for rapid experimentation
+and iteration. Additionally, this structured approach facilitated more systematic
+testing, as different versions of the prompts could be evaluated with minimal
+effort. Overall, this refinement not only enhanced the reliability of the agent
+but also contributed to a more efficient development workflow.
 
 \subsection{Agent Refactoring}
-Beyond improving prompt handling, a major structural refactoring was undertaken
-to optimize the agent's implementation. The original codebase was relatively monolithic,
-with large, complex functions handling multiple aspects of decision-making. This
-made debugging and extending functionality cumbersome. In the final version, the
-implementation was restructured into a more modular design, with a greater number
-of smaller, well-defined functions handling specific tasks. This decomposition significantly
-reduced code redundancy, improved readability, and made the agent easier to modify.
-One of the key benefits of this modular approach was its impact on the data
-acquisition process. Since the agent's core logic was now more flexible,
-adapting it for different data collection tasks required minimal effort. Simple function
-modifications or prompt adjustments were often sufficient to tailor the agent's behavior
-to new requirements. This ability to rapidly reconfigure the agent streamlined
-experimentation and allowed us to gather diverse datasets efficiently, ultimately
-improving the quality and scope of our evaluations.
+Beyond improving prompt handling, a major structural refactoring was undertaken to
+optimize the agent's implementation. The original codebase was relatively
+monolithic, with large, complex functions handling multiple aspects of decision-making.
+This made debugging and extending functionality cumbersome. In the final version,
+the implementation was restructured into a more modular design, with a greater
+number of smaller, well-defined functions handling specific tasks. This
+decomposition significantly reduced code redundancy, improved readability, and
+made the agent easier to modify. One of the key benefits of this modular approach
+was its impact on the data acquisition process. Since the agent's core logic was
+now more flexible, adapting it for different data collection tasks required minimal
+effort. Simple function modifications or prompt adjustments were often
+sufficient to tailor the agent's behavior to new requirements. This ability to rapidly
+reconfigure the agent streamlined experimentation and allowed us to gather diverse
+datasets efficiently, ultimately improving the quality and scope of our
+evaluations.
 
 \subsection{RAG Experiments}
-We also explored the potential of Retrieval-Augmented Generation (RAG) as a way to
-enhance the agent's decision-making process. The initial idea was to categorize
-the parcels \emph{a posteriori} based on predefined classes and provide the LLM with
-priority information for each category (example in Listing
-\ref{lst:parcel_categorization}). This would have allowed the model to make more
-informed decisions by leveraging structured context about the importance of
-different types of parcels. However, while this approach showed promise, it was ultimately
-considered too far from the core objectives of this thesis and was therefore not
-pursued further.
+We also explored the potential of Retrieval-Augmented Generation as a way to
+enhance the agent's decision-making process. The initial idea was to categorize the
+parcels \emph{a posteriori} based on predefined classes and provide the LLM with
+priority information for each category (example in Listing \ref{lst:parcel_categorization}).
+This would have allowed the model to make more informed decisions by leveraging structured
+context about the importance of different types of parcels. However, while this approach
+showed promise, it was ultimately considered too far from the core objectives of
+this thesis and was therefore not pursued further.
 
 \vspace{1mm}
 \begin{codewindow}
@@ -398,14 +397,14 @@ if (PARCEL_CATEGORIZATION) {
 
 Another experimental RAG-based approach involved providing the agent with direct
 information about past actions, such as: ``The last time you were in position\texttt{(x,
-y)}, you attempted to move up, but the path was blocked". While this could be a
-useful strategy for a ``blind" agent (one without direct state awareness) its application
-in our case would have led to a problematic behavior. The agent would work by
-just performing random actions, gathering information about the blocked/suboptimal
-paths and then relying entirely on the RAG-generated feedback to navigate. This
-effectively bypassed the agent's core decision-making process, turning it into a
-reactive system rather than a proactive one. Given our focus on autonomous
-decision-making, this approach was deemed unsuitable.
+y)}, you attempted to move \textbf{up}, but the path was blocked". While this
+could be a useful strategy for a ``blind" agent (one without direct state
+awareness) its application in our case would have led to a problematic behavior.
+The agent would work by just performing random actions, gathering information about
+the blocked/suboptimal paths and then relying entirely on the RAG-generated feedback
+to navigate. This effectively bypassed the agent's core decision-making process,
+turning it into a reactive system rather than a proactive one. Given our focus
+on autonomous decision-making, this approach was deemed unsuitable.
 
 Nonetheless, these experiments highlighted the potential of RAG for different
 types of autonomous agents and may be worth exploring in future research.
@@ -413,13 +412,13 @@ types of autonomous agents and may be worth exploring in future research.
 \subsection{Stateless and Stateful Agents}
 \label{sec:stateful_and_stateless_agents_chapAD}
 
-The final agent played a crucial role in generating the heatmaps discussed in Section
-\ref{sec:uncertainty_visualization}, primarily leveraging GPT-4o-mini. Task categorization
-into \texttt{pickup} and \texttt{delivery} was handled by computing the number of
-parcels currently in possession of the agent, rather than inferred dynamically
-from the environment state. While an automated approach could have been explored,
-manually assigning these tasks ensured clarity and allowed for more controlled
-testing conditions.
+The final agent played a crucial role in generating the heatmaps that will be discussed
+in Section \ref{sec:uncertainty_visualization}, primarily leveraging GPT-4o-mini.
+The task categorization into \texttt{pickup} and \texttt{delivery} was handled by
+computing the number of parcels currently in possession of the agent, rather
+than inferred dynamically from the environment state (keeping the same prompt for
+both goals) to ensure clarity and allowing for more controlled testing
+conditions.
 
 Both stateless and stateful configurations of the agent were developed and
 tested. The stateless version made decisions based solely on the current state,
@@ -432,23 +431,23 @@ experimented with three different approaches:
 \begin{itemize}
   \item \textbf{Raw probability selection}: The agent directly selected the action
     with the highest probability, without any additional modifications. This approach
-    was straightforward, but led to suboptimal (or totally wrong) paths when the
-    highest-probability action was incorrect;
+    was straightforward, but led to suboptimal paths when the highest-probability
+    action was incorrect;
 
   \item \textbf{Weighted selection}: Instead of always choosing the most probable
     action, the agent sampled actions based on their probabilities. This method was
-    particularly effective in the stateful configuration: if an incorrect action
-    initially had the highest probability, randomness allowed the agent to eventually
-    correct itself over multiple iterations on the same spot;
+    particularly effective in the \emph{stateful} configuration: if an incorrect
+    action initially had the highest probability, randomness allowed the agent
+    to eventually correct itself over multiple iterations on the same spot;
 
   \item \textbf{Stopping mechanism}: This approach follows literally the process
     explained in the paper `Robots That Ask For Help: Uncertainty Alignment for Large
     Language Model Planners' (explained in Section \ref{ssub:tokens_log_probability}):
-    by filtering the actions after the computation of the scaled log-probability
-    of each action, if the resulting set of possible actions was not a singleton
-    the agent would stop waiting for the user input. This method was implemented
-    for completeness in the development, but not tested automatically since it
-    would have required human intervention.
+    by filtering the actions after the computation of the scaled log-probabilities,
+    if the resulting set of possible actions was not a singleton the agent would
+    stop waiting for the user input. This method was implemented for completeness
+    in the development, but not tested automatically since it would have
+    required human intervention.
 \end{itemize}
 Among these methods, weighted selection proved to be the most effective for data
 acquisition and testing, as it leveraged randomness to improve path accuracy.
@@ -459,9 +458,8 @@ better long-term performance.
 \subsection{Takeaways}
 
 We can summarize the biggest improvements in the final agent as ``prompt
-management'' and ``agent refactoring''. The key lessons learned from this phase can
-be summarized as follows.\\The change in the prompt management provided multiple
-advantages:
+management'' and ``agent refactoring''.\\The change in the prompt management provided
+multiple advantages:
 \begin{itemize}
   \item Improved readability: The separation of logic from text made prompts
     easier to understand and modify;
@@ -490,10 +488,10 @@ The refactoring of the agent structure also brought several advantages:
 \section{Extra: Closest Cell to the Goal}
 \label{sec:closest_cell_to_the_goal}
 
-As part of the iterative process of refining our agent, we also tried to systematically
-isolate and address specific challenges by progressively reducing the complexity
-of the final problem. This incremental approach not only helped us pinpoint
-potential weaknesses in the agent's decision-making process but also provided
+As part of the iterative process of refining our agent, we also tried to
+systematically isolate and address specific challenges by progressively reducing
+the complexity of the final problem. This incremental approach not only helped us
+pinpoint potential weaknesses in the agent's decision-making process but also provided
 deeper insights into the LLM's underlying behaviors and limitations.
 
 To achieve this, we conducted a series of controlled experiments, including:
@@ -513,11 +511,11 @@ To achieve this, we conducted a series of controlled experiments, including:
     task at once. This approach is further detailed in the following paragraphs.
 \end{itemize}
 
-One key issue we wanted to investigate was why the agent often failed to select
-the optimal action leading toward the goal. Was the model inherently incapable of
-making the correct choice, or was the issue rooted in the way the prompt was
-structured? To better understand this, we designed an experiment that introduced
-a two-step decision-making process (visible in Figure \ref{fig:extra}):
+One key issue we wanted to investigate was why the agent often failed to select the
+optimal action leading toward the goal. Was the model inherently incapable of
+making the correct choice, or was the issue rooted in the way the prompt was structured?
+To better understand this, we designed an experiment that introduced a two-step decision-making
+process (visible in Figure \ref{fig:extra}):
 \begin{enumerate}
   \item \textbf{Identifying the best neighboring tile}: Before making a move,
     the agent was first asked to determine the most optimal adjacent tile to
@@ -537,32 +535,32 @@ a two-step decision-making process (visible in Figure \ref{fig:extra}):
 \end{figure}
 \vspace{7mm}
 
-This method effectively reframed the problem from a complex, global pathfinding
-challenge into a series of simpler, localized decisions. We hypothesized that
-this decomposition would improve performance by reducing the cognitive load on
-the LLM and allowing it to focus on smaller, well-defined tasks.
+This method effectively reframed the problem from a complex, global pathfinding challenge
+into a series of simpler, localized decisions. We hypothesized that this decomposition
+would improve performance by reducing the cognitive load on the LLM and allowing
+it to focus on smaller, well-defined tasks.
 
-However, despite these modifications, the results did not align with our expectations.
-The primary issue was that if the agent misidentified the best neighboring tile
-by choosing a position that actually increased the distance to the goal, then even
-a perfectly chosen direction would still lead to suboptimal behavior.
+However, despite these modifications, the results did not align with our
+expectations. The primary issue was that if the agent misidentified the best neighboring
+tile by choosing a position that actually increased the distance to the goal,
+then even a perfectly chosen direction would still lead to suboptimal behavior.
 
-Another significant factor was the role of uncertainty computation in the LLM response.
-When relying on the raw output of the LLM (`Raw probability selection' in Section
-\ref{sub:uncertainty_handling}), results were often inconsistent or outright incorrect.
-To address this, we experimented also with the uncertainty-weighted random action
-selection approach (`Weighted selection' in Section
-\ref{sub:uncertainty_handling}), where decisions were influenced by the model's
-confidence levels. Unfortunately, this introduced additional challenges, as interpreting
-the results became even more complex.
+Another significant factor was the role of uncertainty computation in the LLM
+response. When relying on the raw output of the LLM (`Raw probability selection'
+in Section \ref{sub:uncertainty_handling}), results were often inconsistent or
+outright incorrect. To address this, we experimented also with the uncertainty-weighted
+random action selection approach (`Weighted selection' in Section \ref{sub:uncertainty_handling}),
+where decisions were influenced by the model's confidence levels. Unfortunately,
+this introduced additional challenges, as interpreting the results became even
+more complex.
 
-Ultimately, this experiment underscored the limitations of LLM-based decision-making
-in logistics scenarios where local optimizations must align with global
-objectives. The agent's inability to consistently select the correct neighboring
-tile demonstrated how small errors at the decision-making level could compound,
-leading to inefficient or even counterproductive actions.
+Ultimately, this experiment underscored some limitations of LLM-based decision-making
+in logistics scenarios where local optimizations must align with global objectives.
+The agent's inability to consistently select the correct neighboring tile
+demonstrated how small errors at the decision-making level could compound, leading
+to inefficient or even counterproductive actions.
 
-However, as we will explore in Chapter \ref{cha:results_discussion}, newer LLM
-models exhibit notable improvements in our task, suggesting that continued advancements
-in the technology may help overcome these challenges and enhance overall performance
-in complex logistics tasks.
+However, as we will explore in Chapter \ref{cha:results_discussion}, newer LLM models
+exhibit notable improvements in our task, suggesting that continued advancements
+in the technology may help overcome these challenges and enhance overall
+performance in complex logistics tasks.
