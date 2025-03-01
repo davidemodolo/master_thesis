@@ -929,13 +929,13 @@ entire action sequences with minimal or no task-specific training.
 \subsubsection{Chain-of-Thought Reasoning}
 
 One of the most influential ideas for using LLMs in planning is Chain-Of-Thought
-(CoT) prompting. Instead of asking the model to jump directly from a problem
-statement to a final answer, CoT prompting encourages the model to ``think aloud"
-by generating intermediate reasoning steps. This decomposition can help in planning
+prompting. Instead of asking the model to jump directly from a problem statement
+to a final answer, CoT prompting encourages the model to ``think aloud" by
+generating intermediate reasoning steps. This decomposition can help in planning
 problems where the solution involves multiple, logically connected steps.
 
 This was introduced by Wei et al. \cite{wei2023chainofthoughtpromptingelicitsreasoning},
-who demonstrated that prompting the LLM to 'answer step by step' led to improved
+who demonstrated that prompting the LLM to `answer step by step' led to improved
 performance on mathematical problems compared to requesting only the final
 answer. They also showed that this step-by-step approach could be applied to other
 fields, ultimately giving rise to Chain-of-Thought reasoning models.
