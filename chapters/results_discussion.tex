@@ -62,7 +62,7 @@ appear nearly identical, except for a 90-degree rotation. The small differences 
 the two cases can be attributed to the way the data was structured in the prompt,
 which may have influenced the model's text generation.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}[b]{0.45\textwidth}
     \centering
@@ -98,7 +98,7 @@ often follow a top-left origin convention, it is likely that the LLM was
 implicitly influenced by its prior knowledge from programming-related contexts.
 
 \vspace{5mm}
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}[b]{0.45\textwidth}
     \centering
@@ -201,7 +201,7 @@ $5 \times 5$, $7 \times 7$, and $13 \times 13$, with the \emph{pickup} goal
 placed at the center.
 
 \vspace{5mm}
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}[b]{0.32\textwidth}
     \centering
@@ -246,7 +246,7 @@ To further examine the correctness of the agent's decisions, we analyze the corr
 heatmaps shown in Figure \ref{fig:stateless_pickup_correctness}.
 
 \vspace{5mm}
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}[b]{0.32\textwidth}
     \centering
@@ -299,7 +299,7 @@ actions with the highest probability is shown in the $topX$ columns, while their
 percentage is in the $topX\%$ columns.
 
 \vspace{5mm}
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \begin{tabular}{c|ccc|ccc}
                    & top1 & top2 & top3 & top1\% & top2\% & top3\% \\
@@ -352,7 +352,7 @@ From the heatmaps, we observe similar trends as seen in the pickup case:
 \end{itemize}
 
 \vspace{5mm}
-\begin{figure}[h!]
+\begin{figure}[!ht]
   \centering
   \begin{minipage}[b]{0.32\textwidth}
     \centering
@@ -387,7 +387,7 @@ From the heatmaps, we observe similar trends as seen in the pickup case:
 \vspace{5mm}
 
 \vspace{5mm}
-\begin{figure}[h!]
+\begin{figure}[!ht]
   \centering
   \begin{minipage}[b]{0.32\textwidth}
     \centering
@@ -428,7 +428,7 @@ while uncertainty increases with map size, the general patterns of decision-maki
 remain largely stable across different scales.
 
 \vspace{5mm}
-\begin{table}[h!]
+\begin{table}[!ht]
   \centering
   \begin{tabular}{c|ccc|ccc}
                    & top1 & top2 & top3 & top1\% & top2\% & top3\% \\
@@ -457,7 +457,7 @@ the goal may impact how the LLM processes the spatial relationships between
 different tiles as explained in Section \ref{sub:goal_positioning}.
 
 \vspace{5mm}
-\begin{figure}[h!]
+\begin{figure}[!ht]
   \centering
   \begin{minipage}[b]{0.45\textwidth}
     \centering
@@ -482,7 +482,7 @@ different tiles as explained in Section \ref{sub:goal_positioning}.
 \end{figure}
 \vspace{5mm}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
   \centering
   \begin{minipage}[b]{0.45\textwidth}
     \centering
@@ -513,7 +513,7 @@ Looking at the correctness heatmaps in Figures
 the characteristic drop in correctness along the goal row and column persists.
 
 \vspace{3mm}
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}[b]{0.45\textwidth}
     \centering
@@ -539,7 +539,7 @@ the characteristic drop in correctness along the goal row and column persists.
 \vspace{5mm}
 
 \vspace{5mm}
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}[b]{0.45\textwidth}
     \centering
@@ -576,7 +576,7 @@ This perspective brings us to the following topic, where a slice with the same
 size from different maps is compared.
 
 \vspace{3mm}
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}[b]{0.19\textwidth}
     \centering
@@ -651,7 +651,7 @@ in three configurations:
     corner.
 \end{itemize}
 
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \begin{tabular}{c|ccc|ccc}
               & top1 & top2 & top3 & top1\% & top2\% & top3\% \\
@@ -719,7 +719,7 @@ sending of the map was still so frequent that the token limit was reached fast.
 
 \subsection{Path Visualization}
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.5\textwidth]{
     images/results_discussion/stateful/pickupBR_7x7.png
@@ -764,7 +764,7 @@ pickup scenario, previously discussed, can be found in Figure
 \ref{fig:hm_5x5_pickup} and Figure \ref{fig:chm_5x5_pickup}.
 
 \vspace{2mm}
-\begin{figure}[h!]
+\begin{figure}[!ht]
   \centering
   \begin{minipage}[b]{0.45\textwidth}
     \centering
@@ -847,7 +847,7 @@ the top right cell (since it is the most problematic area). The recorded action 
 includes the pickup action.
 
 \vspace{5mm}
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \begin{tabular}{c|cc|c}
     \textbf{Map Size} & \textbf{Stateless} & \textbf{Stateful} & \textbf{Manhattan Distance} \\
@@ -908,7 +908,7 @@ emerged:
 \end{itemize}
 
 \vspace{7mm}
-\begin{figure}[h!]
+\begin{figure}[!ht]
   \centering
   \includegraphics[width=.66\textwidth]{images/results_discussion/extra2.pdf}
   \caption{Two-steps decision making problem}
@@ -926,7 +926,7 @@ GPT-3.5-turbo, an older model, and found that while its overall capabilities wer
 not necessarily worse, it was less likely to select the correct action as the
 one with the highest probability compared to GPT-4o-mini.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}[b]{0.32\textwidth}
     \centering
@@ -965,7 +965,7 @@ action as the highest probability option less frequently than the other models, 
 its top-2 and top-3 probabilities remain comparable.
 
 \vspace{5mm}
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \begin{tabular}{c|ccc|ccc}
     \hline
@@ -987,7 +987,7 @@ setup is adaptable to different models and effectively structured to assess the 
 of LLMs in this task.
 
 \vspace{5mm}
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{minipage}[b]{0.32\textwidth}
     \centering

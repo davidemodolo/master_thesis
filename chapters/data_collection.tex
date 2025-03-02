@@ -222,7 +222,8 @@ entirely absent from the top attention-receiving tokens in the initial prompt.
                         & name                \\
     \hline
   \end{tabular}
-  \caption{Comparison of Old and New Prompts}
+  \caption{Comparison of Old and New Prompts' words appearing in the top 50 attention-receiving
+  tokens}
   \label{tab:prompt_comparison}
 \end{table}
 
@@ -247,8 +248,8 @@ of the prompt.
 \begin{figure}[ht!]
   \centering
   \includegraphics[width=0.8\textwidth]{images/data_collection/difference.png}
-  \caption{Attention Difference between Old and New Prompts 264 common tokens. Full
-  resolution available in the repository \cite{projectrepo}.}
+  \caption{Attention Difference between Old and New Prompts' 264 common tokens.
+  Full resolution available in the repository \cite{projectrepo}.}
   \label{fig:difference}
 \end{figure}
 
@@ -292,12 +293,14 @@ before answering. Instead, it directly processed the encoded prompt and returned
 a response in plain English, demonstrating its ability to work with BASE64-encoded
 text.
 
+\vspace{5mm}
 \begin{figure}[ht!]
   \centering
   \includegraphics[width=0.66\textwidth]{images/data_collection/b64gpt.png}
   \caption{GPT-4o-mini response to a BASE64-encoded question}
   {\emph{Source: GPT-4o-mini via OpenAI web interface}} \label{fig:b64gpt}
 \end{figure}
+\vspace{5mm}
 
 Encouraged by these results, we attempted to apply a similar encoding strategy to
 the map representation while also aiming to reduce the number of characters in the
