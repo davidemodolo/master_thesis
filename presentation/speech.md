@@ -12,10 +12,31 @@ And here falls our project. Most of the literature tries to deploy LLM-based pla
 
 With this work, we wanted to analyze the generative capabilities in planning intrinsic in LLMs.
 
-The idea can be summarized as assessing strength and weaknesses of an LLM inside an unknown environment performing a logistics task using the uncertainty.
-This is a common problem vastly studied with AI-based approaches.
+We wanted to put to the test the planning capabilities of an LLM using only the text generation capabilities of the model.
+
+An LLM inside an unknown environment performing a logistics task using the uncertainty.
 
 I can't stress this enough, this is a generative approach and we want to see the intrinsic capabilities of an LLM in planning.
 
+step-by-step
+
+Uncertainty explanation - necessary step by step to compute uncertainty
+
+Examples of planning where uncertainty could help (chess, delivery driver, etc.)
+
+Our flow
+
 Briefly on the environment: we run our test using the web-based platform Deliveroo.js developed by prof. Robol for the course Autonomous Software Agents.
 This platform allows us to drive an agent in a 2D environment with parcels that spawn all around the map with the goal of picking them up and delivering them to a destination.
+
+Models
+
+Prompt Engineering
+
+HM
+
+Indeed we can se that if we let an agent run...
+
+Qualitative results
+GPT model comparison
+Biases
