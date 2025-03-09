@@ -59,3 +59,33 @@ Still, the heatmaps created by the stateful are a great indicator also of the st
 Indeed we can see that if we let an statelss agent run in a 7x7 map with the goal in the bottom right tile, we can see that near the goal the agent struggles to find the correct path, while in the other parts of the map the agent is able to navigate quite well. And this can be seen in the heatmap generated for the same game map.
 
 # Results
+
+Now that the project structure is clear, let's take a look at the results.
+
+First, I want to remind you that we did not provide any information about the position of the origin on the map. However, we can observe a bias towards the origin tile, which is positioned in the top-left corner.
+
+Additionally, we notice some uncertainty trends that persist even as the map scales. For example, in this case, the top-right quadrant exhibits more uncertainty, as does the bottom-left quadrant. Meanwhile, the top-left and bottom-right quadrants are almost perfect in terms of accuracy.
+
+Another key observation is that the row containing the goal, as well as the upper part of the column containing the goal, show significant uncertainty. In some cases, the correct action is even removed completely by the uncertainty framework. Furthermore, as the map size increases, we see a slight reduction in top scores.
+
+This also reveals another important trend: the top-right quadrant consistently exhibits uncertainty. If approximately 10% of the cells in that area are uncertain, marking them accordingly makes it easier for an agent to escape the problematic zone. However, with an unlucky sequence of actions, the agent might remain stuck in a larger map.
+
+Next, we tested both the pickup and deliver prompts. The pickup goal differs from the deliver goal in a crucial way: in the pickup task, the goal’s position is explicit, whereas in the deliver task, it is implicit. The model has to retrieve information about the goal’s location, which may be in a different zone of the map—sometimes quite far away. Our tests confirmed this distinction.
+
+There is an article "Needle in a Haystack" that demonstrates how large language models tend to assign more importance to the top and bottom parts of a prompt. We also observed that the behavior related to different quadrants of the map remains consistent, even when the goal is positioned differently. For example, in cases where the goal is placed in the bottom-right corner, the behavior remains nearly perfect—except for uncertainty along the row and column where the goal is located. This aligns with the trends we observed in the original map.
+
+We also compared different portions of maps. Specifically, we examined the tiles surrounding the goal across various map sizes. While the model’s behavior remained similar, it was not identical. This highlights the fact that the way the map is processed by the LLM affects its behavior, particularly near the goal.
+
+To further test our findings and determine whether the biases we observed were due to our methodology or inherent limitations of the model, we conducted additional experiments. First, we tested the model without the pickup and deliver actions. Instead, we simplified the problem by making the goal explicit. The resulting behavior remained almost identical.
+
+Another key experiment involved breaking down the navigation task into two subproblems:
+
+Identifying the neighboring cell that is closest to the goal.
+Determining the correct action to reach that selected cell.
+However, we encountered an issue: in some cases, multiple cells provided the same level of proximity to the goal. If the model selected the wrong cell, the subsequent action—no matter how accurate—would not contribute to reaching the goal.
+
+To summarize our findings:
+
+Stateless approaches exhibit consistent behavior across different maps and goal placements. However, near the goal, there is always some level of uncertainty. Certain zones in the map remain highly uncertain.
+Stateful approaches allow the agent to track past actions, which helps it escape problematic zones. However, in larger uncertain areas, the agent is more likely to become stuck.
+Lastly, we compared the models used in our experiments. Specifically, we utilized GPT-4 Mini for these tests.
