@@ -122,34 +122,15 @@ as well as some example of agents (with different level of complexity)\footnote{
   \label{fig:deliveroo_js}
 \end{figure}
 
-The game can be played even by humans, by interacting in the browser; technically
-speaking, it is a web-based platform consisting of three main components
-connected to each other via sockets (implemented with Socket.io\footnote{\url{https://socket.io/}}):
-\begin{itemize}
-  \item \textbf{Game server}: it contains the entire logic of the game and it includes
-    the implementation of client connection handler, parcel spawning, current environment
-    status and so on;
-
-  \item \textbf{Agent client}: it is the custom component that we developed to interact
-    with the game server. It is a JavaScript file that connects to the server, manages
-    all the logic of the agent (in our case, the LLM agent) and sends the
-    actions to the server;
-
-  \item \textbf{3D web app}: it is the visual representation of the game. It is
-    a web page that connects to the server and receives the status of the game
-    to render it in a 3D environment. It is not necessary for the agent to work,
-    but it is useful to understand what is happening in the game.
-\end{itemize}
-
 As we can see from the Figure \ref{fig:deliveroo_js}, the game is a grid of
 $N \times M$ tiles where the agent can move. At the time of writing, the
 $(0, 0)$ cell is in the bottom-left corner, but we moved it to the top-left corner
-to better analyze the results with additional tools. The map is defined in a JS
-file (example in Listing \ref{lst:deliveroo_map_config}) where the number inside
-a cell represent the type of the cell.
+to better analyze the results. The map is defined in a JS file (example in Listing
+\ref{lst:deliveroo_map_config}) where the number inside a cell represents the
+type of the cell ($1$: \emph{walkable} tile; $2$: \emph{delivery} tile; $0$:
+\emph{blocked} tile, not used in our tests).
 
-% \begin{lstlisting}[language=Python, caption={Example of a configuration for a 7x7 map with a single central delivery zone}, label={lst:deliveroo_map_config}]
-\vspace{10mm}
+\vspace{3mm}
 \begin{codewindow}
   [JavaScript Code] \lstset{style=jsstyle, language=JavaScript, caption={Example of a 7x7 map with a single central delivery zone},
   label={lst:deliveroo_map_config}} \begin{lstlisting}
@@ -165,19 +146,7 @@ module.exports = [
 ];
 \end{lstlisting}
 \end{codewindow}
-\vspace{10mm}
-
-There are three possible types of cells:
-\begin{itemize}
-  \item \textcolor{primary}{\textbf{green}} (\texttt{1}): the agent can move on
-    it. These cells can contain multiple parcels but only one agent at a time;
-
-  \item \textcolor{red}{\textbf{red}} (\texttt{2}): the agent can move on it and
-    deliver any number of parcel it has;
-
-  \item \textcolor{black}{\textbf{black}} (\texttt{0}): the agent can't move on
-    it and they can't contain any parcel (we will not use them in our tests).
-\end{itemize}
+\vspace{3mm}
 
 The functioning is very straight forward:
 
@@ -197,7 +166,7 @@ The functioning is very straight forward:
 
 \subsection{Server Configuration and Event Handling}
 \label{sub:server_configuration_event_handling}
-\vspace{10mm}
+\vspace{3mm}
 \begin{codewindow}
   [JavaScript Code] \lstset{style=jsstyle, language=JavaScript, caption={Example of a configuration file for the server},
   label={lst:deliveroo_server_config}} \begin{lstlisting}
@@ -224,22 +193,22 @@ module.exports = {
 };
 \end{lstlisting}
 \end{codewindow}
-\vspace{10mm}
-The behavior of the parcels in the system is defined through the server configuration
-file. This file specifies key parameters that control parcel generation, reward values,
-and decay over time. An example for a configuration file is shown in Listing \ref{lst:deliveroo_server_config}.
+\vspace{3mm}
+The behavior of the parcels in the system is defined through the server
+configuration file. This file specifies key parameters that control parcel generation,
+reward values, and decay over time. An example for a configuration file is shown
+in Listing \ref{lst:deliveroo_server_config}.
 
-Based on the server settings, a maximum number of parcels can be active
-simultaneously. Each parcel is spawned at a fixed interval, with a random reward
-value determined by a specified average and variance. Additionally, the
-configuration dictates whether the reward remains constant or decreases over
-time.
+Based on the server settings, a maximum number of parcels can be active simultaneously.
+Each parcel is spawned at a fixed interval, with a random reward value determined
+by a specified average and variance. Additionally, the configuration dictates whether
+the reward remains constant or decreases over time.
 
 In the example, parcels are generated every 5 seconds, but only one can exist at
 a time. Each parcel starts with a reward value of exactly 10. Furthermore, since
-\texttt{PARCEL\_DECAYING\_INTERVAL} is set to \texttt{"infinite"}, the reward does
-not decrease over time and the parcel will not disappear (until delivered). This
-setup ensures a stable environment for testing the agent's performance.
+\texttt{PARCEL\_DECAYING\_INTERVAL} is set to \texttt{"infinite"}, the reward
+does not decrease over time and the parcel will not disappear (until delivered).
+This setup ensures a stable environment for testing the agent's performance.
 
 The agent can interact with the environment using the following actions:
 \begin{itemize}
@@ -254,8 +223,8 @@ The agent can interact with the environment using the following actions:
 \end{itemize}
 
 The server is responsible for transmitting events to the agent, ensuring that it
-receives all relevant updates in real-time. Specifically, the following events were
-utilized in our tests:
+receives all relevant updates in real-time. Specifically, the following events
+were utilized in our tests:
 
 \begin{itemize}
   \item \texttt{onMap\ (width, height, tiles)}: it sends the width and the height
@@ -277,19 +246,19 @@ utilized in our tests:
 \section{Large Language Models Selection}
 \label{sec:llm_models}
 
-As mentioned in Section \ref{sec:large_language_models_llms}, Large Language
-Models are powerful tools that have revolutionized the field of natural language
-processing. The way they generate text based on input prompts has opened up new possibilities
-for research and applications in various domains.
+As mentioned in Section \ref{sec:large_language_models_llms}, Large Language Models
+are powerful tools that have revolutionized the field of natural language processing.
+The way they generate text based on input prompts has opened up new
+possibilities for research and applications in various domains.
 
-One of the core aspects of LLMs is their autoregressive nature, meaning they
-generate text one token at a time (given the current implementation, but
-alternative solution are currently being studied, for example by Meta AI\footnote{\url{https://ai.meta.com/}}
+One of the core aspects of LLMs is their autoregressive nature, meaning they generate
+text one token at a time (given the current implementation, but alternative solution
+are currently being studied, for example by Meta AI\footnote{\url{https://ai.meta.com/}}
 in the paper `Better \& Faster Large Language Models via Multi-token Prediction'
-by Gloeckle et al.\cite{gloeckle2024betterfasterlarge}), predicting the next
-most likely token based on the context provided. This capability is what allows LLMs
-to generate coherent and contextually relevant responses. The way these systems
-operate can be broken down into a (simplified) step-by-step process:
+by Gloeckle et al.\cite{gloeckle2024betterfasterlarge}), predicting the next most
+likely token based on the context provided. This capability is what allows LLMs
+to generate coherent and contextually relevant responses. The way these systems operate
+can be broken down into a (simplified) step-by-step process:
 
 \begin{itemize}
   \item The prompt (the request) is tokenized, which means it is divided into
@@ -318,40 +287,41 @@ operate can be broken down into a (simplified) step-by-step process:
 \end{figure}
 \footnotetext{{\url{https://platform.openai.com/tokenizer}}}
 
-One key element of this process is how the next token is selected. The winning token
-is picked from a probability distribution obtained through the softmax function.
-However, if selection were purely deterministic, the model would always generate
-the same output given the same prompt, making it rigid and predictable. To
-introduce variability and prevent repetitive patterns, a controlled amount of randomness
-is introduced using the \texttt{temperature} parameter.
+One key element of this process is how the next token is selected. The winning
+token is picked from a probability distribution obtained through the softmax
+function. However, if selection were purely deterministic, the model would always
+generate the same output given the same prompt, making it rigid and predictable.
+To introduce variability and prevent repetitive patterns, a controlled amount of
+randomness is introduced using the \texttt{temperature} parameter.
 
-The temperature parameter plays a crucial role in regulating randomness in text
-generation: this mechanism explains why the same prompt can yield different outputs
-when used multiple times: because the token selection is influenced by this
-controlled randomness.
+The temperature parameter plays a crucial role in regulating randomness in text generation:
+this mechanism explains why the same prompt can yield different outputs when
+used multiple times: because the token selection is influenced by this controlled
+randomness.
 
-Beyond temperature, another factor that influences token selection is the logit bias\footnote{\url{https://www.vellum.ai/llm-parameters/logit-bias}}.
-Logit bias allows direct intervention in the probability of specific tokens being
-chosen during text generation. Instead of relying solely on the model's learned
-probabilities, users can manually adjust the likelihood of certain tokens appearing
-by modifying the logits (the unnormalized probabilities) before applying the softmax
-function.
+Beyond temperature, another factor that influences token selection is the logit
+bias\footnote{\url{https://www.vellum.ai/llm-parameters/logit-bias}}. Logit bias
+allows direct intervention in the probability of specific tokens being chosen
+during text generation. Instead of relying solely on the model's learned probabilities,
+users can manually adjust the likelihood of certain tokens appearing by
+modifying the logits (the unnormalized probabilities) before applying the
+softmax function.
 
 The logit bias mechanism operates as follows:
 
 \begin{itemize}
-  \item Positive bias values increase the probability of a specific token being selected,
-    making it more likely to appear in the generated text.
+  \item \textbf{Positive} bias values increase the probability of a specific
+    token being selected, making it more likely to appear in the generated text.
 
-  \item Negative bias values decrease the probability of a token, potentially
+  \item \textbf{Negative} bias values decrease the probability of a token, potentially
     eliminating it from consideration altogether.
 \end{itemize}
 
-This approach gives users more control over text generation, allowing them to guide
-the model toward preferred outputs while avoiding undesired words or phrases. A
-simplified implementation of how logit bias works can be seen in the Python code
-snippet in Listing \ref{lst:logit_bias}, where we want to increase the likelihood
-of the word ``fox'' and decrease the likelihood of the word ``quick''.
+This approach gives users more control over text generation, allowing them to
+guide the model toward preferred outputs while avoiding undesired words or
+phrases. A simplified implementation of how logit bias works can be seen in the Python
+code snippet in Listing \ref{lst:logit_bias}, where we want to increase the
+likelihood of the word ``fox'' and decrease the likelihood of the word ``quick''.
 
 \vspace{10mm}
 \begin{codewindow}
@@ -368,10 +338,6 @@ logit_bias = {
   tokenizer.encode("quick")[0]: -2.0,
   # Increase likelihood for the word "fox"
   tokenizer.encode("fox")[0]: 2.0,
-  # Almost never generate the word "slow"
-  tokenizer.encode("slow")[0]: -100.0,
-  # Almost always generate the word "brown"
-  tokenizer.encode("brown")[0]: 100.0,
 }
 
 # Apply logit bias: modify logits of specific tokens
@@ -387,47 +353,46 @@ probs = torch.nn.functional.softmax(logits, dim=-1)
 \vspace{10mm}
 
 This technique is particularly useful in scenarios where the generated text must
-adhere to specific constraints. For example, logit bias can be used for content
-moderation, ensuring that the model avoids generating harmful, offensive, or inappropriate
-content. By assigning a strong negative bias to certain tokens used to build
-specific words or sentences, users can effectively steer the model away from producing
+adhere to specific constraints. For example, logit bias can be used for content moderation,
+ensuring that the model avoids generating harmful, offensive, or inappropriate
+content. By assigning a strong negative bias to certain tokens used to build specific
+words or sentences, users can effectively steer the model away from producing
 undesirable responses.
 
-Not only, there are some cases where an LLM has been expanded with custom and
-private information, via fine-tuning or Retrieval Augmented Generation (as we
-cited in Section \ref{sub:llms_uncertainty}). In this context, we may want to force
-the model to not generate some specific content that may be useful for the overall
-response but should not be shared.
+Not only, there are some cases where an LLM has been expanded with custom and private
+information, via fine-tuning or Retrieval Augmented Generation (as we cited in Section
+\ref{sub:llms_uncertainty}). In this context, we may want to force the model to
+not generate some specific content that may be useful for the overall response
+but should not be shared.
 
-On the other hand, logit bias can be leveraged to override built-in model
-safeguards. In some cases, AI models have safety mechanisms that prevent them
-from answering certain types of questions, responding with phrases like ``I'm sorry,
-but I can't provide that information." By applying a negative logit bias to the
-tokens that generate the words that build this response, users can force the model
-to produce an alternative reply, whether it be a reworded refusal or even an
-answer to the original question.
+On the other hand, logit bias can be leveraged to override built-in model safeguards.
+In some cases, AI models have safety mechanisms that prevent them from answering
+certain types of questions, responding with phrases like ``I'm sorry, but I can't
+provide that information." By applying a negative logit bias to the tokens that generate
+the words that build this response, users can force the model to produce an
+alternative reply, whether it be a reworded refusal or even an answer to the original
+question.
 
-Overall, logit bias is a powerful tool for modelling model behavior, allowing
-developers to enforce preferred linguistic patterns, avoid specific terminology,
-and customize AI responses according to their needs. When combined with temperature
-adjustments and other generation techniques, it provides a robust framework for
-controlling LLM output and ensuring its alignment with desired objectives.
+Overall, logit bias is a powerful tool for modelling model behavior, allowing developers
+to enforce preferred linguistic patterns, avoid specific terminology, and customize
+AI responses according to their needs. When combined with temperature
+adjustments and other generation techniques, it provides a robust framework for controlling
+LLM output and ensuring its alignment with desired objectives.
 
 \subsection{Open Source Models}
 
-The term ``Large" in Large Language Models refers to their extensive number of
-parameters and the vast datasets used during training. Training these models is a
-resource-intensive process, both in terms of computational power and time. However,
-some organizations choose to release their models as open source, allowing the community
-to access and utilize them freely. This approach is also beneficial the broader
-AI community, as it fosters innovation: if a new open source model is released
-and it's ``the most powerful", it sets a new baseline for companies. This compels
-the companies offering paid access to their closed models to find further innovations,
-either by reducing costs or developing even more powerful models with new
-features.
+The term ``Large" in Large Language Models refers to their extensive number of parameters
+and the vast datasets used during training. Training these models is a resource-intensive
+process, both in terms of computational power and time. However, some organizations
+choose to release their models as open source, allowing the community to access
+and utilize them freely. This approach is also beneficial the broader AI community,
+as it fosters innovation: if a new open source model is released and it's ``the most
+powerful", it sets a new baseline for companies. This compels the companies
+offering paid access to their closed models to find further innovations, either by
+reducing costs or developing even more powerful models with new features.
 
-In the context of LLMs, the term ``open source" differs from its traditional
-usage in software development\footnote{\url{https://promptengineering.org/llm-open-source-vs-open-weights-vs-restricted-weights/}}.
+In the context of LLMs, the term ``open source" differs from its traditional usage
+in software development\footnote{\url{https://promptengineering.org/llm-open-source-vs-open-weights-vs-restricted-weights/}}.
 Specifically, there is a nuanced distinction that categorizes publicly available
 models into two primary types:
 
@@ -443,18 +408,18 @@ models into two primary types:
     or modify its underlying structure.
 \end{itemize}
 
-In the following subsections, we will present some open models we tested in the early
-stages of our research. The results analyzed in Chapter
-\ref{cha:results_discussion} do not consider these models due to certain
-limitations, which will be discussed shortly. Nonetheless, they are worth mentioning
-as they provided a valuable starting point during the initial phases of our project.
+In the following subsections, we will present some open models we tested in the
+early stages of our research. The results analyzed in Chapter \ref{cha:results_discussion}
+do not consider these models due to certain limitations, which will be discussed
+shortly. Nonetheless, they are worth mentioning as they provided a valuable
+starting point during the initial phases of our project.
 
 \subsubsection{Challenges with Open Source Models}
 
-One significant challenge we encountered with open source models was the
-implementation of altering the logit bias mechanism. While the example in Listing
-\ref{lst:logit_bias} may suggest simplicity, the reality is more complex. Implementing
-this mechanism requires:
+One significant challenge we encountered with open source models was the implementation
+of altering the logit bias mechanism. While the example in Listing
+\ref{lst:logit_bias} may suggest simplicity, the reality is more complex.
+Implementing this mechanism requires:
 
 \begin{itemize}
   \item Reconstructing the model's architecture accurately;
@@ -465,27 +430,27 @@ this mechanism requires:
     values and change them to incorporate the logit bias.
 \end{itemize}
 
-These steps demand substantial time, and in addition, running those models
-locally requires large computational resources; it would have be too much effort
-for something that was not the focus point of the project, since closed models
-provide this feature out of the box.
+These steps demand substantial time, and in addition, running those models locally
+requires large computational resources; it would have be too much effort for
+something that was not the focus point of the project, since closed models provide
+this feature out of the box.
 
-Moreover, during initial tests, we observed difficulties in constraining the
-Open Source models to produce specific tokens from a list without altering the
-logit bias. For instance, when prompted to ``Answer with just a single letter
-between U, D, L, R." (the explanation for this prompt will be given in Section
-\ref{sub:question_structure}) the model often responded with full sentences like
-``Sure, the answer is U!". Truncating such responses to a single token would result
-in outputs like ``Sure" which is not the desired outcome. This is a problem that
-we didn't have with the closed source models, that we will discuss in the next
-sub-section \ref{sub:closed_source_models_openai}.
+Moreover, during initial tests, we observed difficulties in constraining the Open
+Source models to produce specific tokens from a list without altering the logit bias.
+For instance, when prompted to ``Answer with just a single letter between U, D, L,
+R." (the explanation for this prompt will be given in Section \ref{sub:question_structure})
+the model often responded with full sentences like ``Sure, the answer is U!".
+Truncating such responses to a single token would result in outputs like ``Sure"
+which is not the desired outcome. This is a problem that we didn't have with the
+closed source models, that we will discuss in the next sub-section \ref{sub:closed_source_models_openai}.
 
-So, open source models have been tested only in the first instance of the project,
-to test the logic of the agent without wasting credit with the OpenAI API.
+So, open source models have been tested only in the first instance of the
+project, to test the logic of the agent without wasting credit with the OpenAI API.
 
 They have been loaded and used through Ollama\footnote{\url{https://ollama.com/}},
-a tool for running and managing large language models locally. It simplifies downloading,
-running, and interacting with models without relying on cloud services.
+a tool for running and managing large language models locally. It simplifies
+downloading, running, and interacting with models without relying on cloud
+services.
 
 \subsubsection{LLaMa 3.2}
 
@@ -498,11 +463,11 @@ running, and interacting with models without relying on cloud services.
 
 LLaMa 3.2, developed by Meta AI\footnote{\url{https://ai.meta.com/blog/llama-3-2-connect-2024-vision-edge-mobile-devices/}},
 is a multimodal large language model designed to process both textual and visual
-data, marking Meta's first open-source AI model with such capabilities. The
-model is available in two configurations: an 11-billion-parameter version and a more
+data, marking Meta's first open-source AI model with such capabilities. The model
+is available in two configurations: an 11-billion-parameter version and a more
 robust 90-billion-parameter variant. There are also a 1-billion-parameter and 3-billion-parameter
-text-only versions of the models. These models are optimized for deployment on mobile
-(yet powerful) hardware platforms.
+text-only versions of the models. These models are optimized for deployment on
+mobile (yet powerful) hardware platforms.
 
 The model tested in our experiments was the \emph{text-only 3-billion-parameter}
 version.
@@ -516,10 +481,10 @@ version.
 \end{wrapfigure}
 Gemma 2, introduced by Google\footnote{\url{https://developers.googleblog.com/en/gemma-explained-new-in-gemma-2/}},
 is an open suite of language models available in parameter sizes of 2 billion, 9
-billion, and 27 billion. The 27-billion-parameter model has demonstrated exceptional
-performance, surpassing larger models in real-world conversational benchmarks. This
-suite is built upon the same research and technology that underpins Google's Gemini
-models, emphasizing both performance and accessibility.
+billion, and 27 billion. The 27-billion-parameter model has demonstrated
+exceptional performance, surpassing larger models in real-world conversational benchmarks.
+This suite is built upon the same research and technology that underpins Google's
+Gemini models, emphasizing both performance and accessibility.
 
 The model tested in our experiments was the \emph{9-billion-parameter} version.
 
@@ -532,44 +497,45 @@ The model tested in our experiments was the \emph{9-billion-parameter} version.
   {\scriptsize \parbox[t]{\linewidth}{\emph{Source: \href{https://github.com/deepseek-ai}{DeepSeek GitHub}}}}
 \end{wrapfigure}
 DeepSeek-V3, developed by DeepSeek \footnote{\url{https://github.com/deepseek-ai/DeepSeek-V3}},
-is a Mixture-of-Experts (MoE) language model comprising a total of 671 billion parameters,
-with 37 billion activated per token during inference. It employs Multi-head Latent
-Attention (MLA) and the DeepSeekMoE architecture to achieve efficient inference and
-cost-effective training. The model was pre-trained on 14.8 trillion diverse and
-high-quality tokens, followed by supervised fine-tuning and reinforcement learning
-stages to fully harness its capabilities. Despite its extensive scale, DeepSeek-V3's
-training process is notably efficient and it has demonstrated remarkable stability
-throughout training. Comprehensive evaluations reveal that DeepSeek-V3
-outperforms other open-source models and achieves performance comparable to
-leading closed-source models.
+is a Mixture-of-Experts (MoE) language model comprising a total of 671 billion
+parameters, with 37 billion activated per token during inference. It employs
+Multi-head Latent Attention (MLA) and the DeepSeekMoE architecture to achieve
+efficient inference and cost-effective training. The model was pre-trained on 14.8
+trillion diverse and high-quality tokens, followed by supervised fine-tuning and
+reinforcement learning stages to fully harness its capabilities. Despite its extensive
+scale, DeepSeek-V3's training process is notably efficient and it has
+demonstrated remarkable stability throughout training. Comprehensive evaluations
+reveal that DeepSeek-V3 outperforms other open-source models and achieves performance
+comparable to leading closed-source models.
 
-Unfortunately, we didn't get to test it because it has been released after the end
-of the project, but it is worth mentioning for future research thanks to its
+Unfortunately, we didn't get to test it because it has been released after the
+end of the project, but it is worth mentioning for future research thanks to its
 impressive performance.
 
 \subsection{Closed Source Models - OpenAI}
 \label{sub:closed_source_models_openai}
 
-Before delving into the specifics of this section, we want to emphasize that
-OpenAI is not the only company offering closed-source AI models. Several other providers
-exist, such as Anthropic\footnote{\url{https://www.anthropic.com/}}, which
+Before delving into the specifics of this section, we want to emphasize that OpenAI
+is not the only company offering closed-source AI models. Several other
+providers exist, such as Anthropic\footnote{\url{https://www.anthropic.com/}}, which
 develops the Claude family of models, but also DeepSeek\footnote{\url{https://api-docs.deepseek.com/}},
-that developed the open source DeepSeek-V3 provides paid API access to its models
-as well.
+that developed the open source DeepSeek-V3 provides paid API access to its
+models as well.
 
-While OpenAI remains the most widely recognized and utilized provider,
-particularly in research and industry applications, it is important to acknowledge
-that many of the benefits and drawbacks of closed-source models apply broadly across
-all such services. Nevertheless, since our work specifically relies on OpenAI's models,
-our discussion will primarily focus on them while keeping in mind that similar
+While OpenAI remains the most widely recognized and utilized provider, particularly
+in research and industry applications, it is important to acknowledge that many
+of the benefits and drawbacks of closed-source models apply broadly across all
+such services. Nevertheless, since our work specifically relies on OpenAI's
+models, our discussion will primarily focus on them while keeping in mind that similar
 considerations extend to other closed-source alternatives.
 
 \vspace{1mm}
 
-A key distinction between open-source and closed-source models is the transparency
-regarding their architecture. In many closed-source models, details such as the exact
-number of parameters are not publicly disclosed. For instance, while OpenAI's GPT-3\cite{brown2020languagemodelsfewshotlearners}
-is known to have a maximum of 175 billion parameters\footnote{\url{https://en.wikipedia.org/wiki/GPT-3}},
+A key distinction between open-source and closed-source models is the
+transparency regarding their architecture. In many closed-source models, details
+such as the exact number of parameters are not publicly disclosed. For instance,
+while OpenAI's GPT-3\cite{brown2020languagemodelsfewshotlearners} is known to have
+a maximum of 175 billion parameters\footnote{\url{https://en.wikipedia.org/wiki/GPT-3}},
 the parameter counts for subsequent models like GPT-4\cite{openai2024gpt4technicalreport}
 have not been officially confirmed. Estimates suggest that GPT-4 may have around
 1.76 trillion parameters, but this remains speculative\footnote{\url{https://en.wikipedia.org/wiki/GPT-4}}.
@@ -581,30 +547,31 @@ have not been officially confirmed. Estimates suggest that GPT-4 may have around
   {\scriptsize \parbox[t]{\linewidth}{Source: \href{https://www.vecteezy.com/png/22227364-openai-chatgpt-logo-icon}{Vecteezy}}}
 \end{wrapfigure}
 
-OpenAI was established as a research organization dedicated to advancing artificial
-intelligence. They initially released models such as GPT-2\cite{Radford2019LanguageMA}
-and Whisper\cite{radford2022robustspeechrecognitionlargescale} (a speech recognition
-model) to the public at no cost. GPT-2, for example, was made available with various
-model sizes, the largest containing 1.5 billion parameters\footnote{\url{https://en.wikipedia.org/wiki/GPT-2}}.
+OpenAI was established as a research organization dedicated to advancing
+artificial intelligence. They initially released models such as GPT-2\cite{Radford2019LanguageMA}
+and Whisper\cite{radford2022robustspeechrecognitionlargescale} (a speech
+recognition model) to the public at no cost. GPT-2, for example, was made
+available with various model sizes, the largest containing 1.5 billion parameters\footnote{\url{https://en.wikipedia.org/wiki/GPT-2}}.
 
 Subsequently, OpenAI developed GPT-3 and DALL·E\cite{ramesh2021zeroshottexttoimagegeneration},
-introducing them through a commercial platform and API services. The landscape of
-AI applications shifted significantly with the release of ChatGPT\footnote{\url{https://en.wikipedia.org/wiki/ChatGPT}},
-a conversational AI model that garnered widespread attention for its advanced language
-understanding and generation capabilities.
+introducing them through a commercial platform and API services. The landscape
+of AI applications shifted significantly with the release of ChatGPT\footnote{\url{https://en.wikipedia.org/wiki/ChatGPT}},
+a conversational AI model that garnered widespread attention for its advanced
+language understanding and generation capabilities.
 
-OpenAI offers access to their models via subscription plans and a pay-as-you-go API,
-with pricing varying based on the specific model utilized. The API provides granular
-control over model behavior through parameters such as \texttt{logit\_bias}, that,
-as the name suggests, allows users to adjust the likelihood of specific tokens appearing
-in the generated output by assigning bias values ranging from -100 to 100.
+OpenAI offers access to their models via subscription plans and a pay-as-you-go
+API, with pricing varying based on the specific model utilized. The API provides
+granular control over model behavior through parameters such as \texttt{logit\_bias},
+that, as the name suggests, allows users to adjust the likelihood of specific
+tokens appearing in the generated output by assigning bias values ranging from -100
+to 100.
 
-However, a limitation of closed-source models is the lack of transparency
-regarding updates or changes. Users may be unaware of modifications that could affect
-model behavior. For instance, there have been instances where the behavior of the
-\texttt{logit\_bias} parameter changed without prior (or ``at run-time") notice.
-We have identified three primary behaviors that the \texttt{logit\_bias} parameter
-can have depending on the version of the API, which appears to be independent
+However, a limitation of closed-source models is the lack of transparency regarding
+updates or changes. Users may be unaware of modifications that could affect
+model behavior. For instance, there have been instances where the behavior of
+the \texttt{logit\_bias} parameter changed without prior (or ``at run-time")
+notice. We have identified three primary behaviors that the \texttt{logit\_bias}
+parameter can have depending on the version of the API, which appears to be independent
 from any update of the models themselves:
 \begin{enumerate}
   \item \textbf{No change}: The API does not apply the \texttt{logit\_bias} at
@@ -621,34 +588,33 @@ from any update of the models themselves:
     -100 greatly decreases its likelihood, but it may still appear.
 \end{enumerate}
 
-Our tests were conducted during a period when the API exhibited the third
-behavior (Soft), while when the original paper `Robots That Ask For Help: Uncertainty
+Our tests were conducted during a period when the API exhibited the third behavior
+(Soft), while when the original paper `Robots That Ask For Help: Uncertainty
 Alignment for Large Language Model Planners' was released, the API exhibited the
 second behavior (Exclusive)
 
-Due to frequent API updates, we cannot guarantee the reproducibility of these results.
-To more mitigate variability, we set the temperature parameter to zero during our
-tests, aiming for deterministic outputs. To limit the impact of unwanted tokens appearing
-in the output or vice versa, we decided to ignore any token that was not in the
-list of expected tokens and we assigned to the missing tokens the 20th log-probability
-minus the 19th one.
+Due to frequent API updates, we cannot guarantee the reproducibility of these
+results. To more mitigate variability, we set the temperature parameter to zero
+during our tests, aiming for deterministic outputs. To limit the impact of
+unwanted tokens appearing in the output or vice versa, we decided to ignore any token
+that was not in the list of expected tokens and we assigned to the missing tokens
+the 20th log-probability minus the 19th one.
 
-Another crucial feature offered by OpenAI is the \texttt{logprobs} parameter.
-When specified, this parameter returns the log probabilities of the top tokens that
+Another crucial feature offered by OpenAI is the \texttt{logprobs} parameter. When
+specified, this parameter returns the log probabilities of the top tokens that
 the model may generate as the ``next token".
 
-This information is essential for computing the uncertainty of the model's
-predictions, as detailed in Section \ref{ssub:tokens_log_probability}. It's
-important to note that also the behavior of the \texttt{logprobs} parameter can change
-over time. For instance, when the paper `Robots That Ask For Help: Uncertainty Alignment
-for Large Language Model Planners' was released, the \texttt{logprobs} parameter
-returned a maximum of 5 tokens. Since then, this limit has been increased to a
-maximum of 20 tokens. In the future, it may be adjusted again, so it's important
-to keep this in mind when working with the API.
+This information is essential for computing the uncertainty of the model's predictions,
+as detailed in Section \ref{ssub:tokens_log_probability}. It's important to note
+that also the behavior of the \texttt{logprobs} parameter can change over time. For
+instance, when the paper `Robots That Ask For Help: Uncertainty Alignment for
+Large Language Model Planners' was released, the \texttt{logprobs} parameter returned
+a maximum of 5 tokens. Since then, this limit has been increased to a maximum of
+20 tokens. In the future, it may be adjusted again, so it's important to keep
+this in mind when working with the API.
 
 Pricing per 1 million tokens for all the OpenAI models used can be seen in Table
-\ref{tab:pricing}; the functioning of caching is explained in Section
-\ref{ssub:leveraging_prompt_caching}.
+\ref{tab:pricing}; the functioning of caching is explained in Section \ref{ssub:leveraging_prompt_caching}.
 
 \vspace{3mm}
 \begin{table}[h]
@@ -669,42 +635,43 @@ Pricing per 1 million tokens for all the OpenAI models used can be seen in Table
 \vspace{3mm}
 
 \subsubsection{GPT-4o-mini}
-GPT-4o-mini, is a lightweight variant of the GPT-4o architecture, optimized for efficiency
-while maintaining strong performance across a range of tasks. It is designed to
-deliver fast inference and lower computational costs, making it suitable for deployment
-in real-time applications and on-device AI systems. While OpenAI has not
-publicly disclosed the parameter count, it is positioned as a more efficient alternative
-to larger models in the GPT-4 family.
+GPT-4o-mini, is a lightweight variant of the GPT-4o architecture, optimized for
+efficiency while maintaining strong performance across a range of tasks. It is designed
+to deliver fast inference and lower computational costs, making it suitable for
+deployment in real-time applications and on-device AI systems. While OpenAI has not
+publicly disclosed the parameter count, it is positioned as a more efficient
+alternative to larger models in the GPT-4 family.
 
-The main model used for the tests in our experiments was indeed GPT-4o-mini,
-selected for its balance of performance and pricing.
+The main model used for the tests in our experiments was indeed GPT-4o-mini, selected
+for its balance of performance and pricing.
 
 \subsubsection{GPT-4o}
-GPT-4o is OpenAI's flagship multimodal model, capable of processing and generating
-text, images, and audio in real time. It represents a significant leap in
-efficiency and latency, outperforming previous iterations such as GPT-4-turbo while
-operating at a lower computational cost. Unlike its predecessors, GPT-4o is natively
-trained across multiple modalities rather than combining separate models for different
-inputs. Though OpenAI has not released detailed architectural specifications, benchmark
-results indicate substantial improvements in reasoning, multilingual proficiency,
-and response speed.
+GPT-4o is OpenAI's flagship multimodal model, capable of processing and
+generating text, images, and audio in real time. It represents a significant leap
+in efficiency and latency, outperforming previous iterations such as GPT-4-turbo
+while operating at a lower computational cost. Unlike its predecessors, GPT-4o
+is natively trained across multiple modalities rather than combining separate
+models for different inputs. Though OpenAI has not released detailed architectural
+specifications, benchmark results indicate substantial improvements in reasoning,
+multilingual proficiency, and response speed.
 
-It has been used less than GPT-4o-mini because of the higher cost and the fact that,
-since from the first tests, the results were almost identical to the mini version.
+It has been used less than GPT-4o-mini because of the higher cost and the fact
+that, since from the first tests, the results were almost identical to the mini
+version.
 
 \paragraph{AzureAPI}
-\label{par:azureapi} GPT-4o was accessed via the Azure OpenAI API, provided by the
-University of Trento, offering a secure and private interface for interacting
-with the model. To facilitate communication between the agent's JavaScript code and
-the API, a lightweight Python server was developed. The server's code is available
-on GitHub\cite{projectrepo}.
+\label{par:azureapi} GPT-4o was accessed via the Azure OpenAI API, provided by
+the University of Trento, offering a secure and private interface for interacting
+with the model. To facilitate communication between the agent's JavaScript code
+and the API, a lightweight Python server was developed. The server's code is
+available on GitHub\cite{projectrepo}.
 
 \subsubsection{GPT-3.5-turbo}
-GPT-3.5-turbo is a high-performance variant of OpenAI's GPT-3.5 model. It provides
-strong general-purpose capabilities while being more accessible for applications
-requiring large-scale deployment. Though it does not match GPT-4-level reasoning
-abilities, it remains competitive in many NLP benchmarks and is widely used for production
-AI services.
+GPT-3.5-turbo is a high-performance variant of OpenAI's GPT-3.5 model. It
+provides strong general-purpose capabilities while being more accessible for
+applications requiring large-scale deployment. Though it does not match GPT-4-level
+reasoning abilities, it remains competitive in many NLP benchmarks and is widely
+used for production AI services.
 
-Unfortunately, this model has been the weakest in our tests; we will discuss this
-in depth in the Section \ref{sec:model_comparison}.
+Unfortunately, this model has been the weakest in our tests; we will discuss
+this in depth in the Section \ref{sec:model_comparison}.
