@@ -25,21 +25,27 @@ with dynamic and complex environments. While stateless approaches offer
 simplicity, they may fall short in scenarios where resolving subtle spatial cues
 is critical. The stateful framework, despite imposing additional constraints due
 to token limitations, demonstrates significant advantages in accuracy and
-adaptability. Future research should focus on optimizing the balance between context
-size and performance, possibly through advanced summarization techniques or
-selective memory retention.
+adaptability.
+
+We were able to visualize some intrinsic biases in how the model perceives the
+map, identifying recurrent behaviors in common map zones that exhibit consistently
+higher uncertainty. Our experiments demonstrated that more powerful models tend
+to exhibit less uncertainty. Additionally, we confirmed that an LLM pays more
+attention to the beginning and end of a prompt, providing insights into optimal prompt
+structuring. Importantly, we showed that these biases were not due to our methodology,
+as we adhered to established literature and conducted tests with a simplified
+version of the problem, yielding almost identical results.
 
 \vspace{1mm}
-Some limitations to this thesis include the possibility that the prompt, although
-designed in accordance with the literature, may not be optimal. Additionally,
-the behavior of OpenAI's API \texttt{logit bias} parameter is subject to changes,
-which could impact consistency. Most of the tests were conducted with a single model,
-and the results were then generalized to all models, which may not fully capture
-variations. Furthermore, the environment was not truly dynamic; while it was
-treated as such by not relying on a specific parser, the agent was not actually tested
-in a fast-changing environment. Context size limitations also proved to be
-crucial in the agent's performance, and some biases were observed in the agent's
-understanding of the environment.
+Some limitations to this thesis include the possibility that the prompt,
+although designed in accordance with the literature, may not be optimal.
+Additionally, the behavior of OpenAI's API \texttt{logit bias} parameter is
+subject to changes, which could impact consistency. Most of the tests were
+conducted with a single model, and the results were then generalized to all models,
+which may not fully capture variations. Furthermore, the environment was not
+truly dynamic; while it was treated as such by not relying on a specific parser,
+the agent was not actually tested in a fast-changing environment. Context size limitations
+also proved to be crucial in the stateful agent's performance.
 \vspace{1mm}
 
 Overall, we were able to demonstrate the potential of LLMs' generative capabilities
