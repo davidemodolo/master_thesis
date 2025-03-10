@@ -18,10 +18,8 @@ But what happens if we strip everything away?
 With this work, we wanted to analyze the generative capabilities in planning intrinsic in LLMs.
 
 Our main research question is simple:
-"Can an LLM, without additional training or frameworks, effectively plan and navigate in an unknown
-environment?"
-To explore this, we placed an LLM-driven agent inside a web-based game where it must pick up and
-deliver parcels. This approach allows us to evaluate how well LLMs can make sequential decisions in real-time environments.
+"Can an LLM, without additional training or frameworks, effectively plan and navigate in an unknown environment?"
+To explore this, we placed an LLM-driven agent inside a web-based game where it must pick up and deliver parcels. This approach allows us to evaluate how well LLMs can make sequential decisions in real-time environments.
 
 I can't stress this enough, this is a generative approach and we want to see the intrinsic capabilities of an LLM in planning.
 
