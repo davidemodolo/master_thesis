@@ -13,7 +13,7 @@ In this thesis, we ask: Can LLMs plan effectively without extra fine-tuning or s
 Most LLM-based planning approaches available in the literature rely on additional frameworks, such as fine-tuning, Chain-of-Thought prompting, or even hybrid reinforcement learning models.
 
 These techniques aim to enhance planning by providing structured reasoning pathways.
-But what happens if we strip everything away?
+But what happens if we strip everything away? TODO: change to "strip anything prior"
 
 With this work, we wanted to analyze the generative capabilities in planning intrinsic in LLMs.
 
