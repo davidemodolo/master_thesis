@@ -100,8 +100,6 @@ Another common patter is the model's behavior near the goal. We can see a trend 
 
 This analysis conducted using the stateless agent is also useful to understand the behavior of the stateful agent. Let's see this example, of a 13x13 map with the pickup goal in the center. We can see that the agent follow an optimal path, but it goes back and forth one time. If we compare this to the stateless, we see struggles in the same cells, with the difference that the stateful agent is able to ultimately reach the goal, while the stateless has the 0% probability of choosing to go right in those two cells. This is the power of the context and history. Last, the stateful implementation resulted in around a 20% less required actions to reach the goal compared to the stateless agent, with the drawback of the context size in bigger maps that limits the agent's ability to successfully navigate.
 
-> Question: why no heatmaps for the stateful agent?
-
 # Slide 40 ?
 
 We also say that, in the same portion of the maps, the behavior is similar but not identical. In this example we see the eight cells around the goal that have similar probabilities but a decaying trend in the correctness as the size of the map increases.
