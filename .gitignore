@@ -10,7 +10,7 @@ package-lock2.json
 package-lock.json
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
+questions.md
 # Runtime data
 pids
 *.pid
