@@ -60,7 +60,8 @@ These two kind of heatmaps allowed us to analyze step-by-step the behavior of th
 # Slide 20
 
 Our tests relied on two goals: the pickup and the deliver. The difference between them is that in the pickup, the location of the goal is explicit so it states something like "take the parcel at the cell X, Y", while in the deliver goal, the model has to infer the coordinates of the delivery tile from the map description that in our case was the list of all the available cells.
-An important aspect to underline here is that in the delivery goal, the results were very similar to the pickup goal, with a bit more uncertainty overall and a difference in the top1% score of 6% less on average, showing that the model is able to infer the goal position from the map description.
+
+An important aspect to underline here is that in the delivery goal, the results were in line with the pickup goal, with a slightly higher uncertainty overall and a difference in the top1% score of 6% less on average, still showing that the model is able to infer the goal position from the map description.
 
 # Slide 21
 
@@ -85,8 +86,8 @@ We also noted some common uncertainty patterns.
 
 # Slide 28 -> 29
 
-First, I put here a subset of maps just to show a consistency in an overall trend of less correctness in the top-right quadrant of the map and also in the bottom-left one, even if in reduced form.
-We can see an average correctness difference of 35% between the top-left and the top-right quadrant and this behavior is consistent across all the maps we tested, with a slight reduction in the correctness as the size of the map increases as we saw in the goals slide.
+For the first one, I put here a subset of maps just to show a consistency in an overall trend of less correctness in the top-right quadrant of the map and also in the bottom-left one, even if in reduced form.
+And on average over all of our tests, we saw a difference of 35% between the top-left and the top-right quadrant and again, this behavior is consistent across all the maps we tested, with a slight reduction in the general correctness as the size of the map increases.
 
 # Slide 30 -> 35
 
@@ -107,6 +108,8 @@ We also say that, in the same portion of the maps, the behavior is similar but n
 # Slide 41
 
 To summarize, we saw that the generative capabilities of the LLMs in planning are effective, but with consistent problems and biases. With the stateful agent we saw an average of 20% less action required to reach a goal, with the limitation of the context size in big maps. Another important factor is that the percentage of "problematic" cells is quite similar as the size of the map increases, but translating this to real numbers result in an increasing difficulty of an agent to escape a problematic zone if it goes deeper inside it due to a series of unlucky actions.
+
+[frase conclusiva]
 
 # Slide 41
 
