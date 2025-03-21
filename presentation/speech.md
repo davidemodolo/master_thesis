@@ -107,9 +107,7 @@ We also say that, in the same portion of the maps, the behavior is similar but n
 
 # Slide 41
 
-To summarize, we saw that the generative capabilities of the LLMs in planning are effective, but with consistent problems and biases. With the stateful agent we saw an average of 20% less action required to reach a goal, with the limitation of the context size in big maps. Another important factor is that the percentage of "problematic" cells is quite similar as the size of the map increases, but translating this to real numbers result in an increasing difficulty of an agent to escape a problematic zone if it goes deeper inside it due to a series of unlucky actions.
-
-[frase conclusiva]
+To summarize, we saw that the generative capabilities of the LLMs in planning are effective, even though challenges such as consistent problems and biases remains. While LLMs aren't yet fully capable of reliably plan even just the next action, we believe that the limitations highlighted in this thesis may offer valuable insights for future advancements and refinements.
 
 # Slide 41
 
